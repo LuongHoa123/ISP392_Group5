@@ -1,0 +1,13 @@
+package com.ISP392.demo;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class Isp392Group5ApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
