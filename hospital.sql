@@ -184,33 +184,6 @@ LOCK TABLES `medical_records` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `medications`
---
-
-DROP TABLE IF EXISTS `medications`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `medications` (
-  `medicationId` int NOT NULL AUTO_INCREMENT,
-  `medicationName` varchar(255) NOT NULL,
-  `description` text,
-  `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`medicationId`),
-  UNIQUE KEY `medicationName` (`medicationName`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `medications`
---
-
-LOCK TABLES `medications` WRITE;
-/*!40000 ALTER TABLE `medications` DISABLE KEYS */;
-/*!40000 ALTER TABLE `medications` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `patients`
 --
 
@@ -285,17 +258,15 @@ DROP TABLE IF EXISTS `prescriptions`;
 CREATE TABLE `prescriptions` (
   `prescriptionId` int NOT NULL AUTO_INCREMENT,
   `recordId` int NOT NULL,
-  `medicationId` int NOT NULL,
   `dosage` varchar(100) DEFAULT NULL,
   `quantity` int DEFAULT NULL,
   `instructions` text,
   `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `medications` text,
   PRIMARY KEY (`prescriptionId`),
   KEY `recordId` (`recordId`),
-  KEY `medicationId` (`medicationId`),
-  CONSTRAINT `prescriptions_ibfk_1` FOREIGN KEY (`recordId`) REFERENCES `medical_records` (`recordId`),
-  CONSTRAINT `prescriptions_ibfk_2` FOREIGN KEY (`medicationId`) REFERENCES `medications` (`medicationId`)
+  CONSTRAINT `prescriptions_ibfk_1` FOREIGN KEY (`recordId`) REFERENCES `medical_records` (`recordId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -515,10 +486,6 @@ UNLOCK TABLES;
 --
 -- Dumping events for database 'hospital'
 --
-
---
--- Dumping routines for database 'hospital'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -529,4 +496,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-22 11:53:51
+-- Dump completed on 2025-05-24 22:11:05
