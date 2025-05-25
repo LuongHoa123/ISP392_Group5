@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" th:fragment="layout" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <title>Doccure - Dashboard</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/assets_admin/img/favicon.png}">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/assets_admin/css/bootstrap.min.css}">
+
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" th:href="@{/assets_admin/css/font-awesome.min.css}">
+
+    <!-- Feathericon CSS -->
+    <link rel="stylesheet" th:href="@{/assets_admin/css/feathericon.min.css}">
+
+    <link rel="stylesheet" th:href="@{/assets_admin/plugins/morris/morris.css}">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+
+    <script th:src="@{/js/html5shiv.min.js}"></script>
+    <script th:src="@{/js/respond.min.js}"></script>
+</head>
+<body>
+
+<!-- Main Wrapper -->
+<div class="main-wrapper">
+
+    <!-- Header -->
+    <div th:replace="fragments/header-admin :: header"></div>
+
+    <!-- /Header -->
+
+    <!-- Sidebar -->
+    <div th:replace="fragments/sidebar-admin :: sidebar"></div>
+
+    <!-- /Sidebar -->
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <div class="content container-fluid">
+
+            <th:block th:insert="~{::pageContent}"></th:block>
+
+        </div>
+    </div>
+    <!-- /Page Wrapper -->
+
+</div>
+<!-- /Main Wrapper -->
+
+<!-- jQuery -->
+<script th:src="@{/js/jquery-3.2.1.min.js}"></script>
+
+<!-- Bootstrap Core JS -->
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+
+<!-- Slimscroll JS -->
+<script th:src="@{/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+
+<script th:src="@{/plugins/raphael/raphael.min.js}"></script>
+<script th:src="@{/plugins/morris/morris.min.js}"></script>
+<script th:src="@{/js/chart.morris.js}"></script>
+
+<!-- Custom JS -->
+<script th:src="@{/assets_admin/js/script.js}"></script>
+
+</body>
+
+</html>

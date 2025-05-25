@@ -6,8 +6,15 @@
             <a href="./pages/services.html" class="nav-links">Services</a>
             <a href="./pages/contact.html" class="nav-links">Contact Us</a>
             <a href="./pages/timing.html" class="nav-links">Timings</a>
-            <a th:href="@{/login}" class="nav-links">Đăng nhập</a>
-            <a th:href="@{/register}" class="nav-links">Đăng ký</a>
+
+            <th:block th:if="${#authorization.expression('isAnonymous()')}">
+                <a th:href="@{/login}" class="nav-links">Đăng nhập</a>
+                <a th:href="@{/register}" class="nav-links">Đăng ký</a>
+            </th:block>
+
+            <th:block th:unless="${#authorization.expression('isAnonymous()')}">
+                <a th:href="@{/logout}" class="nav-links">Đăng xuất</a>
+            </th:block>
         </nav>
 
         <div id="menu-btn" class="fas fa-bars"></div>
