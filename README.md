@@ -7,12 +7,9 @@ Veritas ENT Hospital is a specialized medical facility dedicated to the diagnosi
 ## Technologies Used
 
 ### Frontend
-- **JSP (JavaServer Pages):** Used for building dynamic web pages, allowing for efficient and modular frontend development.
-- **JSTL (JavaServer Pages Standard Tag Library):** A collection of JSP tags that simplify common tasks and promote best practices.
 - **Thymeleaf:** A modern server-side Java template engine for both web and standalone environments.
 
 ### Backend
-- **Servlet:** Handles requests and responses, providing the backbone for the server-side logic of the application.
 - **Spring Boot:** Java-based framework used to build microservices and web applications. It simplifies the development process by providing auto-configuration and embedded servers, reducing the need for manual configuration.
 
 ### Database
