@@ -1,0 +1,15 @@
+<th:block th:fragment="header">
+    <header class="header" id="nav">
+        <a th:href="@{/}" class="logo"><i class="fa-solid fa-heart-pulse"></i> Hospital</a>
+        <nav class="navbar">
+            <a th:href="@{/}" class="nav-links">Home</a>
+            <a href="./pages/services.html" class="nav-links">Services</a>
+            <a href="./pages/contact.html" class="nav-links">Contact Us</a>
+            <a href="./pages/timing.html" class="nav-links">Timings</a>
+            <a th:href="@{/login}" class="nav-links">Đăng nhập</a>
+            <a th:href="@{/register}" class="nav-links">Đăng ký</a>
+        </nav>
+
+        <div id="menu-btn" class="fas fa-bars"></div>
+    </header>
+</th:block>

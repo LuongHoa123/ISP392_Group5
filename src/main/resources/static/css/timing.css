@@ -1,0 +1,104 @@
+/* same root file used in style.css  */
+:root{
+    --green: #16a085;
+    --black: #444;
+    --light-color: #777;
+    --box-shadow: .5rem .5rem 0 rgba(22, 160, 133, .2);
+    --text-shadow: .4rem .4rem 0 rgba(0, 0, 0, .2);
+    --border: .2rem solid var(--green);
+    --red: #e40909;
+}
+
+/* timing section css which is located in timing.html */
+
+th, td{
+    border: 1px solid black;
+}
+
+table{
+    width: 100%;
+    padding: 1.8rem;
+    border-collapse: collapse;
+}
+
+.timings .row{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.timings .row .img{
+    flex: 1 1 45rem;
+}
+
+.timings .row .img img{
+    width: 100%;
+}
+
+.timings .row .table table{
+    flex: 1 1 45rem;
+    /* background: #fff; */
+    /* border: var(--border); */
+    /* box-shadow: var(--box-shadow);  */
+    text-align: center;
+    padding: 2rem;
+    border-radius: .5rem;
+    font-size: 3rem;
+    border-spacing: .5rem;
+    overflow: hidden;
+    width: 100%;
+} 
+/* 
+.timings .row .table{
+    max-width: 100%;
+    overflow-x: auto;
+} */
+
+.timings .row .table tbody tr .timing{
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.timings .row .table tbody tr .wed{
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.timings .row p{
+    font-size: 3rem;
+    text-align: center;
+}
+
+.timings .row p u{
+    text-decoration: underline;
+}
+/* making tables responsive for mobile devicies */
+@media(max-width: 500px){
+    .timings .row .table table thead{
+        display: none;
+    }
+    .timings .row .table table, .timings .row .table table tbody, .timings .row .table table tbody tr, .timings .row .table table tbody td{
+        display: block;
+        width: 100%;
+    }
+    .timings .row .table table tbody tr{
+        margin-bottom: 15px;
+    }
+    .timings .row .table table tbody td{
+        text-align: center;
+        /* padding-left: 50%; */
+        position: relative;
+    }
+    .timings .row .table table tbody td::before{
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 50%;
+        /* padding-left: 50px; */
+        font-size: 15px;
+        font-weight: bold;
+        text-align: center;
+    }
+}

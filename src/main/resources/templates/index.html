@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/about.css}">
+    <link rel="stylesheet" th:href="@{/css/services.css}">
+    <link rel="icon" th:href="@{/assets/favicon.ico}" type="image/jpeg">
+    <title>MediHeart - Sức khỏe tốt và tinh thần minh mẫn là hai phúc lành lớn nhất của cuộc sống</title>
+</head>
+<body>
+<th:block th:replace="layout/user-layout :: layout">
+    <th:block th:fragment="pageContent">
+
+        <section class="home">
+            <div class="content">
+                <h3>Một Tâm Hồn Khỏe Mạnh Trong Một Cơ Thể Khỏe Mạnh</h3>
+                <p>Chào mừng đến với Mediheart, một phòng khám y tế hàng đầu tận tâm cung cấp các dịch vụ chăm sóc sức
+                    khỏe
+                    xuất sắc cho bệnh nhân của chúng tôi. Với đội ngũ chuyên gia y tế có tay nghề cao và tận tâm, chúng
+                    tôi
+                    cam kết mang đến sự chăm sóc cá nhân hóa trong một môi trường thoải mái và chu đáo...</p>
+                <a href="./pages/contact.html" class="btn">Liên Hệ Với Chúng Tôi...<span
+                        class="fas fa-chevron-right"></span> </a>
+            </div>
+            <div class="image">
+                <img th:src="@{/assets/home.png}" alt="">
+            </div>
+        </section>
+
+        <section class="icons-container">
+
+            <div class="icons">
+                <i class="fas fa-user-md"></i>
+                <h3>Đáng Tin Cậy</h3>
+                <p>đội ngũ bác sĩ</p>
+            </div>
+
+            <div class="icons">
+                <i class="fas fa-users"></i>
+                <h3>500+</h3>
+                <p>bệnh nhân hài lòng</p>
+            </div>
+
+            <div class="icons">
+                <i class="fas fa-procedures"></i>
+                <h3>Hiện Đại</h3>
+                <p>Thiết Bị và Phương Pháp</p>
+            </div>
+
+            <div class="icons">
+                <i class="fas fa-hospital"></i>
+                <h3>Không Gian Tốt</h3>
+                <p>cho bệnh nhân chờ đợi</p>
+            </div>
+
+        </section>
+
+        <section class="about">
+            <h1 class="heading"><span>Về</span> Chúng Tôi</h1>
+
+            <div class="row">
+                <div class="image">
+                    <img th:src="@{/assets/about.png}" alt="">
+                </div>
+                <div class="content">
+                    <h3>Chúng Tôi Chăm Sóc Cuộc Sống Khỏe Mạnh Của Bạn</h3>
+                    <p>Chúng tôi là Đội ngũ Mediheart. Chúng tôi là đội ngũ gồm 3 bác sĩ chuyên nghiệp và 2 y tá. Tại
+                        phòng
+                        khám của chúng tôi, chúng tôi cung cấp cho bạn các tiện nghi như Chăm sóc Răng miệng, Liệu pháp
+                        Massage, Chẩn đoán và nhiều hơn nữa. Tại Mediheart, chúng tôi hiểu rằng sức khỏe của bạn là tài
+                        sản
+                        quý giá nhất, và chúng tôi cố gắng trở thành đối tác đáng tin cậy của bạn trong việc đạt được
+                        sức
+                        khỏe tối ưu. Trang web của chúng tôi là một nguồn tài nguyên toàn diện, nơi bạn có thể tìm hiểu
+                        về
+                        phòng khám, dịch vụ và chuyên môn của chúng tôi, giúp bạn đưa ra quyết định sáng suốt về nhu cầu
+                        chăm
+                        sóc sức khỏe của mình.</p>
+                    <a href="./pages/services.html" class="btn"> Tìm Hiểu Thêm <span
+                            class="fas fa-chevron-right"></span></a>
+                </div>
+            </div>
+        </section>
+
+        <section class="review">
+            <h1 class="heading"><span>Đánh Giá</span> Của Khách Hàng</h1>
+            <div class="box-container">
+                <div class="box">
+                    <img th:src="@{/assets/Man.jpg}" alt="">
+                    <h3>Xavier</h3>
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="text">Phòng khám tuyệt vời, cơ sở vật chất tuyệt vời, nhân viên tuyệt vời và môi trường
+                        rất
+                        tốt!</p>
+                </div>
+                <div class="box">
+                    <img th:src="@{/assets/Man2.jpg}" alt="">
+                    <h3>Francis</h3>
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="text">Môi trường rất đẹp và dễ chịu! Tôi thực sự đã có một trải nghiệm rất tốt tại phòng
+                        khám này. Nơi này rộng rãi và rất tốt!</p>
+                </div>
+                <div class="box">
+                    <img th:src="@{/assets/Man3.jpg}" alt="">
+                    <h3>John</h3>
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="text">Rất tốt! Ở đây, có một phòng chờ rất rộng rãi và các bác sĩ thì tuyệt vời.</p>
+                </div>
+            </div>
+        </section>
+    </th:block>
+</th:block>
+
+<script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>
