@@ -3,9 +3,11 @@ package com.ISP392.demo.controller.auth;
 import com.ISP392.demo.service.EmailSenderService;
 import com.ISP392.demo.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,15 +24,54 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @GetMapping("/login")
+    public String showLogin() {
+        return "login";
+    }
+
+    @GetMapping("/logout")
+    public String logoutPage() {
+        SecurityContextHolder.getContext().setAuthentication(null);
+        return "redirect:/?logout";
+    }
+
     @RequestMapping(value = "register")
     public String addUser() {
         return "register";
     }
 
+
     @RequestMapping(value = "save", method = RequestMethod.POST)
     public String save(@RequestParam String email, @RequestParam String firstName, @RequestParam String lastName,
                        @RequestParam String address, @RequestParam String gender, @RequestParam String dob,
                        @RequestParam String phone, @RequestParam String password, Model model, HttpSession session) {
+        if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            model.addAttribute("mess", "Email không hợp lệ!");
+            return "register";
+        }
+
+        if (userService.findByEmail(email).isPresent()) {
+            model.addAttribute("mess", "Email đã tồn tại. Hãy nhập Email mới!");
+            return "register";
+        }
+
+        if (!firstName.matches("^[\\p{L} .'-]+$") || !lastName.matches("^[\\p{L} .'-]+$")) {
+            model.addAttribute("mess", "Họ và tên không hợp lệ! Vui lòng chỉ nhập chữ.");
+            return "register";
+        }
+
+        if (!phone.matches("^[0-9]{10,11}$")) {
+            model.addAttribute("mess", "Số điện thoại không hợp lệ!");
+            return "register";
+        }
+
+        if (password.length() < 6) {
+            model.addAttribute("mess", "Mật khẩu phải có ít nhất 6 ký tự!");
+            return "register";
+        }
+
+        session.setAttribute("otp-register", otpCode());
+        session.setMaxInactiveInterval(360);
         if (userService.findByEmail(email).isPresent()) {
             model.addAttribute("mess", "Email đã tồn tại. Hãy nhập Email mới!");
             return "register";

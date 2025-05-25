@@ -52,6 +52,7 @@ public class OtpController {
 
             PatientEntity patientEntity = new PatientEntity();
             patientEntity.setUser(save);
+            patientEntity.setStatus(1);
 
             patientEntity.setPhone((String) session.getAttribute("phone"));
             patientEntity.setFirstName((String) session.getAttribute("firstName"));

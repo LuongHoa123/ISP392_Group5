@@ -11,5 +11,5 @@ import java.util.Optional;
 @Repository
 @SpringBootApplication
 public interface PatientRepository extends JpaRepository<PatientEntity, Long> {
-
+    int countAllByStatus(Integer status);
 }

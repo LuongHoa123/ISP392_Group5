@@ -13,7 +13,21 @@ public class HomeController {
 
     @GetMapping("/")
     private String indexHome(Model model) {
-        return "index";
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+
+        if (authorities.stream().anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority()))) {
+            model.addAttribute("email", username);
+            return "redirect:/admin/dashboard";
+        } else if (authorities.stream().anyMatch(authority -> "ROLE_DOCTOR".equals(authority.getAuthority()))) {
+            model.addAttribute("email", username);
+            return "redirect:/doctor/dashboard";
+        } else if (authorities.stream().anyMatch(authority -> "ROLE_RECEPTIONIST".equals(authority.getAuthority()))) {
+            model.addAttribute("email", username);
+            return "redirect:/receptionist/dashboard";
+        } else {
+            return "index";
+        }
     }
 
     @GetMapping("/home")
