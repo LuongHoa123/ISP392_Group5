@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" th:fragment="layout" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/about.css}">
+    <link rel="stylesheet" th:href="@{/css/services.css}">
+    <link rel="icon" th:href="@{/assets/favicon.ico}" type="image/jpeg">
+</head>
+<title>MediHeart - Good health and good sense are two of life's greatest blessings</title>
+</head>
+<body>
+
+<div th:replace="fragments/header-user :: header"></div>
+
+
+<th:block th:insert="~{::pageContent}"></th:block>
+
+
+<div th:replace="fragments/footer-user :: footer"></div>
+
+
+<script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>
