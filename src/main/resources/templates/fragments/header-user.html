@@ -2,10 +2,10 @@
     <header class="header" id="nav">
         <a th:href="@{/}" class="logo"><i class="fa-solid fa-heart-pulse"></i> Hospital</a>
         <nav class="navbar">
-            <a th:href="@{/}" class="nav-links">Home</a>
-            <a href="./pages/services.html" class="nav-links">Services</a>
-            <a href="./pages/contact.html" class="nav-links">Contact Us</a>
-            <a href="./pages/timing.html" class="nav-links">Timings</a>
+            <a th:href="@{/}" class="nav-links">Trang chủ</a>
+            <a href="./pages/services.html" class="nav-links">Dịch vụ</a>
+            <a href="./pages/contact.html" class="nav-links">Bác sĩ</a>
+            <a href="./pages/timing.html" class="nav-links">Lịch hẹn</a>
 
             <th:block th:if="${#authorization.expression('isAnonymous()')}">
                 <a th:href="@{/login}" class="nav-links">Đăng nhập</a>
@@ -13,10 +13,10 @@
             </th:block>
 
             <th:block th:unless="${#authorization.expression('isAnonymous()')}">
+                <a th:href="@{/changePass}" class="nav-links">Đổi mật khẩu</a>
                 <a th:href="@{/logout}" class="nav-links">Đăng xuất</a>
             </th:block>
         </nav>
-
         <div id="menu-btn" class="fas fa-bars"></div>
     </header>
 </th:block>

@@ -23,13 +23,13 @@ public class LoginController {
         if (isValidCredentials) {
             return "redirect:/index";
         } else {
-            model.addAttribute("error", "Sai email hoặc mật khẩu!");
+            model.addAttribute("mess", "Sai email hoặc mật khẩu!");
             return "login";
         }
     }
     @GetMapping("/loginError")
     public String loginError(Model model) {
-        model.addAttribute("error", "Sai email hoặc mật khẩu!");
+        model.addAttribute("mess", "Sai email hoặc mật khẩu!");
         return "login";
     }
 }

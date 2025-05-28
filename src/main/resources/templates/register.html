@@ -113,13 +113,17 @@
                 <form th:action="@{/save}" method="post">
                     <h3>Đăng ký</h3>
 
-                    <input type="text" name="firstName" placeholder="Họ" class="box">
-                    <input type="text" name="lastName" placeholder="Tên" class="box">
+                    <div class="container mt-3" th:if="${mess}">
+                        <div class="alert alert-danger text-center" th:text="${mess}"></div>
+                    </div>
+
+                    <input type="text" name="firstName" placeholder="Họ" class="box" required>
+                    <input type="text" name="lastName" placeholder="Tên" class="box" required>
 
 
-                    <input type="date" name="dob" class="box">
-                    <input type="text" name="phone" placeholder="SDT" class="box">
-                    <input type="text" name="address" placeholder="Địa chỉ" class="box">
+                    <input type="date" name="dob" class="box" required>
+                    <input type="text" name="phone" placeholder="SDT" class="box" required>
+                    <input type="text" name="address" placeholder="Địa chỉ" class="box" required>
 
                     <div class="form-group">
                         <div class="form-check form-check-inline">
@@ -132,8 +136,8 @@
                         </div>
                     </div>
 
-                    <input type="email" name="email" placeholder="your e-mail" class="box" autocapitalize="none">
-                    <input type="password" name="password" placeholder="your password" class="box">
+                    <input type="email" name="email" placeholder="your e-mail" class="box" autocapitalize="none" required>
+                    <input type="password" name="password" placeholder="your password" class="box" required>
 
                     <button type="submit" class="btn btn-primary btn-block">Xác nhận</button>
 

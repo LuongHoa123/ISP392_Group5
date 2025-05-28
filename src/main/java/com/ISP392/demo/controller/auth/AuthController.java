@@ -1,22 +1,27 @@
 package com.ISP392.demo.controller.auth;
 
+import com.ISP392.demo.entity.UserEntity;
+import com.ISP392.demo.repository.UserRepository;
 import com.ISP392.demo.service.EmailSenderService;
 import com.ISP392.demo.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @Controller
 public class AuthController {
     private final UserService userService;
     private final EmailSenderService emailSenderService;
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public AuthController(UserService userService, EmailSenderService emailSenderService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
@@ -96,4 +101,44 @@ public class AuthController {
         int code = (int) Math.floor(((Math.random() * 899999) + 100000));
         return String.valueOf(code);
     }
+
+    @GetMapping("/changePass")
+    public String changePass() {
+        return "change-password";
+    }
+
+
+    @PostMapping("/change-password")
+    public String changePassword(@RequestParam String oldPassword,
+                                 @RequestParam String newPassword,
+                                 @RequestParam String confirmPassword,
+                                 Model model) {
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Optional<UserEntity> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            model.addAttribute("error", "Người dùng không tồn tại.");
+            return "change-password";
+        }
+
+        UserEntity user = optionalUser.get();
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            model.addAttribute("error", "Mật khẩu hiện tại không đúng.");
+            return "change-password";
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            model.addAttribute("error", "Mật khẩu mới và xác nhận không trùng khớp.");
+            return "change-password";
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        model.addAttribute("success", "Đổi mật khẩu thành công.");
+        return "change-password";
+    }
+
 }
