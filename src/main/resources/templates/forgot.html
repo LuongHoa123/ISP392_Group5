@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang chủ</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        body {
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        form {
+            background: #fff;
+            padding: 30px 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-group input {
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .form-group input:focus {
+            border-color: #0072ff;
+            box-shadow: 0 0 5px rgba(0, 114, 255, 0.4);
+            outline: none;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .btn-gradient:hover {
+            background: linear-gradient(to right, #0072ff, #005edc);
+        }
+
+        .text-center {
+            text-align: center;
+        }
+    </style>
+
+</head>
+<body>
+
+<form action="mt-3" th:action="@{/forgotPass}" method="post">
+    <div class="container mt-3" th:if="${mess}">
+        <div class="alert alert-danger text-center" th:text="${mess}"></div>
+    </div>
+
+    <div class="form-group">
+        <input class="form-control" type="text"
+               id="email"
+               name="email"
+               placeholder="Nhập email" required/>
+    </div>
+
+    <div class="form-group mb-0 text-center">
+        <button class="btn btn-gradient btn-block" type="submit"> Xác Nhận
+        </button>
+    </div>
+</form>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

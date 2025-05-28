@@ -75,10 +75,11 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/", true)
                         .failureUrl("/loginError")
                 )
-                .authorizeHttpRequests(at -> at.requestMatchers("/", "/home", "/login/**", "/login-google", "/register", "/save", "re-send", "/image/**", "/js/**", "/css/**", "/lib/**", "/style/**", "/slider/**", "/assets/**",
+                .authorizeHttpRequests(at -> at.requestMatchers("/", "/home", "/login/**","/loginError/**", "/login-google", "/register", "/save", "re-send", "/image/**", "/js/**", "/css/**", "/lib/**", "/style/**", "/slider/**", "/assets/**",
                         "/api/storage/**", "recover", "send-otp-recover", "otp-check", "confirm-otp", "send-otp-recover", "confirm-otp-recover",
-                        "/client/payment/pay", "/productListClient/**", "save-new-password", "detail", "change-password", "save-change-password", "/users/**",
+                        "/client/payment/pay", "/productListClient/**", "save-new-password", "detail", "change-password", "save-change-password", "/users/**", "/forgot/**", "/forgotPass/**", "/otp-check-pass/**" , "/confirm-otp-pass/**",
                         "/assets/**", "/assets_admin/**", "/client_assets/**", "/index", "/index/**", "/product/**", "/guest/**").permitAll()
+                        .requestMatchers("/changePass/**", "/change-password/**").hasAnyRole("ADMIN", "PATIENT", "DOCTOR", "RECEPTIONIST")
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN")
                         .requestMatchers("/patient/**").hasAnyRole("PATIENT")
                         .requestMatchers("/doctor/**").hasAnyRole("DOCTOR")

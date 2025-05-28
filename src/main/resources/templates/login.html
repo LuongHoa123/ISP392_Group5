@@ -113,13 +113,21 @@
                 <form th:action="@{/login}" method="post">
                     <h3>Đăng nhập</h3>
 
-                    <input type="email" name="email" placeholder="your e-mail" class="box" autocapitalize="none">
-                    <input type="password" name="password" placeholder="your password" class="box">
+                    <div class="container mt-3" th:if="${mess}">
+                        <div class="alert alert-danger text-center" th:text="${mess}"></div>
+                    </div>
+
+                    <input type="email" name="email" placeholder="your e-mail" class="box" autocapitalize="none" required>
+                    <input type="password" name="password" placeholder="your password" class="box" required>
 
                     <button type="submit" class="btn btn-primary btn-block">Xác nhận</button>
 
                     <div class="login-link">
                         <a th:href="@{/register}">Chưa có tài khoản? Đăng ký</a>
+                    </div>
+
+                    <div class="login-link">
+                        <a th:href="@{/forgot}">Quên mật khẩu</a>
                     </div>
                 </form>
             </div>
