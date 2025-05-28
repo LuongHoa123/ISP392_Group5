@@ -1,121 +1,98 @@
 <th:block th:fragment="sidebar">
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-inner slimscroll">
-            <div id="sidebar-menu" class="sidebar-menu">
-                <ul>
-                    <li class="menu-title">
-                        <span>Main</span>
-                    </li>
-                    <li class="active">
-                        <a href="index.html"><i class="fe fe-home"></i> <span>Dashboard</span></a>
-                    </li>
-                    <li>
-                        <a href="appointment-list.html"><i class="fe fe-layout"></i> <span>Appointments</span></a>
-                    </li>
-                    <li>
-                        <a href="specialities.html"><i class="fe fe-users"></i> <span>Specialities</span></a>
-                    </li>
-                    <li>
-                        <a href="doctor-list.html"><i class="fe fe-user-plus"></i> <span>Doctors</span></a>
-                    </li>
-                    <li>
-                        <a href="patient-list.html"><i class="fe fe-user"></i> <span>Patients</span></a>
-                    </li>
-                    <li>
-                        <a href="reviews.html"><i class="fe fe-star-o"></i> <span>Reviews</span></a>
-                    </li>
-                    <li>
-                        <a href="transactions-list.html"><i class="fe fe-activity"></i> <span>Transactions</span></a>
-                    </li>
-                    <li>
-                        <a href="settings.html"><i class="fe fe-vector"></i> <span>Settings</span></a>
-                    </li>
-                    <li class="submenu">
-                        <a href="#"><i class="fe fe-document"></i> <span> Reports</span> <span
-                                class="menu-arrow"></span></a>
-                        <ul style="display: none;">
-                            <li><a href="invoice-report.html">Invoice Reports</a></li>
-                        </ul>
-                    </li>
-                    <li class="menu-title">
-                        <span>Pages</span>
-                    </li>
-                    <li>
-                        <a href="profile.html"><i class="fe fe-user-plus"></i> <span>Profile</span></a>
-                    </li>
-                    <li class="submenu">
-                        <a href="#"><i class="fe fe-document"></i> <span> Authentication </span> <span
-                                class="menu-arrow"></span></a>
-                        <ul style="display: none;">
-                            <li><a href="login.html"> Login </a></li>
-                            <li><a href="register.html"> Register </a></li>
-                            <li><a href="forgot-password.html"> Forgot Password </a></li>
-                            <li><a href="lock-screen.html"> Lock Screen </a></li>
-                        </ul>
-                    </li>
-                    <li class="submenu">
-                        <a href="#"><i class="fe fe-warning"></i> <span> Error Pages </span> <span
-                                class="menu-arrow"></span></a>
-                        <ul style="display: none;">
-                            <li><a href="error-404.html">404 Error </a></li>
-                            <li><a href="error-500.html">500 Error </a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="blank-page.html"><i class="fe fe-file"></i> <span>Blank Page</span></a>
-                    </li>
-                    <li class="menu-title">
-                        <span>UI Interface</span>
-                    </li>
-                    <li>
-                        <a href="components.html"><i class="fe fe-vector"></i> <span>Components</span></a>
-                    </li>
-                    <li class="submenu">
-                        <a href="#"><i class="fe fe-layout"></i> <span> Forms </span> <span
-                                class="menu-arrow"></span></a>
-                        <ul style="display: none;">
-                            <li><a href="form-basic-inputs.html">Basic Inputs </a></li>
-                            <li><a href="form-input-groups.html">Input Groups </a></li>
-                            <li><a href="form-horizontal.html">Horizontal Form </a></li>
-                            <li><a href="form-vertical.html"> Vertical Form </a></li>
-                            <li><a href="form-mask.html"> Form Mask </a></li>
-                            <li><a href="form-validation.html"> Form Validation </a></li>
-                        </ul>
-                    </li>
-                    <li class="submenu">
-                        <a href="#"><i class="fe fe-table"></i> <span> Tables </span> <span
-                                class="menu-arrow"></span></a>
-                        <ul style="display: none;">
-                            <li><a href="tables-basic.html">Basic Tables </a></li>
-                            <li><a href="data-tables.html">Data Table </a></li>
-                        </ul>
-                    </li>
-                    <li class="submenu">
-                        <a href="javascript:void(0);"><i class="fe fe-code"></i> <span>Multi Level</span> <span
-                                class="menu-arrow"></span></a>
-                        <ul style="display: none;">
-                            <li class="submenu">
-                                <a href="javascript:void(0);"> <span>Level 1</span> <span class="menu-arrow"></span></a>
-                                <ul style="display: none;">
-                                    <li><a href="javascript:void(0);"><span>Level 2</span></a></li>
-                                    <li class="submenu">
-                                        <a href="javascript:void(0);"> <span> Level 2</span> <span
-                                                class="menu-arrow"></span></a>
-                                        <ul style="display: none;">
-                                            <li><a href="javascript:void(0);">Level 3</a></li>
-                                            <li><a href="javascript:void(0);">Level 3</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="javascript:void(0);"> <span>Level 2</span></a></li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);"> <span>Level 1</span></a>
-                            </li>
-                        </ul>
-                    </li>
+    <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+            <li class="nav-item nav-profile">
+                <a href="#" class="nav-link">
+                    <div class="nav-profile-image">
+                        <img src="assets/images/faces/face1.jpg" alt="profile">
+                        <span class="login-status online"></span>
+                        <!--change to offline or busy as needed-->
+                    </div>
+                    <div class="nav-profile-text d-flex flex-column">
+                        <span class="font-weight-bold mb-2">David Grey. H</span>
+                        <span class="text-secondary text-small">Project Manager</span>
+                    </div>
+                    <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">
+                    <span class="menu-title">Dashboard</span>
+                    <i class="mdi mdi-home menu-icon"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false"
+                   aria-controls="ui-basic">
+                    <span class="menu-title">Basic UI Elements</span>
+                    <i class="menu-arrow"></i>
+                    <i class="mdi mdi-crosshairs-gps menu-icon"></i>
+                </a>
+                <div class="collapse" id="ui-basic">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">Buttons</a></li>
+                        <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">Typography</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="pages/icons/mdi.html">
+                    <span class="menu-title">Icons</span>
+                    <i class="mdi mdi-contacts menu-icon"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="pages/forms/basic_elements.html">
+                    <span class="menu-title">Forms</span>
+                    <i class="mdi mdi-format-list-bulleted menu-icon"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="pages/charts/chartjs.html">
+                    <span class="menu-title">Charts</span>
+                    <i class="mdi mdi-chart-bar menu-icon"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="pages/tables/basic-table.html">
+                    <span class="menu-title">Tables</span>
+                    <i class="mdi mdi-table-large menu-icon"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#general-pages" aria-expanded="false"
+                   aria-controls="general-pages">
+                    <span class="menu-title">Sample Pages</span>
+                    <i class="menu-arrow"></i>
+                    <i class="mdi mdi-medical-bag menu-icon"></i>
+                </a>
+                <div class="collapse" id="general-pages">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item"> <a class="nav-link" href="pages/samples/blank-page.html"> Blank Page </a></li>
+                        <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Login </a></li>
+                        <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Register </a></li>
+                        <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> 404 </a></li>
+                        <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> 500 </a></li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item sidebar-actions">
+            <span class="nav-link">
+              <div class="border-bottom">
+                <h6 class="font-weight-normal mb-3">Projects</h6>
+              </div>
+              <button class="btn btn-block btn-lg btn-gradient-primary mt-4">+ Add a project</button>
+              <div class="mt-4">
+                <div class="border-bottom">
+                  <p class="text-secondary">Categories</p>
+                </div>
+                <ul class="gradient-bullet-list mt-4">
+                  <li>Free</li>
+                  <li>Pro</li>
                 </ul>
-            </div>
-        </div>
-    </div>
+              </div>
+            </span>
+            </li>
+        </ul>
+    </nav>
 </th:block>
