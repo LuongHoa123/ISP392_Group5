@@ -1,8 +1,8 @@
-# Veritas ENT Hospital
+# Mediheart ENT Hospital
 
 ![logo-for-otolaryngology-clinics-ent-doctor-vector-36260084 (1)](https://github.com/user-attachments/assets/0ca92aec-d809-4beb-be1c-a7defd0ef807)
 
-Veritas ENT Hospital is a specialized medical facility dedicated to the diagnosis, treatment, and management of ear, nose, and throat disorders. Equipped with advanced technology and staffed by experienced ENT specialists, the hospital offers comprehensive care for conditions such as sinusitis, hearing loss, throat infections, and nasal obstructions. With a patient-centered approach, Veritas ensures precise treatments, including minimally invasive surgeries, hearing aids, and allergy management, in a compassionate environment.
+Mediheart ENT Hospital is a specialized medical facility dedicated to the diagnosis, treatment, and management of ear, nose, and throat disorders. Equipped with advanced technology and staffed by experienced ENT specialists, the hospital offers comprehensive care for conditions such as sinusitis, hearing loss, throat infections, and nasal obstructions. With a patient-centered approach, Veritas ensures precise treatments, including minimally invasive surgeries, hearing aids, and allergy management, in a compassionate environment.
 
 ## Technologies Used
 
