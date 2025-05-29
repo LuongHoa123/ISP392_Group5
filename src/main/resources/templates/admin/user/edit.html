@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Chỉnh sửa Người Dùng</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+</head>
+<body>
+<th:block th:replace="layout/admin-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="page-header">
+            <h3 class="page-title"> Chỉnh sửa Người Dùng </h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Quản lý người dùng</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Chỉnh sửa</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="row">
+            <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Thông tin người dùng</h4>
+                        <form class="forms-sample" th:action="@{/admin/user/update/{id}(id=${userDto.id})}"
+                              th:object="${userDto}" method="post" onsubmit="return validateForm()">
+
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" th:field="*{email}" placeholder="Email"
+                                       required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('email')}"
+                                     th:errors="*{email}"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Mật khẩu</label>
+                                <input type="password" class="form-control" th:field="*{password}"
+                                       placeholder="Mật khẩu">
+                                <small class="form-text text-muted">Để trống nếu không thay đổi mật khẩu.</small>
+                                <div class="text-danger" th:if="${#fields.hasErrors('password')}"
+                                     th:errors="*{password}"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="role">Phân quyền</label>
+                                <select class="form-control" th:field="*{roleName}" required>
+                                    <option th:each="role : ${roles}" th:value="${role.name}"
+                                            th:text="${role.name}" th:selected="${role.name == roleName}"></option>
+                                </select>
+                                <div class="text-danger" th:if="${#fields.hasErrors('roleName')}" th:errors="*{roleName}"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="status">Trạng thái</label>
+                                <select class="form-control" th:field="*{status}">
+                                    <option th:value="1">Hoạt động</option>
+                                    <option th:value="0">Không hoạt động</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-gradient-primary">Cập nhật</button>
+                            <a th:href="@{/admin/user}" class="btn btn-light">Hủy</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+
+<!-- JavaScript Validate -->
+<script>
+    function validateForm() {
+        const password = document.getElementById("password").value;
+
+        if (password.length > 0) {
+            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
+            if (!regex.test(password)) {
+                alert("Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, thường, số và ký tự đặc biệt.");
+                return false;
+            }
+        }
+        return true;
+    }
+</script>
+
+<script th:src="@{/assets_admin/vendors/js/vendor.bundle.base.js}"></script>
+<script th:src="@{/assets_admin/js/off-canvas.js}"></script>
+<script th:src="@{/assets_admin/js/hoverable-collapse.js}"></script>
+<script th:src="@{/assets_admin/js/misc.js}"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+</head>
+<body>
+<th:block th:replace="layout/admin-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container mt-4">
+            <h3 class="mb-3">Quản lý người dùng</h3>
+
+            <!-- Form tìm kiếm -->
+            <form class="form-inline mb-3" method="get" th:action="@{/admin/user}">
+                <div class="form-group mr-2">
+                    <input type="text" class="form-control" name="email" placeholder="Tìm theo email"
+                           th:value="${email}">
+                </div>
+                <div class="form-group mr-2">
+                    <select class="form-control" name="role">
+                        <option value="">Tất cả vai trò</option>
+                        <option th:each="r : ${roles}"
+                                th:value="${r.name}"
+                                th:selected="${selectedRole == r.name}"
+                                th:text="${r.name}"></option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary mr-2">Tìm kiếm</button>
+                <a class="btn btn-success" th:href="@{/admin/user/add}">Thêm người dùng</a>
+            </form>
+
+            <!-- Bảng danh sách người dùng -->
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Email</th>
+                            <th>Vai trò</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="user, iterStat : ${users}">
+                            <td th:text="${iterStat.index + 1}"></td>
+                            <td th:text="${user.email}"></td>
+                            <td th:text="${user.role.name}"></td>
+                            <td>
+                        <span th:text="${user.status == 1 ? 'Hoạt động' : 'Bị khóa'}"
+                              th:classappend="${user.status == 1} ? 'text-success' : 'text-danger'"></span>
+                            </td>
+                            <td>
+                                <a class="btn btn-warning btn-sm" th:href="@{'/admin/user/edit/' + ${user.id}}">Sửa</a>
+                                <form th:action="@{'/admin/user/update-status/' + ${user.id}}"
+                                      method="post" style="display:inline-block;">
+                                    <input type="hidden" name="status" th:value="${user.status == 1 ? 0 : 1}"/>
+                                    <button type="submit"
+                                            class="btn btn-secondary btn-sm"
+                                            th:text="${user.status == 1 ? 'Khóa' : 'Mở'}"
+                                            onclick="return confirm('Bạn có chắc muốn thay đổi trạng thái người dùng này?')"></button>
+                                </form>
+                                <form th:action="@{'/admin/user/delete/' + ${user.id}}"
+                                      method="get" style="display:inline-block;"
+                                      onsubmit="return confirm('Bạn có chắc chắn muốn xóa người dùng này không?');">
+                                    <button type="submit" class="btn btn-danger btn-sm">Xoá</button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <nav th:if="${totalPages > 1}">
+                        <ul class="pagination justify-content-center mt-3">
+                            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/admin/user(page=${currentPage - 1}, email=${email}, role=${selectedRole})}">Trước</a>
+                            </li>
+                            <li class="page-item"
+                                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                th:classappend="${i == currentPage} ? 'active'">
+                                <a class="page-link"
+                                   th:href="@{/admin/user(page=${i}, email=${email}, role=${selectedRole})}"
+                                   th:text="${i + 1}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/admin/user(page=${currentPage + 1}, email=${email}, role=${selectedRole})}">Sau</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+<script th:src="@{/assets_admin/vendors/js/vendor.bundle.base.js}"></script>
+<script th:src="@{/assets_admin/js/off-canvas.js}"></script>
+<script th:src="@{/assets_admin/js/misc.js}"></script>
+</body>
+</html>

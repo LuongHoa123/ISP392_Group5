@@ -25,6 +25,4 @@ public class AdminHomeController {
         model.addAttribute("countUser", userRepository.countAllByStatus(1));
         return "admin/dashboard";
     }
-
-
 }

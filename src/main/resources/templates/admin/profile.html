@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" th:fragment="layout" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Thêm Người Dùng</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+</head>
+
+<body>
+<th:block th:replace="layout/admin-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="page-header">
+            <h3 class="page-title"> Đổi thông tin cá nhân </h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active"><a href="#">Đổi thông tin cá nhân</a></li>
+                </ol>
+            </nav>
+        </div>
+        <div class="row">
+            <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Thông tin của tôi</h4>
+                        <form class="forms-sample" th:action="@{/admin/user/save}" th:object="${userDto}" method="post" onsubmit="return validateForm()">
+
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" th:field="*{email}" placeholder="Email" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Mật khẩu</label>
+                                <input type="password" class="form-control" th:field="*{password}" placeholder="Mật khẩu" required>
+                                <small class="form-text text-muted">Mật khẩu phải có ít nhất 6 ký tự bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.</small>
+                                <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="role">Phân quyền</label>
+                                <select class="form-control" th:field="*{roleName}" required>
+                                    <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}"></option>
+                                </select>
+                                <div class="text-danger" th:if="${#fields.hasErrors('roleName')}" th:errors="*{roleName}"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="status">Trạng thái</label>
+                                <select class="form-control" th:field="*{status}">
+                                    <option th:value="1">Hoạt động</option>
+                                    <option th:value="0">Không hoạt động</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-gradient-primary">Lưu</button>
+                            <a th:href="@{/admin/user}" class="btn btn-light">Hủy</a>
+                        </form>
+                        <script>
+                            function validateForm() {
+                                const password = document.getElementById("password").value;
+
+                                const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
+
+                                if (!passwordRegex.test(password)) {
+                                    alert("Mật khẩu không hợp lệ. Mật khẩu phải có ít nhất 6 ký tự bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
+                                    return false;
+                                }
+                                return true;
+                            }
+                        </script>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+
+<script th:src="@{/assets_admin/vendors/js/vendor.bundle.base.js}"></script>
+<script th:src="@{/assets_admin/vendors/chart.js/Chart.min.js}"></script>
+<script th:src="@{/assets_admin/js/jquery.cookie.js}" type="text/javascript"></script>
+<script th:src="@{/assets_admin/js/off-canvas.js}"></script>
+<script th:src="@{/assets_admin/js/hoverable-collapse.js}"></script>
+<script th:src="@{/assets_admin/js/misc.js}"></script>
+<script th:src="@{/assets_admin/js/dashboard.js}"></script>
+<script th:src="@{/assets_admin/js/todolist.js}"></script>
+</body>
+</html>
