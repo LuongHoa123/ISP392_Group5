@@ -352,7 +352,7 @@ CREATE TABLE `roles` (
   `roleName` varchar(50) NOT NULL,
   PRIMARY KEY (`roleId`),
   UNIQUE KEY `roleName` (`roleName`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -361,6 +361,7 @@ CREATE TABLE `roles` (
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
+INSERT INTO `roles` VALUES (1,'ADMIN'),(2,'DOCTOR'),(4,'PATIENT'),(3,'RECEPTIONIST');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -379,6 +380,7 @@ CREATE TABLE `shifts` (
   `endTime` time DEFAULT NULL,
   `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `status` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`shiftId`),
   UNIQUE KEY `unique_doctor_date` (`doctorId`,`shiftDate`),
   CONSTRAINT `shifts_ibfk_1` FOREIGN KEY (`doctorId`) REFERENCES `doctors` (`doctorId`)
@@ -454,37 +456,11 @@ LOCK TABLES `waiting_list` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `working_schedules`
---
-
-DROP TABLE IF EXISTS `working_schedules`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `working_schedules` (
-  `scheduleId` int NOT NULL AUTO_INCREMENT,
-  `doctorId` int NOT NULL,
-  `dayOfWeek` varchar(10) NOT NULL,
-  `startTime` time DEFAULT NULL,
-  `endTime` time DEFAULT NULL,
-  `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`scheduleId`),
-  UNIQUE KEY `unique_doctor_day` (`doctorId`,`dayOfWeek`),
-  CONSTRAINT `working_schedules_ibfk_1` FOREIGN KEY (`doctorId`) REFERENCES `doctors` (`doctorId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `working_schedules`
---
-
-LOCK TABLES `working_schedules` WRITE;
-/*!40000 ALTER TABLE `working_schedules` DISABLE KEYS */;
-/*!40000 ALTER TABLE `working_schedules` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Dumping events for database 'hospital'
+--
+
+--
+-- Dumping routines for database 'hospital'
 --
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -496,4 +472,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-24 22:11:05
+-- Dump completed on 2025-05-29 21:32:31
