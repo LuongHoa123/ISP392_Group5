@@ -24,7 +24,7 @@ public class HomeController {
             return "redirect:/doctor/dashboard";
         } else if (authorities.stream().anyMatch(authority -> "ROLE_RECEPTIONIST".equals(authority.getAuthority()))) {
             model.addAttribute("email", username);
-            return "redirect:/receptionist/dashboard";
+            return "redirect:/recep/dashboard";
         } else {
             return "index";
         }

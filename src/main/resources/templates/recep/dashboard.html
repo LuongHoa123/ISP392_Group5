@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" th:fragment="layout" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Purple Recep</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+</head>
+<body>
+<th:block th:replace="layout/recep-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="page-header">
+            <h3 class="page-title">
+              <span class="page-title-icon bg-gradient-primary text-white me-2">
+                <i class="mdi mdi-home"></i>
+              </span> Trang chủ lễ tân
+            </h3>
+            <nav aria-label="breadcrumb">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <span></span>Tổng quan <i
+                            class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="row">
+            <div class="col-md-4 stretch-card grid-margin">
+                <div class="card bg-gradient-danger card-img-holder text-white">
+                    <div class="card-body">
+                        <img src="assets_admin/images/dashboard/circle.svg" class="card-img-absolute"
+                             alt="circle-image"/>
+                        <h4 class="font-weight-normal mb-3">Số bệnh nhân hiện tại <i
+                                class="mdi mdi-chart-line mdi-24px float-right"></i>
+                        </h4>
+                        <h2 class="mb-5"><span th:text="${countPatient}"></span></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 stretch-card grid-margin">
+                <div class="card bg-gradient-info card-img-holder text-white">
+                    <div class="card-body">
+                        <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image"/>
+                        <h4 class="font-weight-normal mb-3">Số bác sĩ <i
+                                class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
+                        </h4>
+                        <h2 class="mb-5"><span th:text="${countDoctor}"></span></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 stretch-card grid-margin">
+                <div class="card bg-gradient-success card-img-holder text-white">
+                    <div class="card-body">
+                        <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image"/>
+                        <h4 class="font-weight-normal mb-3">Số tài khoản <i
+                                class="mdi mdi-diamond mdi-24px float-right"></i>
+                        </h4>
+                        <h2 class="mb-5"><span th:text="${countUser}"></span></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </th:block>
+</th:block>
+
+<script th:src="@{/assets_admin/vendors/js/vendor.bundle.base.js}"></script>
+<script th:src="@{/assets_admin/vendors/chart.js/Chart.min.js}"></script>
+<script th:src="@{/assets_admin/js/jquery.cookie.js}" type="text/javascript"></script>
+<script th:src="@{/assets_admin/js/off-canvas.js}"></script>
+<script th:src="@{/assets_admin/js/hoverable-collapse.js}"></script>
+<script th:src="@{/assets_admin/js/misc.js}"></script>
+<script th:src="@{/assets_admin/js/dashboard.js}"></script>
+<script th:src="@{/assets_admin/js/todolist.js}"></script>
+</body>
+</html>

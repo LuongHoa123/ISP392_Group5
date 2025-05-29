@@ -1,4 +1,4 @@
-package com.ISP392.demo.controller;
+package com.ISP392.demo.controller.patient;
 
 import com.ISP392.demo.entity.PatientEntity;
 import com.ISP392.demo.entity.UserEntity;
