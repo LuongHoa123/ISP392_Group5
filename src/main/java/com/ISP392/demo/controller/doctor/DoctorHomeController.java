@@ -1,4 +1,4 @@
-package com.ISP392.demo.controller.patient;
+package com.ISP392.demo.controller.doctor;
 
 
 import com.ISP392.demo.repository.DoctorRepository;
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/recep")
-public class RecepHomeController {
+@RequestMapping("/doctor")
+public class DoctorHomeController {
 
     @Autowired
     private PatientRepository patientRepository;
@@ -23,9 +23,6 @@ public class RecepHomeController {
 
     @GetMapping("/dashboard")
     public String home(Model model) {
-        model.addAttribute("countDoctor", doctorRepository.count());
-        model.addAttribute("countPatient", patientRepository.countAllByStatus(1));
-        model.addAttribute("countUser", userRepository.countAllByStatus(1));
-        return "recep/dashboard";
+        return "doctor/dashboard";
     }
 }
