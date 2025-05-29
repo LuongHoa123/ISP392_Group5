@@ -2,6 +2,8 @@ package com.ISP392.demo.repository;
 
 import com.ISP392.demo.entity.DoctorEntity;
 import com.ISP392.demo.entity.PatientEntity;
+import com.ISP392.demo.entity.RecepEntity;
+import com.ISP392.demo.entity.UserEntity;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,4 +24,7 @@ public interface DoctorRepository extends JpaRepository<DoctorEntity, Long> {
             "LOWER(d.email) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(d.phoneNumber) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<DoctorEntity> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+
+    DoctorEntity findByUser(UserEntity user);
+
 }
