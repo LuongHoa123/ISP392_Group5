@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra cứu bệnh nhân</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+</head>
+<body>
+<th:block th:replace="layout/recep-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container mt-4">
+            <h3 class="mb-3">Tra cứu bệnh nhân</h3>
+
+            <!-- Form tìm kiếm -->
+            <form class="form-inline mb-3" method="get" th:action="@{/recep/patient}">
+                <div class="form-group mr-2">
+                    <input type="text" class="form-control" name="firstName" placeholder="Tìm theo họ"
+                           th:value="${firstName}">
+                </div>
+                <div class="form-group mr-2">
+                    <input type="text" class="form-control" name="lastName" placeholder="Tìm theo tên"
+                           th:value="${lastName}">
+                </div>
+                <div class="form-group mr-2">
+                    <input type="text" class="form-control" name="phone" placeholder="Tìm theo số điện thoại"
+                           th:value="${phone}">
+                </div>
+                <div class="form-group mr-2">
+                    <select class="form-control" name="gender">
+                        <option value="">Tất cả giới tính</option>
+                        <option value="MALE" th:selected="${gender == 'MALE'}">Nam</option>
+                        <option value="FEMALE" th:selected="${gender == 'FEMALE'}">Nữ</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary mr-2">Tìm kiếm</button>
+            </form>
+
+            <!-- Bảng danh sách bệnh nhân -->
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Họ</th>
+                            <th>Tên</th>
+                            <th>Ngày sinh</th>
+                            <th>Giới tính</th>
+                            <th>Số điện thoại</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="patient, iterStat : ${patients}">
+                            <td th:text="${iterStat.index + 1}"></td>
+                            <td th:text="${patient.firstName}"></td>
+                            <td th:text="${patient.lastName}"></td>
+                            <td th:text="${#temporals.format(patient.dateOfBirth, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${patient.gender.name() == 'MALE' ? 'Nam' : 'Nữ'}"></td>
+                            <td th:text="${patient.phone}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <nav th:if="${totalPages > 1}">
+                        <ul class="pagination justify-content-center mt-3">
+                            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/recep/patient(page=${currentPage - 1}, firstName=${firstName}, lastName=${lastName}, phone=${phone}, gender=${gender})}">Trước</a>
+                            </li>
+                            <li class="page-item"
+                                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                th:classappend="${i == currentPage} ? 'active'">
+                                <a class="page-link"
+                                   th:href="@{/recep/patient(page=${i}, firstName=${firstName}, lastName=${lastName}, phone=${phone}, gender=${gender})}"
+                                   th:text="${i + 1}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/recep/patient(page=${currentPage + 1}, firstName=${firstName}, lastName=${lastName}, phone=${phone}, gender=${gender})}">Sau</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+<script th:src="@{/assets_admin/vendors/js/vendor.bundle.base.js}"></script>
+<script th:src="@{/assets_admin/js/off-canvas.js}"></script>
+<script th:src="@{/assets_admin/js/misc.js}"></script>
+</body>
+</html>
