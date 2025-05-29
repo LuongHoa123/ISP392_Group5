@@ -4,7 +4,7 @@
         <nav class="navbar">
             <a th:href="@{/}" class="nav-links">Trang chủ</a>
             <a href="./pages/services.html" class="nav-links">Dịch vụ</a>
-            <a href="./pages/contact.html" class="nav-links">Bác sĩ</a>
+            <a th:href="@{/doctors}" class="nav-links">Bác sĩ</a>
             <a href="./pages/timing.html" class="nav-links">Lịch hẹn</a>
 
             <th:block th:if="${#authorization.expression('isAnonymous()')}">
