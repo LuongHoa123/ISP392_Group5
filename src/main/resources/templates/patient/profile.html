@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cập nhật thông tin bệnh nhân - MediHeart</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="icon" th:href="@{/assets/favicon.ico}" type="image/jpeg">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .update-profile {
+            padding: 50px 0;
+            background-color: #f8f9fa;
+        }
+
+        .update-profile .heading {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #007bff;
+        }
+
+        .update-profile form {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .update-profile form h3 {
+            color: #28a745;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .update-profile form .form-control {
+            margin-bottom: 15px;
+        }
+
+        .update-profile form .btn {
+            background-color: #28a745;
+            color: white;
+            padding: 12px;
+            width: 100%;
+        }
+
+        .update-profile form .btn:hover {
+            background-color: #1e7e34;
+        }
+
+        .update-profile form p.error-message {
+            color: #dc3545;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="layout/user-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <section class="update-profile">
+            <h1 class="heading">Cập nhật thông tin cá nhân</h1>
+
+            <!-- Hiển thị thông báo nếu có lỗi hoặc thành công -->
+            <div class="container mt-3" th:if="${param.success}">
+                <div class="alert alert-success text-center">Cập nhật thông tin thành công!</div>
+            </div>
+
+            <div class="container mt-3" th:if="${param.error}">
+                <div class="alert alert-danger text-center">Có lỗi xảy ra trong quá trình cập nhật thông tin!</div>
+            </div>
+
+            <form id="updateProfileForm" th:action="@{/patient/update}" method="post" th:object="${patient}">
+                <h3>Cập nhật thông tin</h3>
+
+                <!-- Họ và Tên -->
+                <div class="form-group">
+                    <label for="firstName">Tên</label>
+                    <input type="text" id="firstName" name="firstName" class="form-control" th:field="*{firstName}" required>
+                    <div id="firstNameError" class="text-danger"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName">Họ</label>
+                    <input type="text" id="lastName" name="lastName" class="form-control" th:field="*{lastName}" required>
+                    <div id="lastNameError" class="text-danger"></div>
+                </div>
+
+                <!-- Ngày sinh -->
+                <div class="form-group">
+                    <label for="dateOfBirth">Ngày sinh</label>
+                    <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" th:field="*{dateOfBirth}" required>
+                    <div id="dateOfBirthError" class="text-danger"></div>
+                </div>
+
+                <!-- Giới tính -->
+                <div class="form-group">
+                    <label for="gender">Giới tính</label>
+                    <select id="gender" name="gender" class="form-control" th:field="*{gender}" required>
+                        <option value="MALE" th:selected="*{gender == 'MALE'}">Nam</option>
+                        <option value="FEMALE" th:selected="*{gender == 'FEMALE'}">Nữ</option>
+                    </select>
+                    <div id="genderError" class="text-danger"></div>
+                </div>
+
+                <!-- Địa chỉ -->
+                <div class="form-group">
+                    <label for="address">Địa chỉ</label>
+                    <input type="text" id="address" name="address" class="form-control" th:field="*{address}" required>
+                    <div id="addressError" class="text-danger"></div>
+                </div>
+
+                <!-- Số điện thoại -->
+                <div class="form-group">
+                    <label for="phone">Số điện thoại</label>
+                    <input type="text" id="phone" name="phone" class="form-control" th:field="*{phone}" required>
+                    <div id="phoneError" class="text-danger"></div>
+                </div>
+
+                <button type="submit" class="btn btn-success">Cập nhật</button>
+            </form>
+        </section>
+    </th:block>
+</th:block>
+
+<script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
+<script th:src="@{/js/script.js}"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    // Validation khi submit form
+    document.getElementById('updateProfileForm').addEventListener('submit', function(e) {
+        // Clear previous error messages
+        document.getElementById('firstNameError').textContent = '';
+        document.getElementById('lastNameError').textContent = '';
+        document.getElementById('phoneError').textContent = '';
+        document.getElementById('dateOfBirthError').textContent = '';
+        document.getElementById('genderError').textContent = '';
+        document.getElementById('addressError').textContent = '';
+
+        let isValid = true;
+
+        // Validate First Name and Last Name
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const namePattern = /^[\p{L} .'-]+$/u; // Chỉ cho phép chữ, dấu chấm, dấu gạch nối và dấu nháy đơn
+
+        if (!namePattern.test(firstName)) {
+            document.getElementById('firstNameError').textContent = 'Họ và tên không hợp lệ! Vui lòng chỉ nhập chữ.';
+            isValid = false;
+        }
+        if (!namePattern.test(lastName)) {
+            document.getElementById('lastNameError').textContent = 'Họ và tên không hợp lệ! Vui lòng chỉ nhập chữ.';
+            isValid = false;
+        }
+
+        // Validate Phone Number
+        const phone = document.getElementById('phone').value;
+        const phonePattern = /^[0-9]{10,11}$/;
+
+        if (!phonePattern.test(phone)) {
+            document.getElementById('phoneError').textContent = 'Số điện thoại không hợp lệ!';
+            isValid = false;
+        }
+
+        // Validate Date of Birth
+        const dateOfBirth = document.getElementById('dateOfBirth').value;
+        if (!dateOfBirth) {
+            document.getElementById('dateOfBirthError').textContent = 'Vui lòng nhập ngày sinh!';
+            isValid = false;
+        }
+
+        // Validate Address
+        const address = document.getElementById('address').value;
+        if (address.length < 5) {
+            document.getElementById('addressError').textContent = 'Địa chỉ phải có ít nhất 5 ký tự!';
+            isValid = false;
+        }
+
+        // Validate Gender
+        const gender = document.getElementById('gender').value;
+        if (!gender) {
+            document.getElementById('genderError').textContent = 'Vui lòng chọn giới tính!';
+            isValid = false;
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+package com.ISP392.demo.controller.admin;
+
+import com.ISP392.demo.dto.UserDto;
+import com.ISP392.demo.entity.RoleEntity;
+import com.ISP392.demo.entity.UserEntity;
+import com.ISP392.demo.enums.RoleEnum;
+import com.ISP392.demo.repository.RoleRepository;
+import com.ISP392.demo.repository.UserRepository;
+
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Controller
+@RequestMapping("/admin/user")
+public class AdminUserController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @GetMapping("")
+    public String userListPage(Model model,
+                               @RequestParam(value = "email", required = false) String emailParam,
+                               @RequestParam(value = "role", required = false) String roleParam,
+                               @RequestParam(value = "page", defaultValue = "0") int page,
+                               @RequestParam(value = "size", defaultValue = "5") int size) {
+
+        List<UserEntity> allUsers = userRepository.findAll();
+
+        if (emailParam != null && !emailParam.isEmpty()) {
+            allUsers = allUsers.stream()
+                    .filter(u -> u.getEmail() != null && u.getEmail().toLowerCase().contains(emailParam.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        if (roleParam != null && !roleParam.isEmpty()) {
+            allUsers = allUsers.stream()
+                    .filter(u -> u.getRole() != null &&
+                            u.getRole().getName().name().equalsIgnoreCase(roleParam))
+                    .collect(Collectors.toList());
+        }
+
+        int totalItems = allUsers.size();
+        int totalPages = (int) Math.ceil((double) totalItems / size);
+
+        int start = Math.min(page * size, totalItems);
+        int end = Math.min(start + size, totalItems);
+
+        List<UserEntity> users = allUsers.subList(start, end);
+
+        model.addAttribute("users", users);
+        model.addAttribute("roles", roleRepository.findAll());
+        model.addAttribute("selectedRole", roleParam);
+        model.addAttribute("email", emailParam);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+
+        return "admin/user/list";
+    }
+
+    // Form thêm mới
+    @GetMapping("/add")
+    public String addUserForm(Model model) {
+        model.addAttribute("userDto", new UserDto());
+        model.addAttribute("roles", roleRepository.findAll());
+        return "admin/user/add";
+    }
+
+    @PostMapping("/save")
+    public String saveUser(@ModelAttribute("userDto") @Valid UserDto userDto,
+                           BindingResult result,
+                           Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("roles", roleRepository.findAll());
+            return "admin/user/add";
+        }
+
+        RoleEntity selectedRole = roleRepository.findByName(RoleEnum.valueOf(userDto.getRoleName()));
+        UserEntity user = new UserEntity();
+        user.setEmail(userDto.getEmail());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setRole(selectedRole);
+        user.setStatus(userDto.getStatus());
+        userRepository.save(user);
+        return "redirect:/admin/user";
+    }
+
+
+    @GetMapping("/edit/{id}")
+    public String editUserForm(@PathVariable("id") Long id, Model model) {
+        Optional<UserEntity> optional = userRepository.findById(id);
+        if (optional.isPresent()) {
+            UserEntity user = optional.get();
+            UserDto dto = new UserDto();
+            dto.setId(user.getId());
+            dto.setEmail(user.getEmail());
+            dto.setStatus(user.getStatus());
+            dto.setRoleName(user.getRole().getName().name());
+
+            model.addAttribute("userDto", dto);
+            model.addAttribute("roles", roleRepository.findAll());
+            return "admin/user/edit";
+        }
+        return "redirect:/admin/user";
+    }
+
+    @PostMapping("/update/{id}")
+    public String updateUser(@PathVariable("id") Long id,
+                             @ModelAttribute("userDto") @Valid UserDto userDto,
+                             BindingResult result,
+                             Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("roles", roleRepository.findAll());
+            return "admin/user/edit";
+        }
+
+        Optional<UserEntity> optional = userRepository.findById(id);
+        if (optional.isPresent()) {
+            UserEntity user = optional.get();
+            user.setEmail(userDto.getEmail());
+            user.setStatus(userDto.getStatus());
+
+            if (userDto.getPassword() != null && !userDto.getPassword().isBlank()) {
+                user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            }
+
+            RoleEntity selectedRole = roleRepository.findByName(RoleEnum.valueOf(userDto.getRoleName()));
+            user.setRole(selectedRole);
+
+            userRepository.save(user);
+        }
+
+        return "redirect:/admin/user";
+    }
+
+
+
+    @PostMapping("/update-status/{id}")
+    public String updateUserStatus(@PathVariable Long id,
+                                   @RequestParam("status") Integer status) {
+        Optional<UserEntity> optional = userRepository.findById(id);
+        if (optional.isPresent()) {
+            UserEntity user = optional.get();
+            user.setStatus(status);
+            userRepository.save(user);
+        }
+        return "redirect:/admin/user";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteUser(@PathVariable("id") Long id) {
+        userRepository.deleteById(id);
+        return "redirect:/admin/user";
+    }
+}

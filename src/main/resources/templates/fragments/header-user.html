@@ -14,6 +14,7 @@
 
             <th:block th:unless="${#authorization.expression('isAnonymous()')}">
                 <a th:href="@{/changePass}" class="nav-links">Đổi mật khẩu</a>
+                <a th:href="@{/profile}" class="nav-links">Đổi thông tin cá nhân</a>
                 <a th:href="@{/logout}" class="nav-links">Đăng xuất</a>
             </th:block>
         </nav>
