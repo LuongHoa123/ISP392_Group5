@@ -113,23 +113,39 @@
                 <form th:action="@{/login}" method="post">
                     <h3>Đăng nhập</h3>
 
-                    <div class="container mt-3" th:if="${mess}">
-                        <div class="alert alert-danger text-center" th:text="${mess}"></div>
+                    <div th:if="${mess != null}" class="alert alert-danger">
+                        <p th:text="${mess}"></p>
                     </div>
 
-                    <input type="email" name="email" placeholder="your e-mail" class="box" autocapitalize="none" required>
+                    <input type="email" name="email" placeholder="your e-mail" class="box" required>
                     <input type="password" name="password" placeholder="your password" class="box" required>
+
+                    <div class="g-recaptcha" data-sitekey="6LcoxlUrAAAAAEsnaYQ7YBPfnVCu83AD6VHiqFpj"></div>
 
                     <button type="submit" class="btn btn-primary btn-block">Xác nhận</button>
 
                     <div class="login-link">
                         <a th:href="@{/register}">Chưa có tài khoản? Đăng ký</a>
                     </div>
-
                     <div class="login-link">
                         <a th:href="@{/forgot}">Quên mật khẩu</a>
                     </div>
                 </form>
+
+                <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const form = document.querySelector("form");
+
+                        form.addEventListener("submit", function (event) {
+                            const response = grecaptcha.getResponse();
+                            if (response.length === 0) {
+                                event.preventDefault();
+                                alert("Vui lòng xác minh bạn không phải là robot.");
+                            }
+                        });
+                    });
+                </script>
             </div>
         </section>
 
