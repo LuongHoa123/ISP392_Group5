@@ -17,14 +17,24 @@ import java.util.List;
 @Repository
 @SpringBootApplication
 public interface DoctorRepository extends JpaRepository<DoctorEntity, Long> {
-    @Query("SELECT d FROM DoctorEntity d WHERE " +
-            "LOWER(d.firstName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "LOWER(d.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "LOWER(d.specialization) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "LOWER(d.email) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "LOWER(d.phoneNumber) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    Page<DoctorEntity> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
-
     DoctorEntity findByUser(UserEntity user);
+
+    @Query("""
+                SELECT d FROM DoctorEntity d
+                WHERE 
+                    (:keyword IS NULL OR :keyword = '' OR 
+                        LOWER(d.firstName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR 
+                        LOWER(d.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR 
+                        LOWER(d.email) LIKE LOWER(CONCAT('%', :keyword, '%')))
+                    AND (:specialization IS NULL OR :specialization = '' OR 
+                        LOWER(d.specialization) LIKE LOWER(CONCAT('%', :specialization, '%')))
+                    AND (:minYoe IS NULL OR d.yoe >= :minYoe)
+            """)
+    Page<DoctorEntity> searchByMultipleFilters(
+            @Param("keyword") String keyword,
+            @Param("specialization") String specialization,
+            @Param("minYoe") Integer minYoe,
+            Pageable pageable
+    );
 
 }

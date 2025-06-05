@@ -16,6 +16,12 @@
     <div class="alert alert-danger text-center" th:text="${mess}"></div>
 </div>
 
+<div class="container mt-3" th:if="${param.successReg}">
+    <div class="alert alert-success text-center">Đăng ký thành công!</div>
+</div>
+
+
+
 <th:block th:replace="layout/user-layout :: layout">
     <th:block th:fragment="pageContent">
 

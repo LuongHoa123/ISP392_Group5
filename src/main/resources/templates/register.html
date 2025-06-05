@@ -101,6 +101,45 @@
         .appointment form .login-link a:hover {
             text-decoration: underline;
         }
+
+        .register-form {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            transition: 0.3s;
+        }
+
+        .register-form h3 {
+            font-weight: bold;
+            color: #333;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        input.form-control {
+            border-radius: 8px;
+        }
+
+        button.btn {
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
     </style>
 </head>
 <body>
@@ -110,39 +149,61 @@
             <h1 class="heading">Đăng ký</h1>
 
             <div class="row">
-                <form th:action="@{/save}" method="post">
-                    <h3>Đăng ký</h3>
+                <form th:action="@{/save}" method="post" class="register-form shadow">
+                    <h3 class="text-center mb-4">Đăng ký</h3>
 
-                    <div class="container mt-3" th:if="${mess}">
-                        <div class="alert alert-danger text-center" th:text="${mess}"></div>
+                    <div class="alert alert-danger text-center" th:if="${mess}" th:text="${mess}"></div>
+
+                    <div class="mb-3">
+                        <label for="firstName">Họ <span class="text-danger">*</span></label>
+                        <input type="text" id="firstName" name="firstName" class="form-control" required>
                     </div>
 
-                    <input type="text" name="firstName" placeholder="Họ" class="box" required>
-                    <input type="text" name="lastName" placeholder="Tên" class="box" required>
+                    <div class="mb-3">
+                        <label for="lastName">Tên <span class="text-danger">*</span></label>
+                        <input type="text" id="lastName" name="lastName" class="form-control" required>
+                    </div>
 
+                    <div class="mb-3">
+                        <label for="dob">Ngày sinh <span class="text-danger">*</span></label>
+                        <input type="date" id="dob" name="dob" class="form-control" required>
+                    </div>
 
-                    <input type="date" name="dob" class="box" required>
-                    <input type="text" name="phone" placeholder="SDT" class="box" required>
-                    <input type="text" name="address" placeholder="Địa chỉ" class="box" required>
+                    <div class="mb-3">
+                        <label for="phone">Số điện thoại <span class="text-danger">*</span></label>
+                        <input type="text" id="phone" name="phone" class="form-control" required>
+                    </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
+                        <label for="address">Địa chỉ <span class="text-danger">*</span></label>
+                        <input type="text" id="address" name="address" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Giới tính <span class="text-danger">*</span></label><br>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="gender" id="male" value="MALE">
+                            <input class="form-check-input" type="radio" name="gender" id="male" value="MALE" required>
                             <label class="form-check-label" for="male">Nam</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="gender" id="female" value="FEMALE">
+                            <input class="form-check-input" type="radio" name="gender" id="female" value="FEMALE" required>
                             <label class="form-check-label" for="female">Nữ</label>
                         </div>
                     </div>
 
-                    <input type="email" name="email" placeholder="your e-mail" class="box" autocapitalize="none"
-                           required>
-                    <input type="password" name="password" placeholder="your password" class="box" required>
+                    <div class="mb-3">
+                        <label for="email">Email <span class="text-danger">*</span></label>
+                        <input type="email" id="email" name="email" class="form-control" required>
+                    </div>
 
-                    <button type="submit" class="btn btn-primary btn-block">Xác nhận</button>
+                    <div class="mb-4">
+                        <label for="password">Mật khẩu <span class="text-danger">*</span></label>
+                        <input type="password" id="password" name="password" class="form-control" required>
+                    </div>
 
-                    <div class="login-link">
+                    <button type="submit" class="btn btn-primary w-100">Xác nhận</button>
+
+                    <div class="text-center mt-3">
                         <a th:href="@{/login}">Đã có tài khoản? Đăng nhập</a>
                     </div>
                 </form>

@@ -27,6 +27,78 @@
             display: inline-block;
             margin-top: 5px;
         }
+        .doctors .heading {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #343a40;
+        }
+
+        .box-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            padding: 0 20px;
+        }
+
+        .box {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            padding: 20px;
+            width: 280px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .box img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .box h3 {
+            margin: 15px 0 5px;
+            font-size: 1.2rem;
+            color: #343a40;
+        }
+
+        .specialization {
+            font-weight: bold;
+            color: #007bff;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .box p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .share {
+            margin-top: 10px;
+        }
+
+        .share a {
+            margin: 0 5px;
+            color: #555;
+            transition: color 0.3s;
+        }
+
+        .share a:hover {
+            color: #007bff;
+        }
+
 
     </style>
 </head>
@@ -36,11 +108,23 @@
         <section class="doctors" id="doc">
             <h1 class="heading">Đội ngũ bác sĩ</h1>
             <div class="container my-4">
-                <form class="form-inline justify-content-center" th:action="@{/doctors/search}" method="get">
-                    <input class="form-control mr-2" type="text" name="keyword" placeholder="Tìm kiếm bác sĩ theo tên, chuyên môn, email...">
-                    <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+                <form class="form-inline row justify-content-center" th:action="@{/doctors/search}" method="get" style="gap: 10px">
+                    <div class="col-auto">
+                        <input class="form-control" type="text" name="keyword" placeholder="Tên, chuyên môn, email..." th:value="${keyword}">
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" class="form-control" name="specialization" placeholder="Nhập chuyên khoa"
+                               th:value="${specialization}">
+                    </div>
+                    <div class="col-auto">
+                        <input class="form-control" type="number" name="minYoe" min="0" placeholder="Kinh nghiệm ≥" th:value="${minYoe}">
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+                    </div>
                 </form>
             </div>
+
             <div class="box-container">
                 <div class="box" th:each="doctor : ${doctors}">
                     <img th:src="@{/assets/Doc1.jpg}" alt="Doctor Image">

@@ -12,4 +12,6 @@ import java.util.Optional;
 @SpringBootApplication
 public interface PatientRepository extends JpaRepository<PatientEntity, Long> {
     int countAllByStatus(Integer status);
+    Optional<PatientEntity> findByPhone(String phone);
+
 }
