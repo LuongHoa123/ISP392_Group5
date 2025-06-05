@@ -51,6 +51,13 @@ public class DoctorProfileController {
 
         doctor.setFirstName(formDoctor.getFirstName());
         doctor.setLastName(formDoctor.getLastName());
+        if (doctorRepository.findByPhoneNumber(formDoctor.getPhoneNumber()).isPresent()) {
+            DoctorEntity checkPhoneDoctor = doctorRepository.findByPhoneNumber(formDoctor.getPhoneNumber()).get();
+            if (checkPhoneDoctor.getId() != doctor.getId()) {
+                return "redirect:/doctor/profile?phone=true";
+            }
+        }
+
         doctor.setPhoneNumber(formDoctor.getPhoneNumber());
         doctor.setSpecialization(formDoctor.getSpecialization());
         doctor.setYoe(formDoctor.getYoe());
