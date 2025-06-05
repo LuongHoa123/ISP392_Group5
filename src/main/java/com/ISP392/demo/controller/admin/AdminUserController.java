@@ -88,6 +88,11 @@ public class AdminUserController {
             return "admin/user/add";
         }
 
+        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
+            return "redirect:/admin/user?email=true";
+        }
+
+
         RoleEntity selectedRole = roleRepository.findByName(RoleEnum.valueOf(userDto.getRoleName()));
         UserEntity user = new UserEntity();
         user.setEmail(userDto.getEmail());
@@ -95,7 +100,7 @@ public class AdminUserController {
         user.setRole(selectedRole);
         user.setStatus(userDto.getStatus());
         userRepository.save(user);
-        return "redirect:/admin/user";
+        return "redirect:/admin/user?add=true";
     }
 
 
@@ -143,7 +148,7 @@ public class AdminUserController {
             userRepository.save(user);
         }
 
-        return "redirect:/admin/user";
+        return "redirect:/admin/user?edit=true";
     }
 
 
@@ -157,12 +162,12 @@ public class AdminUserController {
             user.setStatus(status);
             userRepository.save(user);
         }
-        return "redirect:/admin/user";
+        return "redirect:/admin/user?update=true";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable("id") Long id) {
         userRepository.deleteById(id);
-        return "redirect:/admin/user";
+        return "redirect:/admin/user?delete=true";
     }
 }
