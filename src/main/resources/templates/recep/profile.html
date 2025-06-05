@@ -28,6 +28,9 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Thông tin của tôi</h4>
+                        <div th:if="${param.success}" class="alert alert-success" role="alert">
+                            Cập nhật thông tin thành công!
+                        </div>
                         <form id="updateProfileForm" th:action="@{/recep/profile/save}" th:object="${recep}" method="post">
                             <div class="form-group">
                                 <label for="firstName">Họ</label>
