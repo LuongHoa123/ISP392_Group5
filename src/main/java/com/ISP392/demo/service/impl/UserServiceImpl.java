@@ -3,6 +3,7 @@ package com.ISP392.demo.service.impl;
 import com.ISP392.demo.config.SecurityUser;
 import com.ISP392.demo.entity.RoleEntity;
 import com.ISP392.demo.entity.UserEntity;
+import com.ISP392.demo.exception.UserBlockedException;
 import com.ISP392.demo.repository.UserRepository;
 import com.ISP392.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,27 +50,32 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserEntity> userByUsername = userRepository.findByEmail(username);
-        if (userByUsername.isEmpty()) {
-            System.out.println("Could not find user with that email: {}");
+        try {
+            Optional<UserEntity> userByUsername = userRepository.findByEmail(username);
+            if (userByUsername.isEmpty()) {
+                throw new UsernameNotFoundException("Invalid credentials!");
+            }
+            UserEntity user = userByUsername.get();
+
+            if (user.getStatus() == null || user.getStatus() != 1) {
+                throw new UserBlockedException("Tài khoản của bạn đã bị khóa!");
+            }
+
+            Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName().name()));
+
+            return new SecurityUser(user.getEmail(), user.getPassword(), true, true, true, true, grantedAuthorities,
+                    user.getEmail());
+        } catch (UserBlockedException e) {
+            System.out.println("Lỗi: " + e.getMessage());
+            throw e;
+        } catch (UsernameNotFoundException e) {
+            System.out.println("Lỗi: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            System.out.println("Lỗi không xác định: " + e.getMessage());
             throw new UsernameNotFoundException("Invalid credentials!");
         }
-        UserEntity user = userByUsername.get();
-
-        if (user.getStatus() == null || user.getStatus() != 1) {
-            System.out.println("Người dùng không hoạt động: " + username);
-            throw new UsernameNotFoundException("Tài khoản của bạn đã bị khóa hoặc chưa được kích hoạt.");
-        }
-
-        System.out.println(user);
-        if (!user.getEmail().equals(username)) {
-            System.out.println("Could not find user with that username: {}");
-            throw new UsernameNotFoundException("Invalid credentials!");
-        }
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName().name()));
-        System.out.println(grantedAuthorities);
-        return new SecurityUser(user.getEmail(), user.getPassword(), true, true, true, true, grantedAuthorities,
-                user.getEmail());
     }
+
 }
