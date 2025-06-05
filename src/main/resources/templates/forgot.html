@@ -56,14 +56,21 @@
         .text-center {
             text-align: center;
         }
-    </style>
 
+        .italic-text {
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
 
 <form action="mt-3" th:action="@{/forgotPass}" method="post">
     <div class="container mt-3" th:if="${mess}">
         <div class="alert alert-danger text-center" th:text="${mess}"></div>
+    </div>
+
+    <div class="text-center mb-3">
+        <p class="italic-text">We will be sending a reset password link to your email.</p>
     </div>
 
     <div class="form-group">

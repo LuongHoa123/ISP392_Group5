@@ -113,8 +113,8 @@
                 <form th:action="@{/login}" method="post">
                     <h3>Đăng nhập</h3>
 
-                    <div th:if="${mess != null}" class="alert alert-danger">
-                        <p th:text="${mess}"></p>
+                    <div th:if="${param.error}">
+                        <div class="alert alert-danger" th:text="${param.message}">Thông báo lỗi đăng nhập</div>
                     </div>
 
                     <input type="email" name="email" placeholder="your e-mail" class="box" required>

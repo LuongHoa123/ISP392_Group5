@@ -16,6 +16,22 @@
         <div class="container mt-4">
             <h3 class="mb-3">Quản lý người dùng</h3>
 
+            <div th:if="${param.add}" class="alert alert-success" role="alert">
+                Thêm tài khoản thành công!
+            </div>
+
+            <div th:if="${param.edit}" class="alert alert-success" role="alert">
+                Cập nhật tài khoản thành công!
+            </div>
+
+            <div th:if="${param.update}" class="alert alert-success" role="alert">
+                Cập nhật trạng thái thành công!
+            </div>
+
+            <div th:if="${param.delete}" class="alert alert-success" role="alert">
+                Xoá thành công!
+            </div>
+
             <!-- Form tìm kiếm -->
             <form class="form-inline mb-3" method="get" th:action="@{/admin/user}">
                 <div class="form-group mr-2">

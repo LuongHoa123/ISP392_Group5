@@ -29,6 +29,9 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Thông tin người dùng</h4>
+                        <div th:if="${param.email}" class="alert alert-danger" role="alert">
+                            Email đã được đăng ký. Hãy chọn email khác!
+                        </div>
                         <form class="forms-sample" th:action="@{/admin/user/save}" th:object="${userDto}" method="post" onsubmit="return validateForm()">
 
                             <div class="form-group">
