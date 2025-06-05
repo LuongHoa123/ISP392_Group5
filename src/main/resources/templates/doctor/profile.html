@@ -15,19 +15,23 @@
 <body>
 <th:block th:replace="layout/doctor-layout :: layout">
     <th:block th:fragment="pageContent">
-        <div class="page-header">
+        <div class="page-header d-flex justify-content-between align-items-center">
             <h3 class="page-title">Đổi thông tin cá nhân bác sĩ</h3>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item active"><a href="#">Đổi thông tin cá nhân bác sĩ</a></li>
-                </ol>
-            </nav>
+            <a class="btn btn-warning" th:href="@{/changePass}">Đổi mật khẩu</a>
         </div>
+
         <div class="row">
             <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Thông tin của tôi</h4>
+                        <div th:if="${param.success}" class="alert alert-success" role="alert">
+                            Cập nhật thông tin thành công!
+                        </div>
+
+                        <div th:if="${param.phone}" class="alert alert-danger" role="alert">
+                            Số điện thoại bị trùng!
+                        </div>
                         <form id="updateProfileForm" th:action="@{/doctor/profile/save}" th:object="${doctor}"
                               method="post">
                             <div class="form-group">
@@ -61,7 +65,7 @@
                             <div class="form-group">
                                 <label for="yoe">Số năm kinh nghiệm</label>
                                 <input type="number" class="form-control" th:field="*{yoe}" name="yoe"
-                                       placeholder="Số năm kinh nghiệm" required>
+                                       placeholder="Số năm kinh nghiệm" readonly>
                                 <div id="yoeError" class="text-danger"></div>
                             </div>
 

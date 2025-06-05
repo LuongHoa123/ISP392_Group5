@@ -28,6 +28,8 @@ public class DoctorEntity extends AbstractEntity {
 
     private String email;
 
+    private String avatar;
+
     private Integer yoe;
 
 	@ManyToOne

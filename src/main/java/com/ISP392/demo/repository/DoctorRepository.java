@@ -13,11 +13,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @SpringBootApplication
 public interface DoctorRepository extends JpaRepository<DoctorEntity, Long> {
     DoctorEntity findByUser(UserEntity user);
+    Optional<DoctorEntity> findByPhoneNumber(String phone);
 
     @Query("""
                 SELECT d FROM DoctorEntity d
