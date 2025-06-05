@@ -1,6 +1,7 @@
 package com.ISP392.demo.controller.auth;
 
 import com.ISP392.demo.entity.UserEntity;
+import com.ISP392.demo.repository.PatientRepository;
 import com.ISP392.demo.repository.UserRepository;
 import com.ISP392.demo.service.EmailSenderService;
 import com.ISP392.demo.service.UserService;
@@ -22,6 +23,9 @@ public class AuthController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PatientRepository patientRepository;
 
     public AuthController(UserService userService, EmailSenderService emailSenderService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
@@ -57,6 +61,11 @@ public class AuthController {
 
         if (userService.findByEmail(email).isPresent()) {
             model.addAttribute("mess", "Email đã tồn tại. Hãy nhập Email mới!");
+            return "register";
+        }
+
+        if (patientRepository.findByPhone(phone).isPresent()) {
+            model.addAttribute("mess", "Số điện thoại này đã được đăng ký. Hãy nhập số điện thoại mới!");
             return "register";
         }
 

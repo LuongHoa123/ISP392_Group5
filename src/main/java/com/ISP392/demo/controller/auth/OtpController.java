@@ -69,7 +69,7 @@ public class OtpController {
 
             patientRepository.save(patientEntity);
 
-            return "redirect:/";
+            return "redirect:/?successReg=true";
         }
         model.addAttribute("mess", "OTP is not correct! Please check your email.");
         return "otpConfirm";
