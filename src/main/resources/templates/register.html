@@ -149,33 +149,38 @@
             <h1 class="heading">Đăng ký</h1>
 
             <div class="row">
-                <form th:action="@{/save}" method="post" class="register-form shadow">
+              
+
+                <form id = "register-form" th:action="@{/save}" method="post" class="register-form shadow">
                     <h3 class="text-center mb-4">Đăng ký</h3>
 
                     <div class="alert alert-danger text-center" th:if="${mess}" th:text="${mess}"></div>
 
                     <div class="mb-3">
-                        <label for="firstName">Họ <span class="text-danger">*</span></label>
+                        <label for="firstName">Họ<span class="text-danger">*</span></label>
                         <input type="text" id="firstName" name="firstName" class="form-control" required>
+                        <small id="firstNameError" class="text-danger"></small>
+
                     </div>
 
                     <div class="mb-3">
-                        <label for="lastName">Tên <span class="text-danger">*</span></label>
+                        <label for="lastName">Tên<span class="text-danger">*</span></label>
                         <input type="text" id="lastName" name="lastName" class="form-control" required>
+                        <small id="lastNameError" class="text-danger"></small>
                     </div>
 
                     <div class="mb-3">
-                        <label for="dob">Ngày sinh <span class="text-danger">*</span></label>
+                        <label for="dob">Ngày sinh<span class="text-danger">*</span></label>
                         <input type="date" id="dob" name="dob" class="form-control" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="phone">Số điện thoại <span class="text-danger">*</span></label>
+                        <label for="phone">Số điện thoại<span class="text-danger">*</span></label>
                         <input type="text" id="phone" name="phone" class="form-control" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="address">Địa chỉ <span class="text-danger">*</span></label>
+                        <label for="address">Địa chỉ<span class="text-danger">*</span></label>
                         <input type="text" id="address" name="address" class="form-control" required>
                     </div>
 
@@ -192,12 +197,12 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="email">Email <span class="text-danger">*</span></label>
+                        <label for="email">Email<span class="text-danger">*</span></label>
                         <input type="email" id="email" name="email" class="form-control" required>
                     </div>
 
                     <div class="mb-4">
-                        <label for="password">Mật khẩu <span class="text-danger">*</span></label>
+                        <label for="password">Mật khẩu<span class="text-danger">*</span></label>
                         <input type="password" id="password" name="password" class="form-control" required>
                     </div>
 
@@ -218,5 +223,58 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    const firstNameInput = document.getElementById('firstName');
+    const firstNameError = document.getElementById('firstNameError');
+
+    const nameRegex = /^[\p{L}\s]+$/u;
+
+    // Kiểm tra khi đang gõ
+    firstNameInput.addEventListener('input', function() {
+        const value = firstNameInput.value.trim();
+
+        if (value !== "" && !nameRegex.test(value)) {
+            firstNameError.textContent = 'Họ chỉ được chứa chữ cái và khoảng trắng.';
+        } else {
+            firstNameError.textContent = "";
+        }
+    });
+
+    // Kiểm tra khi rời khỏi ô
+    firstNameInput.addEventListener('blur', function () {
+        const value = firstNameInput.value.trim();
+
+        if (value === "") {
+            firstNameError.textContent = 'Họ không được để trống.';
+        }
+    });
+</script>
+<script>
+    const lastNameInput = document.getElementById('lastName');
+    const lastNameError = document.getElementById('lastNameError');
+
+    const nameRegex1 = /^[\p{L}\s]+$/u;
+
+    // Kiểm tra khi đang gõ
+    lastNameInput.addEventListener('input', function() {
+        const value = lastNameInput.value.trim();
+
+        if (value !== "" && !nameRegex1.test(value)) {
+            lastNameError.textContent = 'TênTên chỉ được chứa chữ cái và khoảng trắng.';
+        } else {
+            lastNameError.textContent = "";
+        }
+    });
+
+    // Kiểm tra khi rời khỏi ô
+    lastNameInput.addEventListener('blur', function () {
+        const value = lastNameInput.value.trim();
+
+        if (value === "") {
+            lastNameError.textContent = 'Tên không được để trống.';
+        }
+    });
+</script>
+
 </body>
 </html>
