@@ -53,6 +53,10 @@
             color: #dc3545;
             text-align: center;
         }
+        .required-star {
+    color: red;
+}
+
     </style>
 </head>
 <body>
@@ -74,49 +78,49 @@
                 <h3>Cập nhật thông tin</h3>
 
                 <!-- Họ và Tên -->
-                <div class="form-group">
-                    <label for="firstName">Tên*</label>
-                    <input type="text" id="firstName" name="firstName" class="form-control" th:field="*{firstName}" required>
-                    <div id="firstNameError" class="text-danger"></div>
-                </div>
+<div class="form-group">
+    <label for="firstName">Họ<span class="required-star">*</span></label>
+    <input type="text" id="firstName" name="firstName" class="form-control" th:field="*{firstName}" required>
+    <div id="firstNameError" class="text-danger"></div>
+</div>
 
-                <div class="form-group">
-                    <label for="lastName">Họ</label>
-                    <input type="text" id="lastName" name="lastName" class="form-control" th:field="*{lastName}" required>
-                    <div id="lastNameError" class="text-danger"></div>
-                </div>
+<div class="form-group">
+    <label for="lastName">Tên<span class="required-star">*</span></label>
+    <input type="text" id="lastName" name="lastName" class="form-control" th:field="*{lastName}" required>
+    <div id="lastNameError" class="text-danger"></div>
+</div>
 
-                <!-- Ngày sinh -->
-                <div class="form-group">
-                    <label for="dateOfBirth">Ngày sinh</label>
-                    <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" th:field="*{dateOfBirth}" required>
-                    <div id="dateOfBirthError" class="text-danger"></div>
-                </div>
+<!-- Ngày sinh -->
+<div class="form-group">
+    <label for="dateOfBirth">Ngày sinh<span class="required-star">*</span></label>
+    <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" th:field="*{dateOfBirth}" required>
+    <div id="dateOfBirthError" class="text-danger"></div>
+</div>
 
-                <!-- Giới tính -->
-                <div class="form-group">
-                    <label for="gender">Giới tính</label>
-                    <select id="gender" name="gender" class="form-control" th:field="*{gender}" required>
-                        <option value="MALE" th:selected="*{gender == 'MALE'}">Nam</option>
-                        <option value="FEMALE" th:selected="*{gender == 'FEMALE'}">Nữ</option>
-                    </select>
-                    <div id="genderError" class="text-danger"></div>
-                </div>
+<!-- Giới tính -->
+<div class="form-group">
+    <label for="gender">Giới tính<span class="required-star">*</span></label>
+    <select id="gender" name="gender" class="form-control" th:field="*{gender}" required>
+        <option value="">-- Chọn giới tính --</option>
+        <option value="MALE" th:selected="*{gender == 'MALE'}">Nam</option>
+        <option value="FEMALE" th:selected="*{gender == 'FEMALE'}">Nữ</option>
+    </select>
+    <div id="genderError" class="text-danger"></div>
+</div>
 
-                <!-- Địa chỉ -->
-                <div class="form-group">
-                    <label for="address">Địa chỉ</label>
-                    <input type="text" id="address" name="address" class="form-control" th:field="*{address}" required>
-                    <div id="addressError" class="text-danger"></div>
-                </div>
+<!-- Địa chỉ -->
+<div class="form-group">
+    <label for="address">Địa chỉ<span class="required-star">*</span></label>
+    <input type="text" id="address" name="address" class="form-control" th:field="*{address}" required>
+    <div id="addressError" class="text-danger"></div>
+</div>
 
-                <!-- Số điện thoại -->
-                <div class="form-group">
-                    <label for="phone">Số điện thoại</label>
-                    <input type="text" id="phone" name="phone" class="form-control" th:field="*{phone}" required>
-                    <div id="phoneError" class="text-danger"></div>
-                </div>
-
+<!-- Số điện thoại -->
+<div class="form-group">
+    <label for="phone">Số điện thoại<span class="required-star">*</span></label>
+    <input type="text" id="phone" name="phone" class="form-control" th:field="*{phone}" required>
+    <div id="phoneError" class="text-danger"></div>
+</div>
                 <button type="submit" class="btn btn-success">Cập nhật</button>
             </form>
         </section>
