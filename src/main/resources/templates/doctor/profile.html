@@ -35,31 +35,24 @@
                         <form id="updateProfileForm" th:action="@{/doctor/profile/save}" th:object="${doctor}"
                               method="post">
                             <div class="form-group">
-                                <label for="firstName">Họ</label>
+                                <label for="firstName">Họ <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" th:field="*{firstName}" name="firstName"
                                        placeholder="Họ" required>
                                 <div id="firstNameError" class="text-danger"></div>
                             </div>
 
                             <div class="form-group">
-                                <label for="lastName">Tên</label>
+                                <label for="lastName">Tên <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" th:field="*{lastName}" name="lastName"
                                        placeholder="Tên" required>
                                 <div id="lastNameError" class="text-danger"></div>
                             </div>
 
                             <div class="form-group">
-                                <label for="phoneNumber">Số điện thoại</label>
+                                <label for="phoneNumber">Số điện thoại <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" th:field="*{phoneNumber}" name="phoneNumber"
                                        placeholder="Số điện thoại" required>
                                 <div id="phoneError" class="text-danger"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="specialization">Chuyên khoa</label>
-                                <input type="text" class="form-control" th:field="*{specialization}"
-                                       name="specialization" placeholder="Chuyên khoa" required>
-                                <div id="specializationError" class="text-danger"></div>
                             </div>
 
                             <div class="form-group">
@@ -96,7 +89,6 @@
             document.getElementById('firstNameError').textContent = '';
             document.getElementById('lastNameError').textContent = '';
             document.getElementById('phoneError').textContent = '';
-            document.getElementById('specializationError').textContent = '';
             document.getElementById('yoeError').textContent = '';
 
             const firstName = document.querySelector("[name='firstName']").value.trim();
@@ -122,12 +114,6 @@
                 isValid = false;
             } else if (!phonePattern.test(phoneNumber)) {
                 document.getElementById('phoneError').textContent = 'Số điện thoại không hợp lệ. Phải bắt đầu bằng số 0 và có 10 chữ số.';
-                isValid = false;
-            }
-
-            const specialization = document.querySelector("[name='specialization']").value.trim();
-            if (!specialization) {
-                document.getElementById('specializationError').textContent = 'Chuyên khoa không được để trống.';
                 isValid = false;
             }
 
