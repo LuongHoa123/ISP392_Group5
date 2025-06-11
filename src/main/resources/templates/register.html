@@ -139,6 +139,36 @@
         a:hover {
             text-decoration: underline;
         }
+        /* Password strength bar styling */
+        #password-strength-bar {
+            height: 5px;
+            width: 0%;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+            transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out;
+        }
+
+        #password-strength-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+            text-align: right;
+            height: 15px;
+        }
+
+        .strength-weak {
+            background-color: #dc3545 !important; /* Red */
+        }
+
+        .strength-medium {
+            background-color: #ffc107 !important; /* Yellow */
+        }
+
+        .strength-strong {
+            background-color: #28a745 !important; /* Green */
+        }
+
 
     </style>
 </head>
@@ -149,7 +179,7 @@
             <h1 class="heading">Đăng ký</h1>
 
             <div class="row">
-              
+
 
                 <form id = "register-form" th:action="@{/save}" method="post" class="register-form shadow">
                     <h3 class="text-center mb-4">Đăng ký</h3>
@@ -201,13 +231,16 @@
                         <label for="email">Email<span class="text-danger">*</span></label>
                         <input type="email" id="email" name="email" class="form-control" required>
                         <small id="emailError" class="text-danger"></small>
-                          
+
                     </div>
 
                     <div class="mb-4">
                         <label for="password">Mật khẩu<span class="text-danger">*</span></label>
                         <input type="password" id="password" name="password" class="form-control" required>
+                        <div id="password-strength-bar"></div>
+                        <div id="password-strength-text"></div>
                     </div>
+
 
                     <button type="submit" class="btn btn-primary w-100">Xác nhận</button>
 
@@ -307,7 +340,7 @@
         // Kiểm tra khoảng trắng đầu/cuối
         if (/^\s|\s$/.test(value)) {
             phoneError.textContent = 'Số điện thoại không được có khoảng trắng ở đầu hoặc cuối.';
-        } 
+        }
         else if (!phoneRegex.test(value)) {
             if (!/^0/.test(value)) {
                 phoneError.textContent = 'Số điện thoại phải bắt đầu bằng số 0.';
@@ -343,13 +376,13 @@
 
         if (/^\s|\s$/.test(value)) {
             emailError.textContent = 'Email không được có khoảng trắng ở đầu hoặc cuối.';
-        } 
+        }
         else if (/\s/.test(value)) {
             emailError.textContent = 'Email không được chứa khoảng trắng.';
-        } 
+        }
         else if (!emailRegex.test(value)) {
             emailError.textContent = 'Email phải chứa ký tự @ và đúng định dạng (vd: ten@domain.com).';
-        } 
+        }
         else {
             emailError.textContent = '';
         }
@@ -363,7 +396,60 @@
     });
 </script>
 
+<script>
+    const passwordInput = document.getElementById('password');
+    const strengthBar = document.getElementById('password-strength-bar');
+    const strengthText = document.getElementById('password-strength-text');
 
+    passwordInput.addEventListener('input', function() {
+        const password = passwordInput.value;
+        const strength = checkPasswordStrength(password);
+
+        strengthBar.className = ''; // Reset classes
+        if (strength.score > 0) {
+            strengthBar.classList.add(strength.className);
+        }
+        strengthBar.style.width = strength.score + '%';
+        strengthText.textContent = strength.text;
+    });
+
+    function checkPasswordStrength(password) {
+        let score = 0;
+        let strength = {
+            score: 0,
+            text: '',
+            className: ''
+        };
+
+        if (!password) {
+            return strength;
+        }
+
+        // Award points for different criteria
+        if (password.length >= 8) score += 25;
+        if (password.match(/[a-z]/)) score += 10;
+        if (password.match(/[A-Z]/)) score += 15;
+        if (password.match(/[0-9]/)) score += 15;
+        if (password.match(/[^a-zA-Z0-9]/)) score += 25;
+        // A little bonus for length
+        if (password.length > 12) score += 10;
+
+        strength.score = Math.min(score, 100);
+
+        if (strength.score >= 75) {
+            strength.text = 'Mạnh';
+            strength.className = 'strength-strong';
+        } else if (strength.score >= 50) {
+            strength.text = 'Trung bình';
+            strength.className = 'strength-medium';
+        } else if (strength.score > 0) {
+            strength.text = 'Yếu';
+            strength.className = 'strength-weak';
+        }
+
+        return strength;
+    }
+</script>
 
 </body>
 </html>
