@@ -137,6 +137,11 @@ public class AuthController {
             model.addAttribute("error", "Mật khẩu hiện tại không đúng.");
             return "change-password";
         }
+        // ✅ Kiểm tra mật khẩu mới không được trùng với mật khẩu hiện tại
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            model.addAttribute("error", "Mật khẩu mới không được giống mật khẩu cũ.");
+            return "change-password";
+        }
 
         if (!newPassword.equals(confirmPassword)) {
             model.addAttribute("error", "Mật khẩu mới và xác nhận không trùng khớp.");
