@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -121,6 +122,26 @@ public class OtpController {
         return "otpConfirmPass";
     }
 
+    @RequestMapping(value = "resend-otp-pass", method = RequestMethod.POST)
+    @ResponseBody
+    public String resendOtpPass(HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        if (email == null) {
+            return "error";
+        }
+        
+        // Generate new OTP
+        String newOtp = otpCode();
+        session.setAttribute("otp-pass", newOtp);
+        session.setMaxInactiveInterval(360);
+        
+        // Send email
+        String subject = "Đây là OTP của bạn";
+        String mess = "Xin chào @" + " \n" + email + "Đây là OTP của bạn: " + newOtp + " Hãy điền vào form!" + "\n Cảm ơn!";
+        this.emailSenderService.sendEmail(email, subject, mess);
+        
+        return "success";
+    }
 
     public String otpCode() {
         int code = (int) Math.floor(((Math.random() * 899999) + 100000));

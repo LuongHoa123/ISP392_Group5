@@ -56,8 +56,78 @@
         .text-center {
             text-align: center;
         }
-    </style>
 
+        /* OTP input styles */
+        .otp-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+
+        .otp-input:focus {
+            border-color: #0072ff;
+            background: #fff;
+            box-shadow: 0 0 8px rgba(0, 114, 255, 0.3);
+            outline: none;
+        }
+
+        .otp-input.filled {
+            border-color: #28a745;
+            background: #f8fff9;
+        }
+
+        /* Resend timer styles */
+        .resend-container {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .resend-timer {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .resend-btn {
+            background: #6c757d;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: not-allowed;
+            transition: all 0.3s ease;
+        }
+
+        .resend-btn.active {
+            background: linear-gradient(to right, #28a745, #20c997);
+            cursor: pointer;
+        }
+
+        .resend-btn.active:hover {
+            background: linear-gradient(to right, #218838, #1ea888);
+        }
+
+        .otp-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
 
@@ -66,19 +136,208 @@
         <div class="alert alert-danger text-center" th:text="${mess}"></div>
     </div>
 
+    <h5 class="otp-title">Nhập mã OTP</h5>
+    
     <div class="form-group">
-        <input class="form-control" type="text"
-               id="otp"
-               name="otp"
-
-               placeholder="Nhập OTP bao gồm 6 chữ số." required/>
+        <div class="otp-container">
+            <input type="text" class="otp-input" id="otp1" maxlength="1" data-index="0">
+            <input type="text" class="otp-input" id="otp2" maxlength="1" data-index="1">
+            <input type="text" class="otp-input" id="otp3" maxlength="1" data-index="2">
+            <input type="text" class="otp-input" id="otp4" maxlength="1" data-index="3">
+            <input type="text" class="otp-input" id="otp5" maxlength="1" data-index="4">
+            <input type="text" class="otp-input" id="otp6" maxlength="1" data-index="5">
+        </div>
+        <input type="hidden" id="otp" name="otp" required>
     </div>
 
     <div class="form-group mb-0 text-center">
-        <button class="btn btn-gradient btn-block" type="submit"> Xác Nhận OTP
+        <button class="btn btn-gradient btn-block" type="submit" id="submitBtn" disabled> 
+            Xác Nhận OTP
+        </button>
+    </div>
+
+    <div class="resend-container">
+        <div class="resend-timer" id="timerText">Gửi lại mã sau: <span id="countdown">20</span>s</div>
+        <button type="button" class="resend-btn" id="resendBtn" onclick="resendOTP()">
+            Gửi lại mã OTP
         </button>
     </div>
 </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const otpInputs = document.querySelectorAll('.otp-input');
+    const hiddenOtpInput = document.getElementById('otp');
+    const submitBtn = document.getElementById('submitBtn');
+    const resendBtn = document.getElementById('resendBtn');
+    const countdownElement = document.getElementById('countdown');
+    const timerText = document.getElementById('timerText');
+    
+    let timeLeft = 20;
+    let timerInterval;
+
+    // Start countdown timer
+    function startTimer() {
+        resendBtn.disabled = true;
+        resendBtn.classList.remove('active');
+        timeLeft = 20;
+        
+        timerInterval = setInterval(function() {
+            timeLeft--;
+            countdownElement.textContent = timeLeft;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                resendBtn.disabled = false;
+                resendBtn.classList.add('active');
+                timerText.style.display = 'none';
+            }
+        }, 1000);
+    }
+
+    // Initialize timer
+    startTimer();
+
+    // OTP input handling
+    otpInputs.forEach((input, index) => {
+        input.addEventListener('input', function(e) {
+            const value = e.target.value;
+            
+            // Only allow numbers
+            if (!/^\d$/.test(value) && value !== '') {
+                e.target.value = '';
+                return;
+            }
+
+            if (value !== '') {
+                e.target.classList.add('filled');
+                // Move to next input
+                if (index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            } else {
+                e.target.classList.remove('filled');
+            }
+
+            updateHiddenInput();
+            checkSubmitButton();
+        });
+
+        input.addEventListener('keydown', function(e) {
+            // Handle backspace
+            if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                otpInputs[index - 1].focus();
+                otpInputs[index - 1].value = '';
+                otpInputs[index - 1].classList.remove('filled');
+                updateHiddenInput();
+                checkSubmitButton();
+            }
+            
+            // Handle arrow keys
+            if (e.key === 'ArrowLeft' && index > 0) {
+                otpInputs[index - 1].focus();
+            }
+            if (e.key === 'ArrowRight' && index < otpInputs.length - 1) {
+                otpInputs[index + 1].focus();
+            }
+        });
+
+        input.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pasteData = e.clipboardData.getData('text');
+            const digits = pasteData.replace(/\D/g, '').slice(0, 6);
+            
+            digits.split('').forEach((digit, i) => {
+                if (i < otpInputs.length) {
+                    otpInputs[i].value = digit;
+                    otpInputs[i].classList.add('filled');
+                }
+            });
+            
+            updateHiddenInput();
+            checkSubmitButton();
+            
+            // Focus on the next empty input or the last one
+            const nextEmptyIndex = digits.length < otpInputs.length ? digits.length : otpInputs.length - 1;
+            otpInputs[nextEmptyIndex].focus();
+        });
+    });
+
+    function updateHiddenInput() {
+        let otpValue = '';
+        otpInputs.forEach(input => {
+            otpValue += input.value;
+        });
+        hiddenOtpInput.value = otpValue;
+    }
+
+    function checkSubmitButton() {
+        const allFilled = Array.from(otpInputs).every(input => input.value !== '');
+        submitBtn.disabled = !allFilled;
+    }
+
+    // Focus on first input
+    otpInputs[0].focus();
+});
+
+function resendOTP() {
+    const resendBtn = document.getElementById('resendBtn');
+    const timerText = document.getElementById('timerText');
+    
+    if (!resendBtn.disabled) {
+        // Make AJAX call to resend OTP
+        fetch('/resend-otp-pass', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        })
+        .then(response => response.text())
+        .then(result => {
+            if (result === 'success') {
+                alert('Mã OTP đã được gửi lại thành công!');
+                
+                // Clear all OTP inputs
+                const otpInputs = document.querySelectorAll('.otp-input');
+                otpInputs.forEach(input => {
+                    input.value = '';
+                    input.classList.remove('filled');
+                });
+                document.getElementById('otp').value = '';
+                document.getElementById('submitBtn').disabled = true;
+                
+                // Focus on first input
+                otpInputs[0].focus();
+                
+                // Restart timer
+                timerText.style.display = 'block';
+                const countdownElement = document.getElementById('countdown');
+                let timeLeft = 20;
+                resendBtn.disabled = true;
+                resendBtn.classList.remove('active');
+                
+                const timerInterval = setInterval(function() {
+                    timeLeft--;
+                    countdownElement.textContent = timeLeft;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        resendBtn.disabled = false;
+                        resendBtn.classList.add('active');
+                        timerText.style.display = 'none';
+                    }
+                }, 1000);
+            } else {
+                alert('Có lỗi xảy ra khi gửi lại OTP. Vui lòng thử lại!');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi gửi lại OTP. Vui lòng thử lại!');
+        });
+    }
+}
+</script>
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
