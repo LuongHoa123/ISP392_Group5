@@ -1,5 +1,21 @@
 package com.ISP392.demo.controller.admin;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.ISP392.demo.dto.UserDto;
 import com.ISP392.demo.entity.RoleEntity;
 import com.ISP392.demo.entity.UserEntity;
@@ -8,15 +24,6 @@ import com.ISP392.demo.repository.RoleRepository;
 import com.ISP392.demo.repository.UserRepository;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin/user")
@@ -89,9 +96,10 @@ public class AdminUserController {
         }
 
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
-            return "redirect:/admin/user?email=true";
+            model.addAttribute("roles", roleRepository.findAll());
+            model.addAttribute("emailError");
+            return "admin/user/add";
         }
-
 
         RoleEntity selectedRole = roleRepository.findByName(RoleEnum.valueOf(userDto.getRoleName()));
         UserEntity user = new UserEntity();
@@ -129,6 +137,14 @@ public class AdminUserController {
                              Model model) {
         if (result.hasErrors()) {
             model.addAttribute("roles", roleRepository.findAll());
+            return "admin/user/edit";
+        }
+
+        // Check for duplicate email (excluding current user)
+        Optional<UserEntity> emailUser = userRepository.findByEmail(userDto.getEmail());
+        if (emailUser.isPresent() && !emailUser.get().getId().equals(id)) {
+            model.addAttribute("roles", roleRepository.findAll());
+            model.addAttribute("emailError", "Email is already registered.");
             return "admin/user/edit";
         }
 
