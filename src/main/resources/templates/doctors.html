@@ -110,8 +110,9 @@
             <div class="container my-4">
                 <form class="form-inline row justify-content-center" th:action="@{/doctors/search}" method="get" style="gap: 10px">
                     <div class="col-auto">
-                        <input class="form-control" type="text" name="keyword" placeholder="Tên, chuyên môn, email..." th:value="${keyword}">
-                    </div>
+    <input style="font-size: 16px;" class="form-control input-large" type="text" name="keyword"
+           placeholder="Tên, chuyên môn, email..." th:value="${keyword}">
+</div>
                     <!-- <div class="col-auto">
                         <input type="text" class="form-control" name="specialization" placeholder="Nhập chuyên khoa"
                                th:value="${specialization}">
