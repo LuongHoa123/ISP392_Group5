@@ -21,30 +21,27 @@ public class RecepPatientController {
 
     @GetMapping("")
     public String patientListPage(Model model,
-                                  @RequestParam(value = "firstName", required = false) String firstName,
-                                  @RequestParam(value = "lastName", required = false) String lastName,
-                                  @RequestParam(value = "phone", required = false) String phone,
+                                  @RequestParam(value = "searchKeyword", required = false) String searchKeyword,
                                   @RequestParam(value = "gender", required = false) String gender,
                                   @RequestParam(value = "page", defaultValue = "0") int page,
                                   @RequestParam(value = "size", defaultValue = "5") int size) {
 
         List<PatientEntity> allPatients = patientRepository.findAll();
 
-        if (firstName != null && !firstName.isEmpty()) {
+        // Universal search - tìm kiếm theo họ, tên hoặc số điện thoại
+        if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
+            String keyword = searchKeyword.toLowerCase().trim();
             allPatients = allPatients.stream()
-                    .filter(p -> p.getFirstName() != null && p.getFirstName().toLowerCase().contains(firstName.toLowerCase()))
-                    .collect(Collectors.toList());
-        }
-
-        if (lastName != null && !lastName.isEmpty()) {
-            allPatients = allPatients.stream()
-                    .filter(p -> p.getLastName() != null && p.getLastName().toLowerCase().contains(lastName.toLowerCase()))
-                    .collect(Collectors.toList());
-        }
-
-        if (phone != null && !phone.isEmpty()) {
-            allPatients = allPatients.stream()
-                    .filter(p -> p.getPhone() != null && p.getPhone().contains(phone))
+                    .filter(p -> {
+                        boolean matchFirstName = p.getFirstName() != null && 
+                                p.getFirstName().toLowerCase().contains(keyword);
+                        boolean matchLastName = p.getLastName() != null && 
+                                p.getLastName().toLowerCase().contains(keyword);
+                        boolean matchPhone = p.getPhone() != null && 
+                                p.getPhone().contains(searchKeyword.trim());
+                        
+                        return matchFirstName || matchLastName || matchPhone;
+                    })
                     .collect(Collectors.toList());
         }
 
@@ -64,9 +61,7 @@ public class RecepPatientController {
         List<PatientEntity> patients = allPatients.subList(start, end);
 
         model.addAttribute("patients", patients);
-        model.addAttribute("firstName", firstName);
-        model.addAttribute("lastName", lastName);
-        model.addAttribute("phone", phone);
+        model.addAttribute("searchKeyword", searchKeyword);
         model.addAttribute("gender", gender);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
