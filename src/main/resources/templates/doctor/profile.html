@@ -32,8 +32,11 @@
                         <div th:if="${param.phone}" class="alert alert-danger" role="alert">
                             Số điện thoại bị trùng!
                         </div>
+
+                        <!-- ✅ Đã thêm enctype -->
                         <form id="updateProfileForm" th:action="@{/doctor/profile/save}" th:object="${doctor}"
-                              method="post">
+                              method="post" enctype="multipart/form-data">
+
                             <div class="form-group">
                                 <label for="firstName">Họ <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" th:field="*{firstName}" name="firstName"
@@ -67,10 +70,26 @@
                                 <input type="email" class="form-control" th:value="*{email}" name="email" readonly>
                             </div>
 
+                            <div class="form-group">
+                                <label class="font-weight-bold mb-2">
+                                    Chứng chỉ hành nghề (PDF) <span class="text-danger">*</span>
+                                </label>
+                                <div class="border rounded p-3 bg-light">
+                                    <input type="file" class="form-control-file mb-2" name="certificateFile" accept="application/pdf" required>
+                                    <div th:if="${doctor.certificateFileName != null}">
+                                        <a class="btn btn-sm btn-info" th:href="@{'/doctor/certificate/view'}" target="_blank">Xem chứng chỉ</a>
+                                    </div>
+                                </div>
+                            </div>
+
+
                             <button type="submit" class="btn btn-primary">Lưu</button>
                         </form>
+
+
                     </div>
                 </div>
+
             </div>
         </div>
     </th:block>

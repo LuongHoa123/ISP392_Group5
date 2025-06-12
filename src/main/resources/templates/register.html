@@ -139,6 +139,36 @@
         a:hover {
             text-decoration: underline;
         }
+        /* Password strength bar styling */
+        #password-strength-bar {
+            height: 5px;
+            width: 0%;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+            transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out;
+        }
+
+        #password-strength-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+            text-align: right;
+            height: 15px;
+        }
+
+        .strength-weak {
+            background-color: #dc3545 !important; /* Red */
+        }
+
+        .strength-medium {
+            background-color: #ffc107 !important; /* Yellow */
+        }
+
+        .strength-strong {
+            background-color: #28a745 !important; /* Green */
+        }
+
 
     </style>
 </head>
@@ -149,7 +179,7 @@
             <h1 class="heading">Đăng ký</h1>
 
             <div class="row">
-              
+
 
                 <form id = "register-form" th:action="@{/save}" method="post" class="register-form shadow">
                     <h3 class="text-center mb-4">Đăng ký</h3>
@@ -177,6 +207,7 @@
                     <div class="mb-3">
                         <label for="phone">Số điện thoại<span class="text-danger">*</span></label>
                         <input type="text" id="phone" name="phone" class="form-control" required>
+                        <small id="phoneError" class="text-danger"></small>
                     </div>
 
                     <div class="mb-3">
@@ -199,12 +230,17 @@
                     <div class="mb-3">
                         <label for="email">Email<span class="text-danger">*</span></label>
                         <input type="email" id="email" name="email" class="form-control" required>
+                        <small id="emailError" class="text-danger"></small>
+
                     </div>
 
                     <div class="mb-4">
                         <label for="password">Mật khẩu<span class="text-danger">*</span></label>
                         <input type="password" id="password" name="password" class="form-control" required>
+                        <div id="password-strength-bar"></div>
+                        <div id="password-strength-text"></div>
                     </div>
+
 
                     <button type="submit" class="btn btn-primary w-100">Xác nhận</button>
 
@@ -227,14 +263,22 @@
     const firstNameInput = document.getElementById('firstName');
     const firstNameError = document.getElementById('firstNameError');
 
-    const nameRegex = /^[\p{L}\s]+$/u;
+    // Regex: chỉ cho phép chữ và đúng 1 khoảng trắng giữa các từ, không đầu/cuối, không liên tiếp
+    const nameRegex = /^[\p{L}]+(?:\s[\p{L}]+)*$/u;
 
     // Kiểm tra khi đang gõ
     firstNameInput.addEventListener('input', function() {
-        const value = firstNameInput.value.trim();
+        const value = firstNameInput.value;
 
         if (value !== "" && !nameRegex.test(value)) {
-            firstNameError.textContent = 'Họ chỉ được chứa chữ cái và khoảng trắng.';
+            // Kiểm tra lý do lỗi
+            if (/^\s|\s$/.test(value)) {
+                firstNameError.textContent = 'Họ không được có khoảng trắng ở đầu hoặc cuối.';
+            } else if (/\s{2,}/.test(value)) {
+                firstNameError.textContent = 'Họ không được có nhiều khoảng trắng liên tiếp.';
+            } else {
+                firstNameError.textContent = 'Họ chỉ được chứa chữ cái và khoảng trắng.';
+            }
         } else {
             firstNameError.textContent = "";
         }
@@ -243,24 +287,32 @@
     // Kiểm tra khi rời khỏi ô
     firstNameInput.addEventListener('blur', function () {
         const value = firstNameInput.value.trim();
-
         if (value === "") {
             firstNameError.textContent = 'Họ không được để trống.';
         }
     });
 </script>
+
+
 <script>
     const lastNameInput = document.getElementById('lastName');
     const lastNameError = document.getElementById('lastNameError');
 
-    const nameRegex1 = /^[\p{L}\s]+$/u;
+    // Regex: tên chỉ chứa chữ cái, khoảng trắng hợp lệ (1 dấu cách giữa các từ)
+    const nameRegex1 = /^[\p{L}]+(?:\s[\p{L}]+)*$/u;
 
     // Kiểm tra khi đang gõ
     lastNameInput.addEventListener('input', function() {
-        const value = lastNameInput.value.trim();
+        const value = lastNameInput.value;
 
         if (value !== "" && !nameRegex1.test(value)) {
-            lastNameError.textContent = 'TênTên chỉ được chứa chữ cái và khoảng trắng.';
+            if (/^\s|\s$/.test(value)) {
+                lastNameError.textContent = 'Tên không được có khoảng trắng ở đầu hoặc cuối.';
+            } else if (/\s{2,}/.test(value)) {
+                lastNameError.textContent = 'Tên không được có nhiều khoảng trắng liên tiếp.';
+            } else {
+                lastNameError.textContent = 'Tên chỉ được chứa chữ cái và khoảng trắng.';
+            }
         } else {
             lastNameError.textContent = "";
         }
@@ -274,6 +326,129 @@
             lastNameError.textContent = 'Tên không được để trống.';
         }
     });
+</script>
+<script>
+    const phoneInput = document.getElementById('phone');
+    const phoneError = document.getElementById('phoneError');
+
+    // Regex: bắt đầu bằng 0, ký tự thứ 2 không phải 0, tổng cộng 10 số, không có khoảng trắng ở đầu/cuối
+    const phoneRegex = /^0[1-9][0-9]{8}$/;
+
+    phoneInput.addEventListener('input', function () {
+        const value = phoneInput.value;
+
+        // Kiểm tra khoảng trắng đầu/cuối
+        if (/^\s|\s$/.test(value)) {
+            phoneError.textContent = 'Số điện thoại không được có khoảng trắng ở đầu hoặc cuối.';
+        }
+        else if (!phoneRegex.test(value)) {
+            if (!/^0/.test(value)) {
+                phoneError.textContent = 'Số điện thoại phải bắt đầu bằng số 0.';
+            } else if (value.length !== 10) {
+                phoneError.textContent = 'Số điện thoại phải gồm đúng 10 chữ số.';
+            } else if (/^0{2}/.test(value)) {
+                phoneError.textContent = 'Ký tự thứ 2 không được là số 0.';
+            } else {
+                phoneError.textContent = 'Số điện thoại không hợp lệ.';
+            }
+        } else {
+            phoneError.textContent = '';
+        }
+    });
+
+    phoneInput.addEventListener('blur', function () {
+        const value = phoneInput.value.trim();
+        if (value === '') {
+            phoneError.textContent = 'Số điện thoại không được để trống.';
+        }
+    });
+</script>
+
+<script>
+    const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('emailError');
+
+    // Regex đơn giản kiểm tra email có dạng ten@tenmien, không khoảng trắng
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    emailInput.addEventListener('input', function () {
+        const value = emailInput.value;
+
+        if (/^\s|\s$/.test(value)) {
+            emailError.textContent = 'Email không được có khoảng trắng ở đầu hoặc cuối.';
+        }
+        else if (/\s/.test(value)) {
+            emailError.textContent = 'Email không được chứa khoảng trắng.';
+        }
+        else if (!emailRegex.test(value)) {
+            emailError.textContent = 'Email phải chứa ký tự @ và đúng định dạng (vd: ten@domain.com).';
+        }
+        else {
+            emailError.textContent = '';
+        }
+    });
+
+    emailInput.addEventListener('blur', function () {
+        const value = emailInput.value.trim();
+        if (value === '') {
+            emailError.textContent = 'Email không được để trống.';
+        }
+    });
+</script>
+
+<script>
+    const passwordInput = document.getElementById('password');
+    const strengthBar = document.getElementById('password-strength-bar');
+    const strengthText = document.getElementById('password-strength-text');
+
+    passwordInput.addEventListener('input', function() {
+        const password = passwordInput.value;
+        const strength = checkPasswordStrength(password);
+
+        strengthBar.className = ''; // Reset classes
+        if (strength.score > 0) {
+            strengthBar.classList.add(strength.className);
+        }
+        strengthBar.style.width = strength.score + '%';
+        strengthText.textContent = strength.text;
+    });
+
+    function checkPasswordStrength(password) {
+        let score = 0;
+        let strength = {
+            score: 0,
+            text: '',
+            className: ''
+        };
+
+        if (!password) {
+            return strength;
+        }
+
+        // Award points for different criteria
+        if (password.length >= 8) score += 25;
+        if (password.match(/[a-z]/)) score += 10;
+        if (password.match(/[A-Z]/)) score += 15;
+        if (password.match(/[0-9]/)) score += 15;
+        if (password.match(/[^a-zA-Z0-9]/)) score += 25;
+        // A little bonus for length
+        if (password.length > 12) score += 10;
+
+        strength.score = Math.min(score, 100);
+
+        if (strength.score >= 75) {
+            strength.text = 'Mạnh';
+            strength.className = 'strength-strong';
+        } else if (strength.score >= 50) {
+            strength.text = 'Trung bình';
+            strength.className = 'strength-medium';
+        } else if (strength.score > 0) {
+            strength.text = 'Yếu';
+            strength.className = 'strength-weak';
+        }
+
+        return strength;
+    }
 </script>
 
 </body>

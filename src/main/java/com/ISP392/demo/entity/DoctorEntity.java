@@ -17,6 +17,10 @@ public class DoctorEntity extends AbstractEntity {
     @Column(name = "firstName")
     private String firstName;
 
+    @Column(name = "certificate_file_name")
+    private String certificateFileName;
+
+
     @Column(name = "lastName")
     private String lastName;
 
