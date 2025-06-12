@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -80,56 +81,61 @@ public class AdminUserController {
     }
 
     @PostMapping("/save")
-    public String saveUser(@ModelAttribute("userDto") @Valid UserDto userDto,
-                           BindingResult result,
+    public String saveUser(@ModelAttribute("userDto") UserDto userDto,
                            Model model) {
-        if (result.hasErrors()) {
+        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
+            model.addAttribute("mess", "Email đã tồn tại. Hãy nhập Email mới!");
             model.addAttribute("roles", roleRepository.findAll());
             return "admin/user/add";
         }
 
-        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
-            return "redirect:/admin/user?email=true";
-        }
-
-
         RoleEntity selectedRole = roleRepository.findByName(RoleEnum.valueOf(userDto.getRoleName()));
+        System.out.println(selectedRole);
+
         UserEntity user = new UserEntity();
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setRole(selectedRole);
         user.setStatus(userDto.getStatus());
         userRepository.save(user);
+
         return "redirect:/admin/user?add=true";
     }
 
 
     @GetMapping("/edit/{id}")
     public String editUserForm(@PathVariable("id") Long id, Model model) {
-        Optional<UserEntity> optional = userRepository.findById(id);
-        if (optional.isPresent()) {
-            UserEntity user = optional.get();
-            UserDto dto = new UserDto();
-            dto.setId(user.getId());
-            dto.setEmail(user.getEmail());
-            dto.setStatus(user.getStatus());
-            dto.setRoleName(user.getRole().getName().name());
+        if (!model.containsAttribute("userDto")) {
+            Optional<UserEntity> optional = userRepository.findById(id);
+            if (optional.isPresent()) {
+                UserEntity user = optional.get();
+                UserDto dto = new UserDto();
+                dto.setId(user.getId());
+                dto.setEmail(user.getEmail());
+                dto.setStatus(user.getStatus());
+                dto.setRoleName(user.getRole().getName().name());
 
-            model.addAttribute("userDto", dto);
-            model.addAttribute("roles", roleRepository.findAll());
-            return "admin/user/edit";
+                model.addAttribute("userDto", dto);
+            } else {
+                return "redirect:/admin/user";
+            }
         }
-        return "redirect:/admin/user";
+
+        model.addAttribute("roles", roleRepository.findAll());
+        return "admin/user/edit";
     }
+
 
     @PostMapping("/update/{id}")
     public String updateUser(@PathVariable("id") Long id,
-                             @ModelAttribute("userDto") @Valid UserDto userDto,
-                             BindingResult result,
-                             Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("roles", roleRepository.findAll());
-            return "admin/user/edit";
+                             @ModelAttribute("userDto") UserDto userDto,
+                             RedirectAttributes redirectAttributes) {
+
+        Optional<UserEntity> existingUser = userRepository.findByEmail(userDto.getEmail());
+        if (existingUser.isPresent() && !existingUser.get().getId().equals(id)) {
+            redirectAttributes.addFlashAttribute("mess", "Email đã tồn tại. Hãy nhập Email mới!");
+            redirectAttributes.addFlashAttribute("userDto", userDto);
+            return "redirect:/admin/user/edit/" + id;
         }
 
         Optional<UserEntity> optional = userRepository.findById(id);
@@ -150,6 +156,7 @@ public class AdminUserController {
 
         return "redirect:/admin/user?edit=true";
     }
+
 
 
 

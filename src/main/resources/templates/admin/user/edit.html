@@ -30,6 +30,10 @@
                         <form class="forms-sample" th:action="@{/admin/user/update/{id}(id=${userDto.id})}"
                               th:object="${userDto}" method="post" onsubmit="return validateForm()">
 
+                            <div class="container mt-3" th:if="${mess}">
+                                <div class="alert alert-danger text-center" th:text="${mess}"></div>
+                            </div>
+
                             <div class="form-group">
                                 <label for="email">Email</label>
                                 <input type="email" class="form-control" th:field="*{email}" placeholder="Email"

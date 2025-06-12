@@ -29,10 +29,12 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Thông tin người dùng</h4>
-                        <div th:if="${param.email}" class="alert alert-danger" role="alert">
-                            Email đã được đăng ký. Hãy chọn email khác!
-                        </div>
+
                         <form class="forms-sample" th:action="@{/admin/user/save}" th:object="${userDto}" method="post" onsubmit="return validateForm()">
+
+                            <div class="container mt-3" th:if="${mess}">
+                                <div class="alert alert-danger text-center" th:text="${mess}"></div>
+                            </div>
 
                             <div class="form-group">
                                 <label for="email">Email</label>

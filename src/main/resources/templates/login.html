@@ -117,7 +117,8 @@
                         <div class="alert alert-danger" th:text="${param.message}">Thông báo lỗi đăng nhập</div>
                     </div>
 
-                    <input type="email" name="email" placeholder="your e-mail" class="box" required>
+                    <input type="email" name="email" placeholder="your e-mail" class="box" style="text-transform: lowercase;" required>
+
                     <input type="password" name="password" placeholder="your password" class="box" required>
 
                     <div class="g-recaptcha" data-sitekey="6LcoxlUrAAAAAEsnaYQ7YBPfnVCu83AD6VHiqFpj"></div>
