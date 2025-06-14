@@ -18,17 +18,11 @@
 
             <!-- Form tìm kiếm -->
             <form class="form-inline mb-3" method="get" th:action="@{/recep/patient}">
-                <div class="form-group mr-2">
-                    <input type="text" class="form-control" name="firstName" placeholder="Tìm theo họ"
-                           th:value="${firstName}">
-                </div>
-                <div class="form-group mr-2">
-                    <input type="text" class="form-control" name="lastName" placeholder="Tìm theo tên"
-                           th:value="${lastName}">
-                </div>
-                <div class="form-group mr-2">
-                    <input type="text" class="form-control" name="phone" placeholder="Tìm theo số điện thoại"
-                           th:value="${phone}">
+                <div class="form-group mr-2 flex-fill">
+                    <input type="text" class="form-control" name="searchKeyword"
+                           placeholder="Tìm theo họ, tên hoặc số điện thoại..."
+                           th:value="${searchKeyword}"
+                           style="min-width: 300px;">
                 </div>
                 <div class="form-group mr-2">
                     <select class="form-control" name="gender">
@@ -37,10 +31,11 @@
                         <option value="FEMALE" th:selected="${gender == 'FEMALE'}">Nữ</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary mr-2">Tìm kiếm</button>
+                <button type="submit" class="btn btn-primary mr-2">
+                    <i class="mdi mdi-magnify"></i> Tìm kiếm
+                </button>
             </form>
 
-            <!-- Bảng danh sách bệnh nhân -->
             <div class="card">
                 <div class="card-body">
                     <table class="table table-bordered">
@@ -70,18 +65,18 @@
                         <ul class="pagination justify-content-center mt-3">
                             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/recep/patient(page=${currentPage - 1}, firstName=${firstName}, lastName=${lastName}, phone=${phone}, gender=${gender})}">Trước</a>
+                                   th:href="@{/recep/patient(page=${currentPage - 1}, searchKeyword=${searchKeyword}, gender=${gender})}">Trước</a>
                             </li>
                             <li class="page-item"
                                 th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                                 th:classappend="${i == currentPage} ? 'active'">
                                 <a class="page-link"
-                                   th:href="@{/recep/patient(page=${i}, firstName=${firstName}, lastName=${lastName}, phone=${phone}, gender=${gender})}"
-                                   th:text="${i + 1}"></a>
+                                   th:href="@{/recep/patient(page=${i}, searchKeyword=${searchKeyword}, gender=${gender})}"
+                                   th:text="${i + 1}"></a>g
                             </li>
                             <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/recep/patient(page=${currentPage + 1}, firstName=${firstName}, lastName=${lastName}, phone=${phone}, gender=${gender})}">Sau</a>
+                                   th:href="@{/recep/patient(page=${currentPage + 1}, searchKeyword=${searchKeyword}, gender=${gender})}">Sau</a>
                             </li>
                         </ul>
                     </nav>
