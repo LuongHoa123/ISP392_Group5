@@ -1,0 +1,115 @@
+package com.ISP392.demo.controller.admin;
+
+import com.ISP392.demo.entity.RoomEntity;
+import com.ISP392.demo.entity.UserEntity;
+import com.ISP392.demo.repository.RoomRepository;
+import com.ISP392.demo.repository.UserRepository;
+
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Controller
+@RequestMapping("/admin/room")
+public class AdminRoomController {
+
+    @Autowired
+    private RoomRepository roomRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @GetMapping("")
+    public String listRooms(Model model,
+                            @RequestParam(value = "search", required = false) String keyword,
+                            @RequestParam(value = "page", defaultValue = "0") int page,
+                            @RequestParam(value = "size", defaultValue = "5") int size) {
+
+        List<RoomEntity> allRooms = roomRepository.findAll();
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String lowerKeyword = keyword.toLowerCase();
+            allRooms = allRooms.stream()
+                    .filter(room ->
+                            (room.getRoomName() != null && room.getRoomName().toLowerCase().contains(lowerKeyword)) ||
+                                    (room.getRoomType() != null && room.getRoomType().toLowerCase().contains(lowerKeyword)) ||
+                                    (room.getDescription() != null && room.getDescription().toLowerCase().contains(lowerKeyword)) ||
+                                    (room.getLocation() != null && room.getLocation().toLowerCase().contains(lowerKeyword))
+                    )
+                    .collect(Collectors.toList());
+        }
+
+        int totalItems = allRooms.size();
+        int totalPages = (int) Math.ceil((double) totalItems / size);
+
+        int start = Math.min(page * size, totalItems);
+        int end = Math.min(start + size, totalItems);
+
+        List<RoomEntity> rooms = allRooms.subList(start, end);
+
+        model.addAttribute("rooms", rooms);
+        model.addAttribute("search", keyword);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+
+        return "admin/room/list";
+    }
+
+
+
+    @GetMapping("/add")
+    public String addRoomForm(Model model) {
+        model.addAttribute("room", new RoomEntity());
+        model.addAttribute("users", userRepository.findAll());
+        return "admin/room/add";
+    }
+
+    @PostMapping("/save")
+    public String saveRoom(@ModelAttribute("room") @Valid RoomEntity room,
+                           BindingResult result,
+                           Model model) {
+        if (result.hasErrors()) {
+            return "admin/room/add";
+        }
+
+        roomRepository.save(room);
+        return "redirect:/admin/room?add=true";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editRoomForm(@PathVariable("id") Long id, Model model) {
+        Optional<RoomEntity> optional = roomRepository.findById(id);
+        if (optional.isPresent()) {
+            model.addAttribute("room", optional.get());
+            return "admin/room/edit";
+        }
+        return "redirect:/admin/room";
+    }
+
+    @PostMapping("/update/{id}")
+    public String updateRoom(@PathVariable("id") Long id,
+                             @ModelAttribute("room") @Valid RoomEntity room,
+                             BindingResult result,
+                             Model model) {
+        if (result.hasErrors()) {
+            return "admin/room/edit";
+        }
+
+        room.setId(id);
+        roomRepository.save(room);
+        return "redirect:/admin/room?edit=true";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteRoom(@PathVariable("id") Long id) {
+        roomRepository.deleteById(id);
+        return "redirect:/admin/room?delete=true";
+    }
+}
