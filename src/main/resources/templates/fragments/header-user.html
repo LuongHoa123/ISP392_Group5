@@ -5,7 +5,7 @@
             <a th:href="@{/}" class="nav-links">Trang chủ</a>
             <a href="./pages/services.html" class="nav-links">Dịch vụ</a>
             <a th:href="@{/doctors}" class="nav-links">Bác sĩ</a>
-            <a href="./pages/timing.html" class="nav-links">Lịch hẹn</a>
+
 
             <th:block th:if="${#authorization.expression('isAnonymous()')}">
                 <a th:href="@{/login}" class="nav-links">Đăng nhập</a>
@@ -15,6 +15,8 @@
             <th:block th:unless="${#authorization.expression('isAnonymous()')}">
                 <a th:href="@{/changePass}" class="nav-links">Đổi mật khẩu</a>
                 <a th:href="@{/profile}" class="nav-links">Đổi thông tin cá nhân</a>
+                <a th:href="@{/patient/appointment}" class="nav-links">Đặt lịch</a>
+                <a th:href="@{/patient/schedules}" class="nav-links">Lịch hẹn của bạn</a>
                 <a th:href="@{/logout}" class="nav-links">Đăng xuất</a>
             </th:block>
         </nav>

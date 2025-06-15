@@ -9,42 +9,72 @@
     <link rel="stylesheet" th:href="@{/css/services.css}">
     <link rel="icon" th:href="@{/assets/favicon.ico}" type="image/jpeg">
     <title>MediHeart - Sức khỏe tốt và tinh thần minh mẫn là hai phúc lành lớn nhất của cuộc sống</title>
-    
 
 
     <style>
         .back-to-top {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  z-index: 1000;
-  background-color: #1e40af;
-  color: white;
-  padding: 12px 16px;
-  border-radius: 50%;
-  font-size: 18px;
-  cursor: pointer;
-  display: none;
-  box-shadow: 0 0 6px rgba(0,0,0,0.2);
-  transition: opacity 0.3s;
-}
-.back-to-top:hover {
-  opacity: 0.8;
-}
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            background-color: #1e40af;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+            transition: opacity 0.3s;
+        }
 
-    </style>>
-        
+        .back-to-top:hover {
+            opacity: 0.8;
+        }
+
+        .custom-alert-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+        }
+
+        .custom-alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+        }
+
+        .alert {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .text-center {
+            font-family: 'Arial', sans-serif;
+        }
+
+
+    </style>
+
 </head>
 <body>
 
 <div class="container mt-3" th:if="${mess}">
-    <div class="alert alert-danger text-center" th:text="${mess}"></div>
+    <div class="alert alert-danger custom-alert-error text-center" th:text="${mess}"></div>
 </div>
 
 <div class="container mt-3" th:if="${param.successReg}">
-    <div class="alert alert-success text-center">Đăng ký thành công!</div>
+    <div class="alert alert-success custom-alert-success text-center">Đăng ký thành công!</div>
 </div>
-
 
 
 <th:block th:replace="layout/user-layout :: layout">
@@ -169,27 +199,27 @@
 </th:block>
 
 <a href="#" class="back-to-top" id="backToTop" title="Lên đầu trang">
-  <i class="fas fa-chevron-up"></i>
+    <i class="fas fa-chevron-up"></i>
 </a>
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const backToTopBtn = document.getElementById("backToTop");
+    document.addEventListener("DOMContentLoaded", function () {
+        const backToTopBtn = document.getElementById("backToTop");
 
-    // Ẩn/hiện nút khi scroll
-    window.addEventListener("scroll", function () {
-      if (window.scrollY > 300) {
-        backToTopBtn.style.display = "block";
-      } else {
-        backToTopBtn.style.display = "none";
-      }
-    });
+        // Ẩn/hiện nút khi scroll
+        window.addEventListener("scroll", function () {
+            if (window.scrollY > 300) {
+                backToTopBtn.style.display = "block";
+            } else {
+                backToTopBtn.style.display = "none";
+            }
+        });
 
-    // Cuộn mượt về đầu trang khi click
-    backToTopBtn.addEventListener("click", function (e) {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+        // Cuộn mượt về đầu trang khi click
+        backToTopBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            window.scrollTo({top: 0, behavior: "smooth"});
+        });
     });
-  });
 </script>
 
 

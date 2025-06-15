@@ -28,7 +28,6 @@ public class RecepPatientController {
 
         List<PatientEntity> allPatients = patientRepository.findAll();
 
-        // Universal search - tìm kiếm theo họ, tên hoặc số điện thoại
         if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
             String keyword = searchKeyword.toLowerCase().trim();
             allPatients = allPatients.stream()
