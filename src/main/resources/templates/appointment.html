@@ -141,7 +141,7 @@
 
                     <input type="email" name="email" th:value="${patient.user.email}" placeholder="Địa chỉ email" class="box"
                            required>
-                    <input type="date" name="date" class="box" required>
+                    <input type="date" th:attr="min=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" id="appointmentDate" name="date" class="box" required>
 
                     <textarea name="problem" placeholder="Mô tả vấn đề sức khỏe của bạn..." class="problem" rows="4"
                               required></textarea>

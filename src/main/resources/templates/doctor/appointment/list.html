@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+    <style>
+        .modal-content {
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            background-color: #0d6efd;
+            color: white;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .modal-title {
+            font-weight: bold;
+        }
+
+        .modal-body p {
+            margin-bottom: 10px;
+        }
+
+        .modal-body span {
+            display: inline-block;
+            max-width: 100%;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        @media (max-width: 576px) {
+            .modal-dialog {
+                max-width: 90%;
+            }
+        }
+    </style>
+
+</head>
+<body>
+<th:block th:replace="layout/doctor-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container mt-4">
+            <h3 class="mb-3">Lịch khám của tôi</h3>
+
+            <!-- Form tìm kiếm -->
+            <form method="get" th:action="@{/doctor/appointment}" class="form-inline mb-3">
+                <input type="text" name="keyword" class="form-control mr-2" placeholder="Tìm kiếm..."
+                       th:value="${keyword}">
+                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+            </form>
+
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ngày hẹn</th>
+                            <th>Tên</th>
+                            <th>Email</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="appt, iter : ${appointments}">
+                            <td th:text="${iter.index + 1}"></td>
+                            <td th:text="${#temporals.format(appt.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td th:text="${appt.name}"></td>
+                            <td th:text="${appt.email}"></td>
+                            <td>
+                                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#appointmentModal" th:data-id="${appt.id}" th:attr="data-id=${appt.id}">
+                                    Xem chi tiết
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="appointmentModalLabel">Chi tiết cuộc hẹn</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                            </div>
+                                            <div class="modal-body text-wrap" style="word-break: break-word;">
+                                                <p><strong>Tên bệnh nhân:</strong> <span id="patientName"></span></p>
+                                                <p><strong>Ngày hẹn:</strong> <span id="appointmentDate"></span></p>
+                                                <p><strong>Vấn đề sức khỏe:</strong> <span id="healthIssue"></span></p>
+                                                <p><strong>Địa chỉ email:</strong> <span id="patientEmail"></span></p>
+                                                <p><strong>Số điện thoại:</strong> <span id="patientPhone"></span></p>
+                                                <p><strong>Tuổi:</strong> <span id="patientAge"></span></p>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Phân trang -->
+                    <nav th:if="${totalPages > 1}">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                <a class="page-link" th:href="@{/doctor/appointment(page=${currentPage - 1})}">Trước</a>
+                            </li>
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                th:classappend="${i == currentPage} ? 'active'">
+                                <a class="page-link" th:text="${i + 1}"
+                                   th:href="@{/doctor/appointment(page=${i})}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                <a class="page-link" th:href="@{/doctor/appointment(page=${currentPage + 1})}">Sau</a>
+                            </li>
+                        </ul>
+                    </nav>
+
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const appointmentModal = new bootstrap.Modal(document.getElementById('appointmentModal'));
+        const buttons = document.querySelectorAll('[data-bs-toggle="modal"]');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function () {
+                const appointmentId = this.getAttribute('data-id');
+                fetch(`/doctor/appointment/${appointmentId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('patientName').textContent = data.name;
+                        document.getElementById('appointmentDate').textContent = data.appointmentDateTime;
+                        document.getElementById('healthIssue').textContent = data.reason;
+                        document.getElementById('patientEmail').textContent = data.email;
+                        document.getElementById('patientPhone').textContent = data.phoneNumber;
+                        document.getElementById('patientAge').textContent = data.age;
+                        appointmentModal.show();
+                    });
+            });
+        });
+    });
+</script>
+<script th:src="@{/assets_admin/vendors/js/vendor.bundle.base.js}"></script>
+<script th:src="@{/assets_admin/js/off-canvas.js}"></script>
+<script th:src="@{/assets_admin/js/misc.js}"></script>
+</body>
+</html>

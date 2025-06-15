@@ -50,6 +50,7 @@ public class PatientAppointmentController {
 
         return "redirect:/";
     }
+
     @PostMapping("/save")
     public String save(
             @RequestParam String name,
@@ -59,13 +60,11 @@ public class PatientAppointmentController {
             @RequestParam String date,
             @RequestParam String problem
     ) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
+        UserEntity userEntity = userRepository.findByEmail(email).orElse(null);
 
         if (userEntity == null) {
-            return "redirect:/index";
+            return "redirect:/patient/appointment?error=no_patient";
         }
-
         PatientEntity patient = userEntity.getPatients().stream().findFirst().orElse(null);
         if (patient == null) {
             return "redirect:/patient/appointment?error=no_patient";
