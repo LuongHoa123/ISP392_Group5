@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,4 +15,6 @@ import java.util.Optional;
 @SpringBootApplication
 public interface AppointmentRepository extends JpaRepository<AppointmentEntity, Long> {
     List<AppointmentEntity> findByDoctor(DoctorEntity doctorEntity);
+    boolean existsByDoctorIdAndAppointmentDateTime(Long doctorId, LocalDateTime dateTime);
+    boolean existsByRoomIdAndAppointmentDateTime(Long roomId, LocalDateTime dateTime);
 }

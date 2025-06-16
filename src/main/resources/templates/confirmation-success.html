@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Xác nhận thành công</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+</head>
+<body>
+<th:block th:replace="layout/user-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container text-center mt-5">
+            <div class="alert alert-success" role="alert">
+                <h4 class="alert-heading">Xác nhận thành công!</h4>
+                <p>Bạn đã xác nhận lịch hẹn khám thành công.</p>
+                <hr>
+                <a class="btn btn-primary mt-3" th:href="@{/}">Quay về trang chủ</a>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+</body>
+</html>

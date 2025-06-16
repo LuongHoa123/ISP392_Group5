@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 @Table(name = "Appointments")
 @Data
 public class AppointmentEntity extends AbstractEntity {
-    @CreatedDate
-    @Column(name = "appointment_date_time" , updatable = false)
+
+    @Column(name = "appointment_date_time")
     protected LocalDateTime appointmentDateTime;
 
     @Column(name = "reason")
@@ -39,6 +39,20 @@ public class AppointmentEntity extends AbstractEntity {
     @EqualsAndHashCode.Exclude
     @JsonBackReference
     private DoctorEntity doctor;
+
+    @ManyToOne
+    @JoinColumn(name = "roomId")
+    @EqualsAndHashCode.Exclude
+    @JsonBackReference
+    private RoomEntity room;
+
+    public RoomEntity getRoom() {
+        return room;
+    }
+
+    public void setRoom(RoomEntity room) {
+        this.room = room;
+    }
 
     public LocalDateTime getAppointmentDateTime() {
         return appointmentDateTime;
