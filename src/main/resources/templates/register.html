@@ -239,8 +239,10 @@
                     <div class="mb-4">
                         <label for="password">Mật khẩu<span class="text-danger">*</span></label>
                         <input type="password" id="password" name="password" class="form-control" required>
+                        <small id="passwordError" class="text-danger"></small>
                         <div id="password-strength-bar"></div>
                         <div id="password-strength-text"></div>
+                        <small class="text-muted">Mật khẩu phải có ít nhất 7 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt (@$!%*?&)</small>
                     </div>
 
 
@@ -400,11 +402,20 @@
 
 <script>
     const passwordInput = document.getElementById('password');
+    const passwordError = document.getElementById('passwordError');
     const strengthBar = document.getElementById('password-strength-bar');
     const strengthText = document.getElementById('password-strength-text');
+    
+    // Password validation regex: tối thiểu 7 ký tự, có chữ hoa, chữ thường, số và ký tự đặc biệt
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{7,}$/;
 
     passwordInput.addEventListener('input', function() {
         const password = passwordInput.value;
+        
+        // Kiểm tra validation trước
+        validatePassword(password);
+        
+        // Sau đó mới kiểm tra strength
         const strength = checkPasswordStrength(password);
 
         strengthBar.className = ''; // Reset classes
@@ -414,6 +425,40 @@
         strengthBar.style.width = strength.score + '%';
         strengthText.textContent = strength.text;
     });
+    
+    passwordInput.addEventListener('blur', function() {
+        const password = passwordInput.value.trim();
+        if (password === '') {
+            passwordError.textContent = 'Mật khẩu không được để trống.';
+        }
+    });
+    
+    function validatePassword(password) {
+        if (password === '') {
+            passwordError.textContent = '';
+            return false;
+        }
+        
+        if (!passwordRegex.test(password)) {
+            if (password.length < 7) {
+                passwordError.textContent = 'Mật khẩu phải có ít nhất 7 ký tự.';
+            } else if (!/(?=.*[a-z])/.test(password)) {
+                passwordError.textContent = 'Mật khẩu phải có ít nhất 1 chữ thường.';
+            } else if (!/(?=.*[A-Z])/.test(password)) {
+                passwordError.textContent = 'Mật khẩu phải có ít nhất 1 chữ hoa.';
+            } else if (!/(?=.*\d)/.test(password)) {
+                passwordError.textContent = 'Mật khẩu phải có ít nhất 1 số.';
+            } else if (!/(?=.*[@$!%*?&])/.test(password)) {
+                passwordError.textContent = 'Mật khẩu phải có ít nhất 1 ký tự đặc biệt (@$!%*?&).';
+            } else {
+                passwordError.textContent = 'Mật khẩu chỉ được chứa chữ cái, số và ký tự đặc biệt @$!%*?&.';
+            }
+            return false;
+        } else {
+            passwordError.textContent = '';
+            return true;
+        }
+    }
 
     function checkPasswordStrength(password) {
         let score = 0;
@@ -428,11 +473,11 @@
         }
 
         // Award points for different criteria
-        if (password.length >= 8) score += 25;
+        if (password.length >= 7) score += 25;
         if (password.match(/[a-z]/)) score += 10;
         if (password.match(/[A-Z]/)) score += 15;
         if (password.match(/[0-9]/)) score += 15;
-        if (password.match(/[^a-zA-Z0-9]/)) score += 25;
+        if (password.match(/[@$!%*?&]/)) score += 25;
         // A little bonus for length
         if (password.length > 12) score += 10;
 
@@ -451,6 +496,8 @@
 
         return strength;
     }
+    
+
 </script>
 
 </body>

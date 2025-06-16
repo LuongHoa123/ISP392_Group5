@@ -13,13 +13,13 @@
     <style>
         .appointment {
             padding: 50px 0;
-            background-color: #f8f9fa; /* Light gray background */
+            background-color: #f8f9fa;
         }
 
         .appointment .heading {
             text-align: center;
             margin-bottom: 30px;
-            color: #007bff; /* Primary blue color */
+            color: #007bff;
         }
 
         .appointment .row {
@@ -33,48 +33,76 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 400px; /* Adjust max-width as needed */
-        }
-
-        .appointment form h3 {
-            color: #28a745; /* Success green color */
-            margin-bottom: 20px;
+            max-width: 400px;
             text-align: center;
         }
 
-        .appointment form .box {
-            width: 100%;
-            padding: 12px;
+        .appointment form h3 {
+            color: #28a745;
             margin-bottom: 20px;
-            border: 1px solid #ced4da; /* Light gray border */
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 16px;
         }
 
-        .appointment form .btn {
-            background-color: #28a745; /* Success green color */
+        .otp-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .otp-inputs input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 1em;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        .appointment form .btn-success {
+            background-color: #28a745;
             color: white;
             padding: 12px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .appointment form .btn-success:hover {
+            background-color: #1e7e34;
+        }
+
+        .appointment form .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
             transition: background-color 0.3s ease;
             width: 100%;
         }
 
-        .appointment form .btn:hover {
-            background-color: #1e7e34; /* Darker success green on hover */
+        .appointment form .btn-secondary:hover {
+            background-color: #5a6268;
         }
 
-        .appointment form p.error-message {
-            color: #dc3545; /* Danger red color */
+        .appointment form p {
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        #timer {
+            color: #dc3545;
             margin-top: 10px;
-            text-align: center;
         }
     </style>
 </head>
+
 <body>
 <th:block th:replace="layout/user-layout :: layout">
     <th:block th:fragment="pageContent">
@@ -82,27 +110,236 @@
             <h1 class="heading">Xác nhận OTP</h1>
 
             <div class="row">
-                <form th:action="@{/confirm-otp}" method="post">
+                <form th:action="@{/confirm-otp}" method="post" id="otpForm">
                     <h3>Xác nhận OTP</h3>
-
-                    <div class="form-group">
-                        <input type="text" class="form-control form-control-lg" name="otp"
-                               placeholder="Nhập OTP bao gồm 6 chữ số." required pattern="[0-9]{6}">
-                        <small class="form-text text-muted">Chúng tôi đã gửi mã OTP đến email của bạn.</small>
+                    <div class="otp-inputs">
+                        <input type="text" maxlength="1" pattern="[0-9]" class="otp-input">
+                        <input type="text" maxlength="1" pattern="[0-9]" class="otp-input">
+                        <input type="text" maxlength="1" pattern="[0-9]" class="otp-input">
+                        <input type="text" maxlength="1" pattern="[0-9]" class="otp-input">
+                        <input type="text" maxlength="1" pattern="[0-9]" class="otp-input">
+                        <input type="text" maxlength="1" pattern="[0-9]" class="otp-input">
                     </div>
-
-                    <button type="submit" class="btn btn-success btn-block">Xác nhận</button>
+                    <input type="hidden" id="otp" name="otp" required>
+                    <p>Chúng tôi đã gửi mã OTP đến email của bạn.</p>
+                    <button type="submit" class="btn btn-success" id="submitBtn">Xác nhận</button>
+                    <button id="resendBtn" class="btn btn-secondary">Gửi lại email</button>
+                    <div id="timer"></div>
                 </form>
             </div>
         </section>
-
     </th:block>
 </th:block>
+
+<script>
+    let timeLeft = 20;
+    const resendBtn = document.getElementById('resendBtn');
+    const timerDisplay = document.getElementById('timer');
+
+    function updateTimer() {
+        if (timeLeft > 0) {
+            timerDisplay.textContent = `Gửi lại sau: ${timeLeft} giây`;
+            timeLeft--;
+            localStorage.setItem('otpTimer', timeLeft);
+            setTimeout(updateTimer, 1000);
+        } else {
+            timerDisplay.textContent = '';
+            resendBtn.disabled = false;
+            resendBtn.classList.remove('disabled');
+            localStorage.removeItem('otpTimer');
+            localStorage.removeItem('otpTimerStart');
+        }
+    }
+
+    function startTimer() {
+        resendBtn.disabled = true;
+        resendBtn.classList.add('disabled');
+        localStorage.setItem('otpTimerStart', Date.now());
+        localStorage.setItem('otpTimer', timeLeft);
+        updateTimer();
+    }
+
+    resendBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        
+        if (!resendBtn.disabled) {
+            console.log('Resending register OTP...');
+            
+            // Disable button and show loading
+            resendBtn.disabled = true;
+            resendBtn.textContent = 'Đang gửi...';
+            
+            // Make AJAX call to resend OTP
+            fetch('/resend-otp-register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.text();
+            })
+            .then(result => {
+                console.log('Response result:', result);
+                if (result === 'success') {
+                    alert('Mã OTP đã được gửi lại thành công!');
+                    
+                    // Clear OTP inputs
+                    const otpInputs = document.querySelectorAll('.otp-inputs input');
+                    otpInputs.forEach(input => {
+                        input.value = '';
+                    });
+                    
+                    // Focus on first input
+                    otpInputs[0].focus();
+                    
+                    // Reset timer
+                    timeLeft = 30;
+                    startTimer();
+                } else {
+                    alert('Có lỗi xảy ra khi gửi lại OTP. Vui lòng thử lại!');
+                    resendBtn.disabled = false;
+                    resendBtn.textContent = 'Gửi lại email';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi kết nối khi gửi lại OTP. Vui lòng thử lại!');
+                resendBtn.disabled = false;
+                resendBtn.textContent = 'Gửi lại email';
+            });
+        }
+    });
+
+    // Initialize timer khi load trang
+    function initializeTimer() {
+        const savedTimer = localStorage.getItem('otpTimer');
+        const savedStart = localStorage.getItem('otpTimerStart');
+        
+        if (savedTimer && savedStart) {
+            const elapsed = Math.floor((Date.now() - parseInt(savedStart)) / 1000);
+            const remaining = parseInt(savedTimer) - elapsed;
+            
+            if (remaining > 0) {
+                timeLeft = remaining;
+                startTimer();
+            } else {
+                // Timer đã hết
+                timerDisplay.textContent = '';
+                resendBtn.disabled = false;
+                resendBtn.classList.remove('disabled');
+                localStorage.removeItem('otpTimer');
+                localStorage.removeItem('otpTimerStart');
+            }
+        } else {
+            // Lần đầu load trang
+            timeLeft = 20;
+            startTimer();
+        }
+    }
+
+    initializeTimer();
+
+    const otpInputs = document.querySelectorAll('.otp-input');
+    const hiddenOtpInput = document.getElementById('otp');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    function updateHiddenInput() {
+        let otpValue = '';
+        otpInputs.forEach(input => {
+            otpValue += input.value;
+        });
+        hiddenOtpInput.value = otpValue;
+        console.log('Updated hidden input:', otpValue);
+    }
+    
+    function checkSubmitButton() {
+        const allFilled = Array.from(otpInputs).every(input => input.value !== '');
+        submitBtn.disabled = !allFilled;
+        if (allFilled) {
+            submitBtn.style.opacity = '1';
+        } else {
+            submitBtn.style.opacity = '0.6';
+        }
+    }
+    
+    otpInputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+            const value = e.target.value;
+            
+            // Only allow numbers
+            if (!/^\d$/.test(value) && value !== '') {
+                e.target.value = '';
+                return;
+            }
+            
+            if (e.target.value.length === 1 && index < otpInputs.length - 1) {
+                otpInputs[index + 1].focus();
+            }
+            
+            updateHiddenInput();
+            checkSubmitButton();
+        });
+        
+        input.addEventListener('keydown', (e) => {
+            // Handle backspace
+            if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                otpInputs[index - 1].focus();
+                otpInputs[index - 1].value = '';
+                updateHiddenInput();
+                checkSubmitButton();
+            }
+            
+            // Handle arrow keys
+            if (e.key === 'ArrowLeft' && index > 0) {
+                otpInputs[index - 1].focus();
+            }
+            if (e.key === 'ArrowRight' && index < otpInputs.length - 1) {
+                otpInputs[index + 1].focus();
+            }
+        });
+        
+        // Add paste functionality
+        input.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pasteData = e.clipboardData.getData('text');
+            const digits = pasteData.replace(/\D/g, '').slice(0, 6); // Chỉ lấy số và tối đa 6 ký tự
+            
+            console.log('Pasted data:', pasteData);
+            console.log('Extracted digits:', digits);
+            
+            // Clear all inputs first
+            otpInputs.forEach(input => {
+                input.value = '';
+            });
+            
+            // Điền vào các ô input
+            digits.split('').forEach((digit, i) => {
+                if (i < otpInputs.length) {
+                    otpInputs[i].value = digit;
+                }
+            });
+            
+            // Update hidden input and check submit button
+            updateHiddenInput();
+            checkSubmitButton();
+            
+            // Focus vào ô tiếp theo sau số cuối cùng được paste, hoặc ô cuối nếu đã đủ 6 số
+            const nextFocusIndex = digits.length < otpInputs.length ? digits.length : otpInputs.length - 1;
+            otpInputs[nextFocusIndex].focus();
+            
+            console.log('Filled', digits.length, 'digits, focused on index', nextFocusIndex);
+        });
+    });
+    
+    // Initial state
+    checkSubmitButton();
+    otpInputs[0].focus();
+</script>
 
 <script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
 <script th:src="@{/js/script.js}"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>

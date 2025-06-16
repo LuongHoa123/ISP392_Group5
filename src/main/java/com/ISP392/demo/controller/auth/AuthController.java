@@ -79,8 +79,21 @@ public class AuthController {
             return "register";
         }
 
-        if (password.length() < 6) {
-            model.addAttribute("mess", "Mật khẩu phải có ít nhất 6 ký tự!");
+        // Kiểm tra password theo yêu cầu mới: tối thiểu 7 ký tự, có chữ hoa, chữ thường, số và ký tự đặc biệt
+        if (!password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{7,}$")) {
+            if (password.length() < 7) {
+                model.addAttribute("mess", "Mật khẩu phải có ít nhất 7 ký tự!");
+            } else if (!password.matches(".*[a-z].*")) {
+                model.addAttribute("mess", "Mật khẩu phải có ít nhất 1 chữ thường!");
+            } else if (!password.matches(".*[A-Z].*")) {
+                model.addAttribute("mess", "Mật khẩu phải có ít nhất 1 chữ hoa!");
+            } else if (!password.matches(".*\\d.*")) {
+                model.addAttribute("mess", "Mật khẩu phải có ít nhất 1 số!");
+            } else if (!password.matches(".*[@$!%*?&].*")) {
+                model.addAttribute("mess", "Mật khẩu phải có ít nhất 1 ký tự đặc biệt (@$!%*?&)!");
+            } else {
+                model.addAttribute("mess", "Mật khẩu chỉ được chứa chữ cái, số và ký tự đặc biệt @$!%*?&!");
+            }
             return "register";
         }
 
@@ -94,7 +107,8 @@ public class AuthController {
         session.setMaxInactiveInterval(360);
         String subject = "Đây là OTP của bạn";
         String mess = "Xin chào @" + " \n" + email + "Đây là OTP của bạn: " + session.getAttribute("otp-register") + " Hãy điền vào form!" + "\n Cảm ơn!";
-        this.emailSenderService.sendEmail(email, subject, mess);
+        // Gửi email bất đồng bộ
+        this.emailSenderService.sendEmailAsync(email, subject, mess);
         session.setAttribute("email", email);
         session.setAttribute("firstName", firstName);
         session.setAttribute("lastName", lastName);
@@ -140,6 +154,24 @@ public class AuthController {
         // ✅ Kiểm tra mật khẩu mới không được trùng với mật khẩu hiện tại
         if (passwordEncoder.matches(newPassword, user.getPassword())) {
             model.addAttribute("error", "Mật khẩu mới không được giống mật khẩu cũ.");
+            return "change-password";
+        }
+
+        // Kiểm tra password mới theo yêu cầu: tối thiểu 7 ký tự, có chữ hoa, chữ thường, số và ký tự đặc biệt
+        if (!newPassword.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{7,}$")) {
+            if (newPassword.length() < 7) {
+                model.addAttribute("error", "Mật khẩu phải có ít nhất 7 ký tự!");
+            } else if (!newPassword.matches(".*[a-z].*")) {
+                model.addAttribute("error", "Mật khẩu phải có ít nhất 1 chữ thường!");
+            } else if (!newPassword.matches(".*[A-Z].*")) {
+                model.addAttribute("error", "Mật khẩu phải có ít nhất 1 chữ hoa!");
+            } else if (!newPassword.matches(".*\\d.*")) {
+                model.addAttribute("error", "Mật khẩu phải có ít nhất 1 số!");
+            } else if (!newPassword.matches(".*[@$!%*?&].*")) {
+                model.addAttribute("error", "Mật khẩu phải có ít nhất 1 ký tự đặc biệt (@$!%*?&)!");
+            } else {
+                model.addAttribute("error", "Mật khẩu chỉ được chứa chữ cái, số và ký tự đặc biệt @$!%*?&!");
+            }
             return "change-password";
         }
 

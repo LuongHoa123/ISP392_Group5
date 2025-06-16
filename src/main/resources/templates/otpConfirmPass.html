@@ -158,45 +158,89 @@
 
     <div class="resend-container">
         <div class="resend-timer" id="timerText">Gửi lại mã sau: <span id="countdown">20</span>s</div>
-        <button type="button" class="resend-btn" id="resendBtn" onclick="resendOTP()">
+        <button type="button" class="resend-btn" id="resendBtn">
             Gửi lại mã OTP
         </button>
     </div>
 </form>
 
 <script>
+let isResending = false; // Global flag to prevent multiple resend requests
+let timeLeft = 20;
+let timerInterval;
+
+// Global timer functions
+function startTimer() {
+    const resendBtn = document.getElementById('resendBtn');
+    const countdownElement = document.getElementById('countdown');
+    const timerText = document.getElementById('timerText');
+    // Clear any existing timer
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+    
+    resendBtn.disabled = true;
+    resendBtn.classList.remove('active');
+    timerText.style.display = 'block';
+    countdownElement.textContent = timeLeft;
+    
+    // Lưu thời điểm bắt đầu timer
+    const startTime = Date.now();
+    localStorage.setItem('otpTimerStart', startTime);
+    localStorage.setItem('otpTimerDuration', timeLeft);
+    
+    timerInterval = setInterval(function() {
+        timeLeft--;
+        countdownElement.textContent = timeLeft;
+        localStorage.setItem('otpTimerDuration', timeLeft);
+        
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            resendBtn.disabled = false;
+            resendBtn.classList.add('active');
+            timerText.style.display = 'none';
+            localStorage.removeItem('otpTimerStart');
+            localStorage.removeItem('otpTimerDuration');
+        }
+    }, 1000);
+}
+
+// Initialize timer khi load trang
+function initializeTimer() {
+    const resendBtn = document.getElementById('resendBtn');
+    const countdownElement = document.getElementById('countdown');
+    const timerText = document.getElementById('timerText');
+    const savedStart = localStorage.getItem('otpTimerStart');
+    const savedDuration = localStorage.getItem('otpTimerDuration');
+    
+    if (savedStart && savedDuration) {
+        const elapsed = Math.floor((Date.now() - parseInt(savedStart)) / 1000);
+        const remaining = parseInt(savedDuration) - elapsed;
+        
+        if (remaining > 0) {
+            timeLeft = remaining;
+            startTimer();
+        } else {
+            // Timer đã hết, cho phép gửi lại
+            resendBtn.disabled = false;
+            resendBtn.classList.add('active');
+            timerText.style.display = 'none';
+            localStorage.removeItem('otpTimerStart');
+            localStorage.removeItem('otpTimerDuration');
+        }
+    } else {
+        // Lần đầu load trang hoặc không có timer đang chạy
+        timeLeft = 20;
+        startTimer();
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const otpInputs = document.querySelectorAll('.otp-input');
     const hiddenOtpInput = document.getElementById('otp');
     const submitBtn = document.getElementById('submitBtn');
-    const resendBtn = document.getElementById('resendBtn');
-    const countdownElement = document.getElementById('countdown');
-    const timerText = document.getElementById('timerText');
-    
-    let timeLeft = 20;
-    let timerInterval;
 
-    // Start countdown timer
-    function startTimer() {
-        resendBtn.disabled = true;
-        resendBtn.classList.remove('active');
-        timeLeft = 20;
-        
-        timerInterval = setInterval(function() {
-            timeLeft--;
-            countdownElement.textContent = timeLeft;
-            
-            if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-                resendBtn.disabled = false;
-                resendBtn.classList.add('active');
-                timerText.style.display = 'none';
-            }
-        }, 1000);
-    }
-
-    // Initialize timer
-    startTimer();
+    initializeTimer();
 
     // OTP input handling
     otpInputs.forEach((input, index) => {
@@ -278,23 +322,101 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Focus on first input
     otpInputs[0].focus();
+    
+    // Add resend button click handler (remove any existing ones first)
+    const resendBtnEl = document.getElementById('resendBtn');
+    resendBtnEl.removeEventListener('click', resendOTP); // Remove if exists
+    resendBtnEl.addEventListener('click', resendOTP, { once: false });
 });
 
-function resendOTP() {
+function resendOTP(event) {
+    // Prevent default behavior and stop propagation
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    
+    console.log('resendOTP function called, isResending:', isResending);
+    
     const resendBtn = document.getElementById('resendBtn');
     const timerText = document.getElementById('timerText');
     
-    if (!resendBtn.disabled) {
-        // Make AJAX call to resend OTP
-        fetch('/resend-otp-pass', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }
+    // Prevent multiple clicks - check both button state and global flag
+    if (resendBtn.disabled || isResending) {
+        console.log('Resend blocked: button disabled or already sending');
+        return false;
+    }
+    
+    // Set flag and disable button
+    isResending = true;
+    resendBtn.disabled = true;
+    resendBtn.classList.add('sending');
+    resendBtn.textContent = 'Đang gửi...';
+    
+    console.log('Starting resend OTP request...');
+    
+    // Set timeout as fallback to reset state after 30 seconds
+    const timeoutId = setTimeout(() => {
+        if (isResending) {
+            console.log('Request timeout, resetting state');
+            isResending = false;
+            resendBtn.classList.remove('sending');
+            resendBtn.textContent = 'Gửi lại mã OTP';
+            alert('Yêu cầu gửi OTP bị timeout. Vui lòng thử lại!');
+        }
+    }, 30000);
+    
+    // Test basic connectivity first
+    console.log('Testing basic connectivity...');
+    fetch(window.location.origin, { method: 'HEAD' })
+        .then(response => {
+            console.log('Basic connectivity test - Status:', response.status);
         })
-        .then(response => response.text())
+        .catch(error => {
+            console.error('Basic connectivity failed:', error);
+        });
+    
+    // Get CSRF token if exists
+    const csrfToken = document.querySelector('meta[name="_csrf"]');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]');
+    
+    console.log('CSRF Token:', csrfToken ? csrfToken.getAttribute('content') : 'Not found');
+    console.log('CSRF Header:', csrfHeader ? csrfHeader.getAttribute('content') : 'Not found');
+    
+    const headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+    };
+    
+    // Add CSRF token if available
+    if (csrfToken && csrfHeader) {
+        headers[csrfHeader.getAttribute('content')] = csrfToken.getAttribute('content');
+        console.log('Added CSRF token to headers');
+    }
+    
+    // Make AJAX call to resend OTP
+    const url = '/resend-otp-pass';
+    console.log('Making request to:', window.location.origin + url);
+    console.log('Request headers:', headers);
+    
+    fetch(url, {
+            method: 'POST',
+            headers: headers
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            return response.text();
+        })
         .then(result => {
+            console.log('Response result:', result);
+            
+            // Check if already processed (to prevent duplicate processing)
+            if (!isResending) {
+                console.log('Request already processed, ignoring response');
+                return;
+            }
+            
             if (result === 'success') {
+                console.log('OTP resend successful');
                 alert('Mã OTP đã được gửi lại thành công!');
                 
                 // Clear all OTP inputs
@@ -309,33 +431,30 @@ function resendOTP() {
                 // Focus on first input
                 otpInputs[0].focus();
                 
-                // Restart timer
-                timerText.style.display = 'block';
-                const countdownElement = document.getElementById('countdown');
-                let timeLeft = 20;
-                resendBtn.disabled = true;
-                resendBtn.classList.remove('active');
-                
-                const timerInterval = setInterval(function() {
-                    timeLeft--;
-                    countdownElement.textContent = timeLeft;
-                    
-                    if (timeLeft <= 0) {
-                        clearInterval(timerInterval);
-                        resendBtn.disabled = false;
-                        resendBtn.classList.add('active');
-                        timerText.style.display = 'none';
-                    }
-                }, 1000);
+                // Restart timer với thời gian mới
+                timeLeft = 20;
+                initializeTimer();
             } else {
-                alert('Có lỗi xảy ra khi gửi lại OTP. Vui lòng thử lại!');
+                console.error('Server returned error:', result);
+                alert('Có lỗi xảy ra khi gửi lại OTP. Chi tiết: ' + result);
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            alert('Có lỗi xảy ra khi gửi lại OTP. Vui lòng thử lại!');
+            console.error('Fetch error details:', error);
+            console.error('Error name:', error.name);
+            console.error('Error message:', error.message);
+            console.error('Error stack:', error.stack);
+            alert('Có lỗi kết nối khi gửi lại OTP. Lỗi: ' + error.message);
+        })
+        .finally(() => {
+            // Clear timeout and reset global flag and button state
+            clearTimeout(timeoutId);
+            isResending = false;
+            resendBtn.classList.remove('sending');
+            resendBtn.textContent = 'Gửi lại mã OTP';
+            console.log('Resend OTP request completed');
+            // Note: resendBtn.disabled will be handled by startTimer()
         });
-    }
 }
 </script>
 

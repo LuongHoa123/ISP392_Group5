@@ -3,7 +3,10 @@ package com.ISP392.demo.service.impl;
 import com.ISP392.demo.service.EmailSenderService;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class EmailSenderServiceImpl implements EmailSenderService {
@@ -23,4 +26,21 @@ public class EmailSenderServiceImpl implements EmailSenderService {
         this.mailSender.send(simpleMailMessage);
     }
 
+    @Override
+    @Async("emailTaskExecutor")
+    public CompletableFuture<Void> sendEmailAsync(String to, String subject, String message) {
+        try {
+            SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+            simpleMailMessage.setFrom("phanphianh2004@gmail.com");
+            simpleMailMessage.setTo(to);
+            simpleMailMessage.setSubject(subject);
+            simpleMailMessage.setText(message);
+            this.mailSender.send(simpleMailMessage);
+            return CompletableFuture.completedFuture(null);
+        } catch (Exception e) {
+            CompletableFuture<Void> future = new CompletableFuture<>();
+            future.completeExceptionally(e);
+            return future;
+        }
+    }
 }

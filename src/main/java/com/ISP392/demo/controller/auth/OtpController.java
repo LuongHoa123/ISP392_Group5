@@ -1,12 +1,5 @@
 package com.ISP392.demo.controller.auth;
 
-import com.ISP392.demo.entity.*;
-import com.ISP392.demo.enums.GenderEnum;
-import com.ISP392.demo.repository.PatientRepository;
-import com.ISP392.demo.repository.UserRepository;
-import com.ISP392.demo.service.*;
-import com.ISP392.demo.utils.DateUtils;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -16,6 +9,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.ISP392.demo.entity.PatientEntity;
+import com.ISP392.demo.entity.RoleEntity;
+import com.ISP392.demo.entity.UserEntity;
+import com.ISP392.demo.enums.GenderEnum;
+import com.ISP392.demo.repository.PatientRepository;
+import com.ISP392.demo.repository.UserRepository;
+import com.ISP392.demo.service.EmailSenderService;
+import com.ISP392.demo.service.RoleService;
+import com.ISP392.demo.service.UserService;
+import com.ISP392.demo.utils.DateUtils;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 
@@ -84,18 +90,35 @@ public class OtpController {
 
     @RequestMapping(value = "forgotPass", method = RequestMethod.POST)
     public String forgotPass(@RequestParam String email, Model model, HttpSession session) {
-        if (!userService.findByEmail(email).isPresent()) {
-            model.addAttribute("mess", "Email không tồn tại!");
+        try {
+            if (!userService.findByEmail(email).isPresent()) {
+                model.addAttribute("mess", "Email không tồn tại!");
+                return "forgot";
+            }
+            session.setAttribute("otp-pass", otpCode());
+            session.setMaxInactiveInterval(360);
+            String subject = "Đây là OTP của bạn";
+            String mess = "Xin chào @" + " \n" + email + "Đây là OTP của bạn: " + session.getAttribute("otp-pass") + " Hãy điền vào form!" + "\n Cảm ơn!";
+            
+            // Gửi email bất đồng bộ với error handling
+            this.emailSenderService.sendEmailAsync(email, subject, mess)
+                .thenRun(() -> {
+                    System.out.println("Forgot password OTP email sent successfully to: " + email);
+                })
+                .exceptionally(throwable -> {
+                    System.err.println("Error sending forgot password OTP email: " + throwable.getMessage());
+                    throwable.printStackTrace();
+                    return null;
+                });
+                
+            session.setAttribute("email", email);
+            return "redirect:/otp-check-pass";
+        } catch (Exception e) {
+            System.err.println("Forgot password error: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("mess", "Có lỗi xảy ra khi gửi OTP. Vui lòng thử lại!");
             return "forgot";
         }
-        session.setAttribute("otp-pass", otpCode());
-        session.setMaxInactiveInterval(360);
-        String subject = "Đây là OTP của bạn";
-        String mess = "Xin chào @" + " \n" + email + "Đây là OTP của bạn: " + session.getAttribute("otp-pass") + " Hãy điền vào form!" + "\n Cảm ơn!";
-        this.emailSenderService.sendEmail(email, subject, mess);
-        session.setAttribute("email", email);
-        return "redirect:/otp-check-pass";
-
     }
 
     @RequestMapping(value = "otp-check-pass", method = RequestMethod.GET)
@@ -125,22 +148,99 @@ public class OtpController {
     @RequestMapping(value = "resend-otp-pass", method = RequestMethod.POST)
     @ResponseBody
     public String resendOtpPass(HttpSession session) {
-        String email = (String) session.getAttribute("email");
-        if (email == null) {
+        try {
+            System.out.println("===== RESEND OTP REQUEST RECEIVED =====");
+            System.out.println("Session ID: " + session.getId());
+            System.out.println("Thread: " + Thread.currentThread().getName());
+            
+            String email = (String) session.getAttribute("email");
+            if (email == null) {
+                System.err.println("Resend OTP Error: Email not found in session");
+                return "error";
+            }
+            
+            System.out.println("Email from session: " + email);
+            
+            // Generate new OTP
+            String newOtp = otpCode();
+            System.out.println("Generated new OTP: " + newOtp);
+            
+            session.setAttribute("otp-pass", newOtp);
+            session.setMaxInactiveInterval(360);
+            
+            // Gửi email bất đồng bộ
+            String subject = "Đây là OTP của bạn";
+            String mess = "Xin chào @" + " \n" + email + "Đây là OTP của bạn: " + newOtp + " Hãy điền vào form!" + "\n Cảm ơn!";
+            
+            System.out.println("Sending email to: " + email);
+            
+            // Gửi email và xử lý kết quả bất đồng bộ
+            this.emailSenderService.sendEmailAsync(email, subject, mess)
+                .thenRun(() -> {
+                    System.out.println("Resend OTP email sent successfully to: " + email);
+                })
+                .exceptionally(throwable -> {
+                    System.err.println("Error sending resend OTP email: " + throwable.getMessage());
+                    throwable.printStackTrace();
+                    return null;
+                });
+            
+            System.out.println("Returning success response");
+            return "success";
+        } catch (Exception e) {
+            System.err.println("Resend OTP Error: " + e.getMessage());
+            e.printStackTrace();
             return "error";
         }
-        
-        // Generate new OTP
-        String newOtp = otpCode();
-        session.setAttribute("otp-pass", newOtp);
-        session.setMaxInactiveInterval(360);
-        
-        // Send email
-        String subject = "Đây là OTP của bạn";
-        String mess = "Xin chào @" + " \n" + email + "Đây là OTP của bạn: " + newOtp + " Hãy điền vào form!" + "\n Cảm ơn!";
-        this.emailSenderService.sendEmail(email, subject, mess);
-        
-        return "success";
+    }
+
+    @RequestMapping(value = "resend-otp-register", method = RequestMethod.POST)
+    @ResponseBody
+    public String resendOtpRegister(HttpSession session) {
+        try {
+            System.out.println("===== RESEND REGISTER OTP REQUEST RECEIVED =====");
+            System.out.println("Session ID: " + session.getId());
+            System.out.println("Thread: " + Thread.currentThread().getName());
+            
+            String email = (String) session.getAttribute("email");
+            if (email == null) {
+                System.err.println("Resend Register OTP Error: Email not found in session");
+                return "error";
+            }
+            
+            System.out.println("Email from session: " + email);
+            
+            // Generate new OTP
+            String newOtp = otpCode();
+            System.out.println("Generated new register OTP: " + newOtp);
+            
+            session.setAttribute("otp-register", newOtp);
+            session.setMaxInactiveInterval(360);
+            
+            // Gửi email bất đồng bộ
+            String subject = "Đây là OTP của bạn";
+            String mess = "Xin chào @" + " \n" + email + "Đây là OTP của bạn: " + newOtp + " Hãy điền vào form!" + "\n Cảm ơn!";
+            
+            System.out.println("Sending register email to: " + email);
+            
+            // Gửi email và xử lý kết quả bất đồng bộ
+            this.emailSenderService.sendEmailAsync(email, subject, mess)
+                .thenRun(() -> {
+                    System.out.println("Resend register OTP email sent successfully to: " + email);
+                })
+                .exceptionally(throwable -> {
+                    System.err.println("Error sending resend register OTP email: " + throwable.getMessage());
+                    throwable.printStackTrace();
+                    return null;
+                });
+            
+            System.out.println("Returning success response");
+            return "success";
+        } catch (Exception e) {
+            System.err.println("Resend Register OTP Error: " + e.getMessage());
+            e.printStackTrace();
+            return "error";
+        }
     }
 
     public String otpCode() {
