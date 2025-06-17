@@ -69,8 +69,30 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+
+    function cancelAppointment(id) {
+        fetch(`/patient/appointment/${id}/cancel`, {
+            method: 'POST'
+        })
+            .then(() => {
+                alert("Hủy lịch thành công!");
+                location.reload();
+            });
+    }
+
+    function deleteAppointment(id) {
+        fetch(`/patient/appointment/${id}`, {
+            method: 'DELETE'
+        })
+            .then(() => {
+                alert("Xóa lịch thành công!");
+                location.reload();
+            });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
+
 
         fetch('/patient/appointment/calendar/data')
             .then(response => response.json())
@@ -81,15 +103,24 @@
 
                     switch (appt.status) {
                         case -1:
-                            backgroundColor = '#ffcc00'; borderColor = '#ffaa00'; break;
+                            backgroundColor = '#ffcc00';
+                            borderColor = '#ffaa00';
+                            break;
                         case 0:
-                            backgroundColor = '#ff4d4d'; borderColor = '#cc0000'; break;
+                            backgroundColor = '#ff4d4d';
+                            borderColor = '#cc0000';
+                            break;
                         case 1:
-                            backgroundColor = '#66cc66'; borderColor = '#339933'; break;
+                            backgroundColor = '#66cc66';
+                            borderColor = '#339933';
+                            break;
                         case 2:
-                            backgroundColor = '#3399ff'; borderColor = '#0066cc'; break;
+                            backgroundColor = '#3399ff';
+                            borderColor = '#0066cc';
+                            break;
                         default:
-                            backgroundColor = '#999999'; borderColor = '#666666';
+                            backgroundColor = '#999999';
+                            borderColor = '#666666';
                     }
 
                     return {
@@ -98,6 +129,7 @@
                         backgroundColor,
                         borderColor,
                         extendedProps: {
+                            id: appt.id,
                             name: appt.name,
                             phone: appt.phoneNumber,
                             email: appt.email,
@@ -122,17 +154,29 @@
                     events: events,
                     eventClick: function (info) {
                         const props = info.event.extendedProps;
-                        const start = new Date(info.event.start).toLocaleString();
+                        const startDate = new Date(info.event.start);
+                        const now = new Date();
+
+                        let actionButtons = "";
+
+                        if (props.status === 2 && startDate > now) {
+                            actionButtons += `<button class="btn btn-warning btn-sm" onclick="cancelAppointment(${props.id})">Hủy lịch</button>`;
+                        }
+                        if (props.status === -1 && startDate > now) {
+                            actionButtons += `<button class="btn btn-danger btn-sm" onclick="deleteAppointment(${props.id})">Xóa lịch</button>`;
+                        }
 
                         document.getElementById('appointmentDetails').innerHTML = `
-                            <p><strong>Họ tên:</strong> ${props.name}</p>
-                            <p><strong>Email:</strong> ${props.email}</p>
-                            <p><strong>SĐT:</strong> ${props.phone}</p>
-                            <p><strong>Lý do khám:</strong> ${info.event.title}</p>
-                            <p><strong>Thời gian:</strong> ${start}</p>
-                            <p><strong>Bác sĩ:</strong> ${props.doctor}</p>
-                            <p><strong>Phòng khám:</strong> ${props.room}</p>
-                        `;
+        <p><strong>Họ tên:</strong> ${props.name}</p>
+        <p><strong>Email:</strong> ${props.email}</p>
+        <p><strong>SĐT:</strong> ${props.phone}</p>
+        <p><strong>Lý do khám:</strong> ${info.event.title}</p>
+        <p><strong>Thời gian:</strong> ${startDate.toLocaleString()}</p>
+        <p><strong>Bác sĩ:</strong> ${props.doctor}</p>
+        <p><strong>Phòng khám:</strong> ${props.room}</p>
+        <div class="mt-3">${actionButtons}</div>
+    `;
+
                         $('#appointmentModal').modal('show');
                     }
                 });
@@ -140,6 +184,8 @@
                 calendar.render();
             });
     });
+
+
 </script>
 
 </body>

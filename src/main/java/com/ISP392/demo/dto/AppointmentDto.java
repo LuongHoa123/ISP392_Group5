@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class AppointmentDto {
+    private Long id;
     private LocalDateTime appointmentDateTime;
     private String reason;
     private String name;
@@ -17,6 +18,14 @@ public class AppointmentDto {
     private String roomName;
     private String doctorName;
     private String doctorSpecialization;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public LocalDateTime getAppointmentDateTime() {
         return appointmentDateTime;

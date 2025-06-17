@@ -63,7 +63,13 @@
 
 
     </style>
-
+    <style>
+        .required:after {
+            content: '*';
+            color: red;
+            margin-left: 4px;
+        }
+    </style>
 </head>
 <body>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -128,26 +134,81 @@
                     <img th:src="@{/assets/appointment.png}" alt="Hình ảnh đặt lịch hẹn">
                 </div>
 
+                <style>
+                    .input-wrapper {
+                        position: relative;
+                        width: 100%;
+                    }
+
+                    .input-wrapper .required-star {
+                        position: absolute;
+                        right: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        color: red;
+                        font-size: 20px;
+                        pointer-events: none;
+                    }
+
+                    .box,
+                    .box-half {
+                        width: 100%;
+                        padding-right: 25px; /* để tránh bị đè lên bởi dấu * */
+                    }
+
+                    .box-half-app {
+                        display: flex;
+                        justify-content: space-between;
+                        gap: 10px;
+                    }
+
+                    .box-half-app > div {
+                        width: 50%;
+                    }
+                </style>
+
                 <form th:action="@{/patient/appointment/save}" method="post">
                     <h3>Đặt lịch khám với chúng tôi</h3>
 
-                    <input type="text" name="name" th:value="${patient.firstName + ' ' + patient.lastName}"
-                           placeholder="Họ và tên của bạn" class="box" required>
-                    <div class="box-half-app">
-                        <input type="tel" name="phone" th:value="${patient.phone}" placeholder="Số điện thoại"
-                               class="box-half" maxlength="10" required>
-                        <input type="number" name="age" placeholder="Tuổi của bạn" class="box-half" min="0" required>
+                    <div class="input-wrapper">
+                        <input type="text" name="name" th:value="${patient.firstName + ' ' + patient.lastName}"
+                               placeholder="Họ và tên của bạn" class="box" required>
+                        <span class="required-star">*</span>
                     </div>
 
-                    <input type="email" name="email" th:value="${patient.user.email}" placeholder="Địa chỉ email" class="box"
-                           required>
-                    <input type="date" th:attr="min=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" id="appointmentDate" name="date" class="box" required>
+                    <div class="input-wrapper">
+                        <input type="tel" name="phone" th:value="${patient.phone}" placeholder="Số điện thoại"
+                               class="box" maxlength="10" required>
+                        <span class="required-star">*</span>
+                    </div>
 
-                    <textarea name="problem" placeholder="Mô tả vấn đề sức khỏe của bạn..." class="problem" rows="4"
-                              required></textarea>
+                    <div class="input-wrapper">
+                        <input type="number" name="age" placeholder="Tuổi của bạn" class="box" min="0" required>
+                        <span class="required-star">*</span>
+                    </div>
+
+                    <div class="input-wrapper">
+                        <input type="email" name="email" th:value="${patient.user.email}" placeholder="Địa chỉ email"
+                               class="box" required>
+                        <span class="required-star">*</span>
+                    </div>
+
+                    <div class="input-wrapper">
+                        <input type="date" th:attr="min=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+                               id="appointmentDate"
+                               name="date" class="box" required>
+                        <span class="required-star">*</span>
+                    </div>
+
+                    <div class="input-wrapper">
+        <textarea name="problem" placeholder="Mô tả vấn đề sức khỏe của bạn..." class="problem" rows="4"
+                  required></textarea>
+                        <span class="required-star">*</span>
+                    </div>
 
                     <input type="submit" value="Đặt lịch ngay" class="btn">
                 </form>
+
             </div>
         </section>
 
@@ -157,6 +218,23 @@
 <a href="#" class="back-to-top" id="backToTop" title="Lên đầu trang">
     <i class="fas fa-chevron-up"></i>
 </a>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateInput = document.getElementById('appointmentDate');
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        const yyyy = tomorrow.getFullYear();
+        const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+        const dd = String(tomorrow.getDate()).padStart(2, '0');
+        const minDateStr = `${yyyy}-${mm}-${dd}`;
+
+        dateInput.min = minDateStr;
+    });
+</script>
+
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const backToTopBtn = document.getElementById("backToTop");

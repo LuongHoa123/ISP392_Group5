@@ -8,6 +8,7 @@ import com.ISP392.demo.repository.AppointmentRepository;
 import com.ISP392.demo.repository.PatientRepository;
 import com.ISP392.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -115,6 +116,20 @@ public class PatientAppointmentController {
 
         List<AppointmentEntity> appointments = appointmentRepository.findByPatient(patient);
 
+        LocalDateTime now = LocalDateTime.now();
+        boolean changed = false;
+
+        for (AppointmentEntity appt : appointments) {
+            if ((appt.getStatus() == -1 || appt.getStatus() == 2) && appt.getAppointmentDateTime().isBefore(now)) {
+                appt.setStatus(0);
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            appointmentRepository.saveAll(appointments);
+        }
+
         return appointments.stream().map(appt -> {
             AppointmentDto dto = new AppointmentDto();
             dto.setAppointmentDateTime(appt.getAppointmentDateTime());
@@ -124,18 +139,41 @@ public class PatientAppointmentController {
             dto.setEmail(appt.getEmail());
             dto.setAge(appt.getAge());
             dto.setStatus(appt.getStatus());
+            dto.setId(appt.getId());
 
             if (appt.getRoom() != null) {
                 dto.setRoomName(appt.getRoom().getRoomName());
             }
-
             if (appt.getDoctor() != null) {
                 dto.setDoctorName(appt.getDoctor().getFirstName() + " " + appt.getDoctor().getLastName());
                 dto.setDoctorSpecialization(appt.getDoctor().getSpecialization());
             }
-
             return dto;
         }).toList();
     }
+
+    @PostMapping("/{id}/cancel")
+    @ResponseBody
+    public ResponseEntity<?> cancelAppointment(@PathVariable Long id) {
+        AppointmentEntity appt = appointmentRepository.findById(id).orElse(null);
+        if (appt == null) return ResponseEntity.notFound().build();
+        if (appt.getStatus() != 2) return ResponseEntity.badRequest().body("Không thể hủy");
+
+        appt.setStatus(-1);
+        appointmentRepository.save(appt);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseBody
+    public ResponseEntity<?> deleteAppointment(@PathVariable Long id) {
+        AppointmentEntity appt = appointmentRepository.findById(id).orElse(null);
+        if (appt == null) return ResponseEntity.notFound().build();
+        if (appt.getStatus() != -1) return ResponseEntity.badRequest().body("Chỉ xóa lịch đã hủy");
+
+        appointmentRepository.delete(appt);
+        return ResponseEntity.ok().build();
+    }
+
 
 }
