@@ -11,16 +11,15 @@
     <link rel="icon" th:href="@{/assets/favicon.ico}" type="image/jpeg">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-
         .appointment {
             padding: 50px 0;
-            background-color: #f8f9fa; /* Light gray background */
+            background-color: #f8f9fa;
         }
 
         .appointment .heading {
             text-align: center;
             margin-bottom: 30px;
-            color: #007bff; /* Primary blue color */
+            color: #007bff;
         }
 
         .appointment .row {
@@ -38,7 +37,7 @@
         }
 
         .appointment form h3 {
-            color: #28a745; /* Success green color */
+            color: #28a745;
             margin-bottom: 20px;
             text-align: center;
         }
@@ -47,14 +46,14 @@
             width: 100%;
             padding: 12px;
             margin-bottom: 15px;
-            border: 1px solid #ced4da; /* Light gray border */
+            border: 1px solid #ced4da;
             border-radius: 4px;
             box-sizing: border-box;
             font-size: 16px;
         }
 
         .appointment form .btn {
-            background-color: #007bff; /* Primary blue color */
+            background-color: #007bff;
             color: white;
             padding: 12px 20px;
             border: none;
@@ -63,11 +62,11 @@
             font-size: 18px;
             transition: background-color 0.3s ease;
             width: 100%;
-            margin-bottom: 10px; /* Add some margin below the submit button */
+            margin-bottom: 10px;
         }
 
         .appointment form .btn:hover {
-            background-color: #0056b3; /* Darker blue on hover */
+            background-color: #0056b3;
         }
 
         .appointment form div.form-group {
@@ -101,6 +100,37 @@
         .appointment form .login-link a:hover {
             text-decoration: underline;
         }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .password-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-container input {
+            padding-right: 40px; /* Space for the icon */
+        }
+
+        .password-container .toggle-password {
+            position: absolute;
+            right: 12px; /* Tăng nhẹ khoảng cách từ mép phải */
+            top: 50%;
+            transform: translateY(-100%); /* Nhích icon lên một chút */
+            cursor: pointer;
+            font-size: 12px; /* Giảm nhẹ kích thước icon cho tinh tế */
+            color: #6c757d;
+        }
+
+        .password-container .toggle-password:hover {
+            color: #007bff;
+        }
     </style>
 </head>
 <body>
@@ -118,7 +148,12 @@
                     </div>
 
                     <input type="email" name="email" placeholder="your e-mail" class="box" required>
-                    <input type="password" name="password" placeholder="your password" class="box" required>
+                    <div class="error-message" id="email-error">Email không hợp lệ. Vui lòng nhập đúng định dạng email (bao gồm @).</div>
+                    
+                    <div class="password-container">
+                        <input type="password" name="password" placeholder="your password" class="box" required id="password">
+                        <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                    </div>
 
                     <div class="g-recaptcha" data-sitekey="6LcoxlUrAAAAAEsnaYQ7YBPfnVCu83AD6VHiqFpj"></div>
 
@@ -136,8 +171,45 @@
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         const form = document.querySelector("form");
+                        const emailInput = document.querySelector("input[name='email']");
+                        const emailError = document.querySelector("#email-error");
+                        const passwordInput = document.querySelector("#password");
+                        const togglePassword = document.querySelector("#togglePassword");
 
+                        // Real-time email validation
+                        emailInput.addEventListener("input", function () {
+                            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                            const emailValue = emailInput.value.trim();
+
+                            if (!emailRegex.test(emailValue)) {
+                                emailError.style.display = "block";
+                            } else {
+                                emailError.style.display = "none";
+                            }
+                        });
+
+                        // Toggle password visibility
+                        togglePassword.addEventListener("click", function () {
+                            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+                            passwordInput.setAttribute("type", type);
+                            this.classList.toggle("fa-eye");
+                            this.classList.toggle("fa-eye-slash");
+                        });
+
+                        // Form submission validation
                         form.addEventListener("submit", function (event) {
+                            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                            const emailValue = emailInput.value.trim();
+
+                            if (!emailRegex.test(emailValue)) {
+                                event.preventDefault();
+                                emailError.style.display = "block";
+                                emailInput.focus();
+                                return;
+                            } else {
+                                emailError.style.display = "none";
+                            }
+
                             const response = grecaptcha.getResponse();
                             if (response.length === 0) {
                                 event.preventDefault();
@@ -157,5 +229,3 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
