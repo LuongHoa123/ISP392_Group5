@@ -32,7 +32,7 @@
 
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input type="email" class="form-control" th:field="*{email}" placeholder="Email"
+                                <input type="email" class="form-control" th:field="*{email}" placeholder="Email" readonly
                                        required>
                                 <div class="text-danger" th:if="${#fields.hasErrors('email')}"
                                      th:errors="*{email}"></div>
