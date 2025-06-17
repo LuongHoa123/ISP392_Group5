@@ -51,11 +51,20 @@
             padding: 20px;
             width: 280px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
         }
 
         .box:hover {
             transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .box a {
+            color: inherit;
+        }
+
+        .box a:hover {
+            text-decoration: none;
         }
 
         .box img {
@@ -128,13 +137,14 @@
 
             <div class="box-container">
                 <div class="box" th:each="doctor : ${doctors}">
-                    <img th:src="@{/assets/Doc1.jpg}" alt="Doctor Image">
-                    <h3 th:text="${doctor.firstName + ' ' + doctor.lastName}">Tên bác sĩ</h3>
-                    <span class="specialization" th:text="${doctor.specialization}">Chuyên môn</span>
-                    <p th:text="'Email: ' + ${doctor.email}"></p>
-                    <p th:text="'SĐT: ' + ${doctor.phoneNumber}"></p>
-                    <p th:text="'Kinh nghiệm: ' + ${doctor.yoe} + ' năm'"></p>
-
+                    <a th:href="@{/doctors/{id}(id=${doctor.id})}" class="text-decoration-none">
+                        <img th:src="@{/assets/Doc1.jpg}" alt="Doctor Image">
+                        <h3 th:text="${doctor.firstName + ' ' + doctor.lastName}">Tên bác sĩ</h3>
+                        <span class="specialization" th:text="${doctor.specialization}">Chuyên môn</span>
+                        <p th:text="'Email: ' + ${doctor.email}"></p>
+                        <p th:text="'SĐT: ' + ${doctor.phoneNumber}"></p>
+                        <p th:text="'Kinh nghiệm: ' + ${doctor.yoe} + ' năm'"></p>
+                    </a>
                     <div class="share">
                         <a href="#"><i class="fa-brands fa-facebook"></i></a>
                         <a href="#"><i class="fa-brands fa-twitter"></i></a>

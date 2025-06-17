@@ -58,4 +58,13 @@ public class DoctorController {
         return "doctors";
     }
 
+    @GetMapping("/{id}")
+    public String getDoctorDetails(@PathVariable Long id, Model model) {
+        DoctorEntity doctor = doctorRepository.findById(id).orElse(null);
+        if (doctor == null) {
+            return "redirect:/doctors";
+        }
+        model.addAttribute("doctor", doctor);
+        return "doctor-details";
+    }
 }
