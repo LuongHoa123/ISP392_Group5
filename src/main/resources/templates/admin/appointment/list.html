@@ -11,12 +11,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-<th:block th:replace="layout/recep-layout :: layout">
+<th:block th:replace="layout/admin-layout :: layout">
     <th:block th:fragment="pageContent">
         <div class="container mt-4">
             <h3 class="mb-3">Lịch hẹn khám</h3>
 
-            <form method="get" th:action="@{/recep/appointment}" class="form-inline mb-3">
+            <form method="get" th:action="@{/admin/appointment}" class="form-inline mb-3">
                 <input type="text" class="form-control mr-2" name="searchKeyword" placeholder="Tìm kiếm..."
                        th:value="${searchKeyword}" style="min-width: 300px;">
                 <button type="submit" class="btn btn-primary">
@@ -38,7 +38,6 @@
                             <th>Phòng</th>
                             <th>Chi tiết</th>
                             <th>Trạng thái</th>
-                            <th>Chỉ định</th>
                             <th></th>
                         </tr>
                         </thead>
@@ -77,19 +76,8 @@
                             </td>
                             <td>
                                 <div class="d-flex flex-column gap-2">
-        <span th:if="${appt.status != 1}">
-            <button type="button" class="btn btn-sm btn-success mb-1"
-                    data-toggle="modal"
-                    th:attr="data-target='#assignModal_' + ${appt.id}">
-                Chỉ định
-            </button>
-        </span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex flex-column gap-2">
                                     <form th:if="${appt.status == -1}"
-                                          th:action="@{/recep/appointment/delete}" method="post"
+                                          th:action="@{/admin/appointment/delete}" method="post"
                                           onsubmit="return confirm('Bạn có chắc chắn muốn xoá lịch hẹn này?')">
                                         <input type="hidden" name="appointmentId" th:value="${appt.id}"/>
                                         <button type="submit" class="btn btn-sm btn-danger">Xoá</button>
@@ -99,61 +87,6 @@
                         </tr>
                         </tbody>
                     </table>
-                    <div th:each="appt : ${appointments}">
-                        <div class="modal fade" th:id="'assignModal_' + ${appt.id}" tabindex="-1" role="dialog"
-                             aria-labelledby="assignModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <form th:action="@{/recep/appointment/assign}" method="post" class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Chỉ định bác sĩ</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span>&times;</span>
-                                        </button>
-                                    </div>
-
-                                    <div class="modal-body">
-                                        <input type="hidden" name="appointmentId" th:value="${appt.id}"/>
-
-                                        <div class="alert alert-danger"
-                                             th:if="${assignErrorId != null and assignErrorId == appt.id}"
-                                             th:text="${assignErrorMsg}">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Bác sĩ</label>
-                                            <select class="form-control" name="doctorId" required>
-                                                <option th:each="doc : ${doctors}" th:value="${doc.id}"
-                                                        th:text="${doc.firstName + ' ' + doc.lastName + ' - Chuyên khoa: ' + doc.specialization}"></option>
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Phòng</label>
-                                            <select class="form-control" name="roomId" required>
-                                                <option th:each="room : ${rooms}" th:value="${room.id}"
-                                                        th:text="${room.roomName}"></option>
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Thời gian khám</label>
-                                            <input type="datetime-local" class="form-control"
-                                                   name="appointmentDateTime"
-                                                   th:value="${(assignErrorId != null && assignErrorId == appt.id and assignTimeError != null)
-                               ? #temporals.format(assignTimeError, 'yyyy-MM-dd''T''HH:mm')
-                               : #temporals.format(appt.appointmentDateTime, 'yyyy-MM-dd''T''HH:mm')}" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary">Xác nhận</button>
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
 
                     <div th:each="appt : ${appointments}">
                         <div class="modal fade"
@@ -249,18 +182,18 @@
                         <ul class="pagination justify-content-center mt-3">
                             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/recep/appointment(page=${currentPage - 1}, searchKeyword=${searchKeyword})}">Trước</a>
+                                   th:href="@{/admin/appointment(page=${currentPage - 1}, searchKeyword=${searchKeyword})}">Trước</a>
                             </li>
                             <li class="page-item"
                                 th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                                 th:classappend="${i == currentPage} ? 'active'">
                                 <a class="page-link"
-                                   th:href="@{/recep/appointment(page=${i}, searchKeyword=${searchKeyword})}"
+                                   th:href="@{/admin/appointment(page=${i}, searchKeyword=${searchKeyword})}"
                                    th:text="${i + 1}"></a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/recep/appointment(page=${currentPage + 1}, searchKeyword=${searchKeyword})}">Sau</a>
+                                   th:href="@{/admin/appointment(page=${currentPage + 1}, searchKeyword=${searchKeyword})}">Sau</a>
                             </li>
                         </ul>
                     </nav>

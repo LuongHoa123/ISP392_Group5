@@ -1,15 +1,10 @@
-package com.ISP392.demo.controller.recep;
+package com.ISP392.demo.controller.admin;
 
 import com.ISP392.demo.entity.AppointmentEntity;
-import com.ISP392.demo.entity.PatientEntity;
-import com.ISP392.demo.enums.GenderEnum;
 import com.ISP392.demo.repository.AppointmentRepository;
 import com.ISP392.demo.repository.DoctorRepository;
-import com.ISP392.demo.repository.PatientRepository;
 import com.ISP392.demo.repository.RoomRepository;
-import com.ISP392.demo.service.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,15 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/recep/appointment")
-public class RecepAppointmentController {
-
+@RequestMapping("/admin/appointment")
+public class AdminAppointmentController {
 
     @Autowired
     private AppointmentRepository appointmentRepository;
@@ -74,56 +66,7 @@ public class RecepAppointmentController {
         model.addAttribute("doctors", doctorRepository.findAll());
         model.addAttribute("rooms", roomRepository.findAll());
 
-        return "recep/appointment/list";
-    }
-
-    @Autowired
-    private EmailSenderService emailSenderService;
-
-    @PostMapping("/assign")
-    public String assignDoctor(@RequestParam Long appointmentId,
-                               @RequestParam Long doctorId,
-                               @RequestParam Long roomId,
-                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime appointmentDateTime,
-                               RedirectAttributes redirectAttributes) {
-
-        AppointmentEntity appointment = appointmentRepository.findById(appointmentId).orElse(null);
-        if (appointment == null || appointment.getStatus() == 1 || appointment.getStatus() == 0) {
-            return "redirect:/recep/appointment";
-        }
-
-        boolean doctorBusy = appointmentRepository.existsByDoctorIdAndAppointmentDateTime(doctorId, appointmentDateTime);
-        boolean roomBusy = appointmentRepository.existsByRoomIdAndAppointmentDateTime(roomId, appointmentDateTime);
-
-        if (doctorBusy || roomBusy) {
-            redirectAttributes.addFlashAttribute("assignErrorId", appointmentId);
-            redirectAttributes.addFlashAttribute("assignErrorMsg",
-                    (doctorBusy ? "Bác sĩ" : "") + (doctorBusy && roomBusy ? " và " : "") + (roomBusy ? "phòng" : "") + " đã có lịch tại thời điểm này!");
-            redirectAttributes.addFlashAttribute("assignTimeError", appointmentDateTime);
-            return "redirect:/recep/appointment";
-        }
-
-        appointment.setDoctor(doctorRepository.findById(doctorId).orElse(null));
-        appointment.setRoom(roomRepository.findById(roomId).orElse(null));
-        appointment.setAppointmentDateTime(appointmentDateTime);
-        appointment.setStatus(-1);
-
-        appointmentRepository.save(appointment);
-
-        if (appointment.getEmail() != null) {
-            String confirmLink = "http://localhost:8080/appointment/confirm?id=" + appointment.getId();
-            String message = "Xin chào " + appointment.getName() + ",\n\n"
-                    + "Bạn vừa được chỉ định lịch khám:\n"
-                    + "📅 Thời gian: " + appointmentDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) + "\n"
-                    + "👨‍⚕️ Bác sĩ: " + appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName() + "\n"
-                    + "🏥 Phòng: " + appointment.getRoom().getRoomName() + "\n\n"
-                    + "👉 Vui lòng xác nhận lịch khám tại liên kết sau: " + confirmLink + "\n\n"
-                    + "Trân trọng,\nPhòng khám";
-
-            emailSenderService.sendEmail(appointment.getEmail(), "Xác nhận lịch khám", message);
-        }
-
-        return "redirect:/recep/appointment";
+        return "admin/appointment/list";
     }
 
     @PostMapping("/delete")
@@ -137,7 +80,6 @@ public class RecepAppointmentController {
             redirectAttributes.addFlashAttribute("errorMessage", "Không thể xoá lịch hẹn.");
         }
 
-        return "redirect:/recep/appointment";
+        return "redirect:/admin/appointment";
     }
-
 }
