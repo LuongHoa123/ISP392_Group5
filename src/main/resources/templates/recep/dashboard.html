@@ -20,12 +20,12 @@
             <h3 class="page-title">
               <span class="page-title-icon bg-gradient-primary text-white me-2">
                 <i class="mdi mdi-home"></i>
-              </span> Trang chủ lễ tân
+              </span> Dashboard
             </h3>
             <nav aria-label="breadcrumb">
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item active" aria-current="page">
-                        <span></span>Tổng quan <i
+                        <span></span>Overview <i
                             class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
                     </li>
                 </ul>
@@ -68,8 +68,162 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-12 grid-margin">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">5 Lịch hẹn chờ khám mới nhất</h4>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Họ tên</th>
+                                    <th>Ngày giờ</th>
+                                    <th>Lý do</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="a, stat : ${appointmentsWaiting}">
+                                    <td th:text="${stat.index + 1}"></td>
+                                    <td th:text="${a.name}"></td>
+                                    <td th:text="${#temporals.format(a.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></td>
+                                    <td th:text="${a.reason}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 grid-margin">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Lịch hẹn chờ xác nhận</h4>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Họ tên</th>
+                                    <th>Ngày giờ</th>
+                                    <th>Lý do</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="a, stat : ${appointmentsPending}">
+                                    <td th:text="${stat.index + 1}"></td>
+                                    <td th:text="${a.name}"></td>
+                                    <td th:text="${#temporals.format(a.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></td>
+                                    <td th:text="${a.reason}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Lịch hẹn theo tháng trong năm</h4>
+                        <canvas id="appointmentsBarChart" height="120"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Thống kê lịch hẹn trong tháng này</h4>
+                        <canvas id="appointmentsPieChart" height="240"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </th:block>
 </th:block>
+<script th:inline="javascript">
+    let barChartRawData = /*[[${appointmentsByMonth}]]*/ [];
+    let barLabels = [];
+    let barData = [];
+
+    barChartRawData.forEach(item => {
+        barLabels.push('Tháng ' + item[0]);
+        barData.push(item[1]);
+    });
+
+    new Chart(document.getElementById("appointmentsBarChart"), {
+        type: 'bar',
+        data: {
+            labels: barLabels,
+            datasets: [{
+                label: 'Số lịch hẹn',
+                data: barData,
+                backgroundColor: '#4b49ac'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Số lượng'
+                    }
+                }
+            }
+        }
+    });
+
+    let pieChartRawData = /*[[${appointmentsPie}]]*/ [];
+    let pieLabelsMap = {
+        '-1': 'Chờ xác nhận',
+        '0': 'Đã hủy',
+        '1': 'Đã khám',
+        '2': 'Chờ khám'
+    };
+
+    let pieLabels = [];
+    let pieData = [];
+
+    pieChartRawData.forEach(item => {
+        let status = item[0];
+        pieLabels.push(pieLabelsMap[status]);
+        pieData.push(item[1]);
+    });
+
+    new Chart(document.getElementById("appointmentsPieChart"), {
+        type: 'pie',
+        data: {
+            labels: pieLabels,
+            datasets: [{
+                data: pieData,
+                backgroundColor: ['#ffc107', '#dc3545', '#28a745', '#17a2b8']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+</script>
 
 <script th:src="@{/assets_admin/vendors/js/vendor.bundle.base.js}"></script>
 <script th:src="@{/assets_admin/vendors/chart.js/Chart.min.js}"></script>

@@ -5,6 +5,8 @@ import com.ISP392.demo.entity.DoctorEntity;
 import com.ISP392.demo.entity.PatientEntity;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -18,4 +20,27 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
     List<AppointmentEntity> findByPatient(PatientEntity patientEntity);
     boolean existsByDoctorIdAndAppointmentDateTime(Long doctorId, LocalDateTime dateTime);
     boolean existsByRoomIdAndAppointmentDateTime(Long roomId, LocalDateTime dateTime);
+
+    List<AppointmentEntity> findTop5ByStatusOrderByAppointmentDateTimeDesc(Integer status);
+
+    List<AppointmentEntity> findTop10ByStatusOrderByAppointmentDateTimeDesc(Integer status);
+
+    @Query("SELECT MONTH(a.appointmentDateTime), COUNT(a) " +
+            "FROM AppointmentEntity a " +
+            "WHERE YEAR(a.appointmentDateTime) = YEAR(CURRENT_DATE) " +
+            "GROUP BY MONTH(a.appointmentDateTime)")
+    List<Object[]> countAppointmentsByMonthInCurrentYear();
+
+    @Query("SELECT a.status, COUNT(a) " +
+            "FROM AppointmentEntity a " +
+            "WHERE MONTH(a.appointmentDateTime) = MONTH(CURRENT_DATE) AND YEAR(a.appointmentDateTime) = YEAR(CURRENT_DATE) " +
+            "GROUP BY a.status")
+    List<Object[]> countAppointmentStatusForCurrentMonth();
+
+    @Query("SELECT MONTH(a.appointmentDateTime), COUNT(a) " +
+            "FROM AppointmentEntity a " +
+            "WHERE YEAR(a.appointmentDateTime) = :year " +
+            "GROUP BY MONTH(a.appointmentDateTime)")
+    List<Object[]> countAppointmentsByMonth(@Param("year") int year);
+
 }
