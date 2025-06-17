@@ -36,24 +36,21 @@ public class DoctorController {
     public String searchDoctors(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String specialization,
-            @RequestParam(required = false) Integer minYoe,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             Model model
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("firstName").ascending());
 
-        Page<DoctorEntity> doctorPage = doctorRepository.searchByMultipleFilters(keyword, specialization, minYoe, pageable);
+        Page<DoctorEntity> doctorPage = doctorRepository.searchByMultipleFilters(keyword, specialization, pageable);
 
         model.addAttribute("doctors", doctorPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", doctorPage.getTotalPages());
         model.addAttribute("keyword", keyword);
         model.addAttribute("specialization", specialization);
-        model.addAttribute("minYoe", minYoe);
         model.addAttribute("baseUrl", "/doctors/search?keyword=" + (keyword != null ? keyword : "")
-                + "&specialization=" + (specialization != null ? specialization : "")
-                + "&minYoe=" + (minYoe != null ? minYoe : ""));
+                + "&specialization=" + (specialization != null ? specialization : ""));
 
         return "doctors";
     }

@@ -34,8 +34,6 @@ public class DoctorEntity extends AbstractEntity {
 
     private String avatar;
 
-    private Integer yoe;
-
 	@ManyToOne
 	@JoinColumn(name = "userId")
 	@EqualsAndHashCode.Exclude

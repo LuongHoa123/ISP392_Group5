@@ -58,12 +58,6 @@
                                 <div id="phoneError" class="text-danger"></div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="yoe">Số năm kinh nghiệm</label>
-                                <input type="number" class="form-control" th:field="*{yoe}" name="yoe"
-                                       placeholder="Số năm kinh nghiệm" readonly>
-                                <div id="yoeError" class="text-danger"></div>
-                            </div>
 
                             <div class="form-group">
                                 <label>Email (không thể sửa)</label>
@@ -108,7 +102,6 @@
             document.getElementById('firstNameError').textContent = '';
             document.getElementById('lastNameError').textContent = '';
             document.getElementById('phoneError').textContent = '';
-            document.getElementById('yoeError').textContent = '';
 
             const firstName = document.querySelector("[name='firstName']").value.trim();
             const namePattern = /^[a-zA-Z\s]+$/;
@@ -133,15 +126,6 @@
                 isValid = false;
             } else if (!phonePattern.test(phoneNumber)) {
                 document.getElementById('phoneError').textContent = 'Số điện thoại không hợp lệ. Phải bắt đầu bằng số 0 và có 10 chữ số.';
-                isValid = false;
-            }
-
-            const yoe = document.querySelector("[name='yoe']").value.trim();
-            if (!yoe) {
-                document.getElementById('yoeError').textContent = 'Số năm kinh nghiệm không được để trống.';
-                isValid = false;
-            } else if (isNaN(yoe) || yoe < 0) {
-                document.getElementById('yoeError').textContent = 'Số năm kinh nghiệm không hợp lệ.';
                 isValid = false;
             }
 

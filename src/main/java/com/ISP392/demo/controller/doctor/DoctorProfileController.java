@@ -76,7 +76,6 @@ public class DoctorProfileController {
 
         doctor.setPhoneNumber(formDoctor.getPhoneNumber());
         doctor.setSpecialization(formDoctor.getSpecialization());
-        doctor.setYoe(formDoctor.getYoe());
 
         // Xử lý upload file PDF
         if (file != null && !file.isEmpty()) {

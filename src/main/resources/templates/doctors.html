@@ -122,13 +122,7 @@
     <input style="font-size: 16px;" class="form-control input-large" type="text" name="keyword"
            placeholder="Tên, chuyên môn, email..." th:value="${keyword}">
 </div>
-                    <!-- <div class="col-auto">
-                        <input type="text" class="form-control" name="specialization" placeholder="Nhập chuyên khoa"
-                               th:value="${specialization}">
-                    </div>
-                    <div class="col-auto">
-                        <input class="form-control" type="number" name="minYoe" min="0" placeholder="Kinh nghiệm ≥" th:value="${minYoe}">
-                    </div> -->
+
                     <div class="col-auto">
                         <button class="btn btn-primary" type="submit">Tìm kiếm</button>
                     </div>
@@ -143,7 +137,7 @@
                         <span class="specialization" th:text="${doctor.specialization}">Chuyên môn</span>
                         <p th:text="'Email: ' + ${doctor.email}"></p>
                         <p th:text="'SĐT: ' + ${doctor.phoneNumber}"></p>
-                        <p th:text="'Kinh nghiệm: ' + ${doctor.yoe} + ' năm'"></p>
+                        <p th:text="${T(java.time.Period).between(doctor.createdAt.toLocalDate(), T(java.time.LocalDate).now()).getYears() + 1} + ' năm kinh nghiệm'"></p>
                     </a>
                     <div class="share">
                         <a href="#"><i class="fa-brands fa-facebook"></i></a>

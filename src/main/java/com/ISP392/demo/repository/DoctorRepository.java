@@ -25,12 +25,10 @@ public interface DoctorRepository extends JpaRepository<DoctorEntity, Long> {
             "(:keyword IS NULL OR LOWER(CONCAT(d.firstName, ' ', d.lastName)) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "   OR LOWER(d.specialization) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "   OR LOWER(d.email) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
-            "AND (:specialization IS NULL OR LOWER(d.specialization) LIKE LOWER(CONCAT('%', :specialization, '%'))) " +
-            "AND (:minYoe IS NULL OR d.yoe >= :minYoe)")
+            "AND (:specialization IS NULL OR LOWER(d.specialization) LIKE LOWER(CONCAT('%', :specialization, '%'))) ")
     Page<DoctorEntity> searchByMultipleFilters(
             @Param("keyword") String keyword,
             @Param("specialization") String specialization,
-            @Param("minYoe") Integer minYoe,
             Pageable pageable
     );
 
