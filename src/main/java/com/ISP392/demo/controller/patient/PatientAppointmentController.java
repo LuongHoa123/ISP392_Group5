@@ -1,5 +1,6 @@
 package com.ISP392.demo.controller.patient;
 
+import com.ISP392.demo.dto.AppointmentDto;
 import com.ISP392.demo.entity.AppointmentEntity;
 import com.ISP392.demo.entity.PatientEntity;
 import com.ISP392.demo.entity.UserEntity;
@@ -10,13 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 @RequestMapping("/patient/appointment")
@@ -84,6 +83,59 @@ public class PatientAppointmentController {
         appointmentRepository.save(appointment);
 
         return "redirect:/patient/appointment?success=true";
+    }
+
+    @GetMapping("/calendar")
+    public String calendar(Model model) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByEmail(username).orElse(null);
+
+        if (user == null) return "redirect:/index";
+
+        PatientEntity patient = user.getPatients().stream().findFirst().orElse(null);
+
+        if (patient == null) return "redirect:/";
+
+        List<AppointmentEntity> appointments = appointmentRepository.findByPatient(patient);
+        model.addAttribute("appointments", appointments);
+        System.out.println(appointments);
+
+        return "patient/history";
+    }
+
+    @GetMapping("/calendar/data")
+    @ResponseBody
+    public List<AppointmentDto> getAppointmentsJson() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByEmail(username).orElse(null);
+        if (user == null) return List.of();
+
+        PatientEntity patient = user.getPatients().stream().findFirst().orElse(null);
+        if (patient == null) return List.of();
+
+        List<AppointmentEntity> appointments = appointmentRepository.findByPatient(patient);
+
+        return appointments.stream().map(appt -> {
+            AppointmentDto dto = new AppointmentDto();
+            dto.setAppointmentDateTime(appt.getAppointmentDateTime());
+            dto.setReason(appt.getReason());
+            dto.setName(appt.getName());
+            dto.setPhoneNumber(appt.getPhoneNumber());
+            dto.setEmail(appt.getEmail());
+            dto.setAge(appt.getAge());
+            dto.setStatus(appt.getStatus());
+
+            if (appt.getRoom() != null) {
+                dto.setRoomName(appt.getRoom().getRoomName());
+            }
+
+            if (appt.getDoctor() != null) {
+                dto.setDoctorName(appt.getDoctor().getFirstName() + " " + appt.getDoctor().getLastName());
+                dto.setDoctorSpecialization(appt.getDoctor().getSpecialization());
+            }
+
+            return dto;
+        }).toList();
     }
 
 }

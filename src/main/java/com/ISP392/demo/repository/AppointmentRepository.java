@@ -15,6 +15,7 @@ import java.util.Optional;
 @SpringBootApplication
 public interface AppointmentRepository extends JpaRepository<AppointmentEntity, Long> {
     List<AppointmentEntity> findByDoctor(DoctorEntity doctorEntity);
+    List<AppointmentEntity> findByPatient(PatientEntity patientEntity);
     boolean existsByDoctorIdAndAppointmentDateTime(Long doctorId, LocalDateTime dateTime);
     boolean existsByRoomIdAndAppointmentDateTime(Long roomId, LocalDateTime dateTime);
 }

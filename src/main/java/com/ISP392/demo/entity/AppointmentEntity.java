@@ -33,7 +33,6 @@ public class AppointmentEntity extends AbstractEntity {
 	@JsonBackReference
 	private PatientEntity patient;
 
-
     @ManyToOne
     @JoinColumn(name = "doctorId")
     @EqualsAndHashCode.Exclude
