@@ -19,6 +19,10 @@
             <form method="get" th:action="@{/doctor/appointment}" class="form-inline mb-3">
                 <input type="text" class="form-control mr-2" name="keyword" placeholder="Tìm kiếm..."
                        th:value="${keyword}" style="min-width: 300px;">
+
+                <input type="date" class="form-control mr-2" name="date"
+                       th:value="${date != null ? #temporals.format(date, 'yyyy-MM-dd') : ''}">
+
                 <button type="submit" class="btn btn-primary">
                     <i class="mdi mdi-magnify"></i> Tìm kiếm
                 </button>
@@ -124,18 +128,18 @@
                         <ul class="pagination justify-content-center mt-3">
                             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/doctor/appointment(page=${currentPage - 1}, searchKeyword=${searchKeyword})}">Trước</a>
+                                   th:href="@{/doctor/appointment(page=${currentPage - 1}, searchKeyword=${searchKeyword}, date=${#temporals.format(date, 'yyyy-MM-dd')})}">Trước</a>
                             </li>
                             <li class="page-item"
                                 th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                                 th:classappend="${i == currentPage} ? 'active'">
                                 <a class="page-link"
-                                   th:href="@{/doctor/appointment(page=${i}, searchKeyword=${searchKeyword})}"
+                                   th:href="@{/doctor/appointment(page=${i}, searchKeyword=${searchKeyword}, date=${#temporals.format(date, 'yyyy-MM-dd')})}"
                                    th:text="${i + 1}"></a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/doctor/appointment(page=${currentPage + 1}, searchKeyword=${searchKeyword})}">Sau</a>
+                                   th:href="@{/doctor/appointment(page=${currentPage + 1}, searchKeyword=${searchKeyword}, date=${#temporals.format(date, 'yyyy-MM-dd')})}">Sau</a>
                             </li>
                         </ul>
                     </nav>

@@ -3,12 +3,15 @@ package com.ISP392.demo.entity;
 import com.ISP392.demo.enums.GenderEnum;
 import com.ISP392.demo.utils.DateUtils;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Table(name = "Patients",
@@ -42,4 +45,10 @@ public class PatientEntity extends AbstractEntity {
 	@EqualsAndHashCode.Exclude
 	@JsonBackReference
 	private UserEntity user;
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonManagedReference
+    private Set<AppointmentEntity> appointments;
 }

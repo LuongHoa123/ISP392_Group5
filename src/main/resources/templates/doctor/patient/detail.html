@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết bệnh nhân</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+</head>
+<body>
+<th:block th:replace="layout/doctor-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container mt-4">
+            <h3>Chi tiết bệnh nhân</h3>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <p><strong>Họ:</strong> <span th:text="${patient.firstName}"></span></p>
+                    <p><strong>Tên:</strong> <span th:text="${patient.lastName}"></span></p>
+                    <p><strong>Ngày sinh:</strong> <span th:text="${#temporals.format(patient.dateOfBirth, 'dd/MM/yyyy')}"></span></p>
+                    <p><strong>Giới tính:</strong>
+                        <span th:text="${patient.gender == 'MALE' ? 'Nam' : 'Nữ'}"></span>
+                    </p>
+                    <p><strong>Địa chỉ:</strong> <span th:text="${patient.address} ?: '---'"></span></p>
+                    <p><strong>Số điện thoại:</strong> <span th:text="${patient.phone}"></span></p>
+                </div>
+            </div>
+
+            <h4>Lịch sử khám bệnh</h4>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Thời gian hẹn</th>
+                    <th>Lý do khám</th>
+                    <th>Phòng</th>
+                    <th>Trạng thái</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="appt, iterStat : ${appointments}">
+                    <td th:text="${iterStat.index + 1}"></td>
+                    <td th:text="${#temporals.format(appt.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td th:text="${appt.reason}"></td>
+                    <td th:text="${appt.room != null ? appt.room.roomName : '---'}"></td>
+                    <td>
+                        <span th:switch="${appt.status}">
+                            <span th:case="-1" class="badge badge-warning">Chờ xác nhận</span>
+                            <span th:case="0" class="badge badge-secondary">Đã huỷ</span>
+                            <span th:case="1" class="badge badge-success">Đã khám</span>
+                            <span th:case="2" class="badge badge-info">Đang chờ khám</span>
+                            <span th:case="*">Không rõ</span>
+                        </span>
+                    </td>
+                </tr>
+                <tr th:if="${appointments.size() == 0}">
+                    <td colspan="5" class="text-center">Chưa có lịch sử khám</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <a th:href="@{/doctor/patient}" class="btn btn-secondary mt-3">Quay lại</a>
+        </div>
+    </th:block>
+</th:block>
+</body>
+</html>
