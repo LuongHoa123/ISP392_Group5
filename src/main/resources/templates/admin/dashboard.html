@@ -47,7 +47,8 @@
             <div class="col-md-4 stretch-card grid-margin">
                 <div class="card bg-gradient-info card-img-holder text-white">
                     <div class="card-body">
-                        <img th:src="@{/assets_admin/images/dashboard/circle.svg}" class="card-img-absolute" alt="circle-image"/>
+                        <img th:src="@{/assets_admin/images/dashboard/circle.svg}" class="card-img-absolute"
+                             alt="circle-image"/>
                         <h4 class="font-weight-normal mb-3">Số bác sĩ <i
                                 class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
                         </h4>
@@ -58,7 +59,8 @@
             <div class="col-md-4 stretch-card grid-margin">
                 <div class="card bg-gradient-success card-img-holder text-white">
                     <div class="card-body">
-                        <img th:src="@{/assets_admin/images/dashboard/circle.svg}" class="card-img-absolute" alt="circle-image"/>
+                        <img th:src="@{/assets_admin/images/dashboard/circle.svg}" class="card-img-absolute"
+                             alt="circle-image"/>
                         <h4 class="font-weight-normal mb-3">Số tài khoản <i
                                 class="mdi mdi-diamond mdi-24px float-right"></i>
                         </h4>
@@ -67,6 +69,90 @@
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-12 grid-margin">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">5 Lịch hẹn chờ khám mới nhất</h4>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Họ tên</th>
+                                    <th>Ngày giờ</th>
+                                    <th>Lý do</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="a, stat : ${appointmentsWaiting}">
+                                    <td th:text="${stat.index + 1}"></td>
+                                    <td th:text="${a.name}"></td>
+                                    <td th:text="${#temporals.format(a.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></td>
+                                    <td th:text="${a.reason}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 grid-margin">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Lịch hẹn chờ xác nhận</h4>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Họ tên</th>
+                                    <th>Ngày giờ</th>
+                                    <th>Lý do</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="a, stat : ${appointmentsPending}">
+                                    <td th:text="${stat.index + 1}"></td>
+                                    <td th:text="${a.name}"></td>
+                                    <td th:text="${#temporals.format(a.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></td>
+                                    <td th:text="${a.reason}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Lịch hẹn theo tháng trong năm</h4>
+                        <canvas id="appointmentsBarChart" height="120"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Thống kê lịch hẹn trong tháng này</h4>
+                        <canvas id="appointmentsPieChart" height="240"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-7 grid-margin stretch-card">
                 <div class="card">
@@ -163,49 +249,7 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-12 grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Recent Updates</h4>
-                        <div class="d-flex">
-                            <div class="d-flex align-items-center me-4 text-muted font-weight-light">
-                                <i class="mdi mdi-account-outline icon-sm me-2"></i>
-                                <span>jack Menqu</span>
-                            </div>
-                            <div class="d-flex align-items-center text-muted font-weight-light">
-                                <i class="mdi mdi-clock icon-sm me-2"></i>
-                                <span>October 3rd, 2018</span>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-6 pe-1">
-                                <img src="assets/images/dashboard/img_1.jpg" class="mb-2 mw-100 w-100 rounded"
-                                     alt="image">
-                                <img src="assets/images/dashboard/img_4.jpg" class="mw-100 w-100 rounded" alt="image">
-                            </div>
-                            <div class="col-6 ps-1">
-                                <img src="assets/images/dashboard/img_2.jpg" class="mb-2 mw-100 w-100 rounded"
-                                     alt="image">
-                                <img src="assets/images/dashboard/img_3.jpg" class="mw-100 w-100 rounded" alt="image">
-                            </div>
-                        </div>
-                        <div class="d-flex mt-5 align-items-top">
-                            <img src="assets/images/faces/face3.jpg" class="img-sm rounded-circle me-3" alt="image">
-                            <div class="mb-0 flex-grow">
-                                <h5 class="me-2 mb-2">School Website - Authentication Module.</h5>
-                                <p class="mb-0 font-weight-light">It is a long established fact that a reader will be
-                                    distracted
-                                    by the readable content of a page.</p>
-                            </div>
-                            <div class="ms-auto">
-                                <i class="mdi mdi-heart-outline text-muted"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         <div class="row">
             <div class="col-md-7 grid-margin stretch-card">
                 <div class="card">
@@ -365,7 +409,76 @@
 
     </th:block>
 </th:block>
+<script th:inline="javascript">
+    let barChartRawData = /*[[${appointmentsByMonth}]]*/ [];
+    let barLabels = [];
+    let barData = [];
 
+    barChartRawData.forEach(item => {
+        barLabels.push('Tháng ' + item[0]);
+        barData.push(item[1]);
+    });
+
+    new Chart(document.getElementById("appointmentsBarChart"), {
+        type: 'bar',
+        data: {
+            labels: barLabels,
+            datasets: [{
+                label: 'Số lịch hẹn',
+                data: barData,
+                backgroundColor: '#4b49ac'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Số lượng'
+                    }
+                }
+            }
+        }
+    });
+
+    let pieChartRawData = /*[[${appointmentsPie}]]*/ [];
+    let pieLabelsMap = {
+        '-1': 'Chờ xác nhận',
+        '0': 'Đã hủy',
+        '1': 'Đã khám',
+        '2': 'Chờ khám'
+    };
+
+    let pieLabels = [];
+    let pieData = [];
+
+    pieChartRawData.forEach(item => {
+        let status = item[0];
+        pieLabels.push(pieLabelsMap[status]);
+        pieData.push(item[1]);
+    });
+
+    new Chart(document.getElementById("appointmentsPieChart"), {
+        type: 'pie',
+        data: {
+            labels: pieLabels,
+            datasets: [{
+                data: pieData,
+                backgroundColor: ['#ffc107', '#dc3545', '#28a745', '#17a2b8']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+</script>
 <script th:src="@{/assets_admin/vendors/js/vendor.bundle.base.js}"></script>
 <script th:src="@{/assets_admin/vendors/chart.js/Chart.min.js}"></script>
 <script th:src="@{/assets_admin/js/jquery.cookie.js}" type="text/javascript"></script>
