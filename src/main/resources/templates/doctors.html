@@ -17,9 +17,16 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         .specialization {
             font-weight: bold;
             color: #007bff;
@@ -27,6 +34,7 @@
             display: inline-block;
             margin-top: 5px;
         }
+
         .doctors .heading {
             text-align: center;
             font-size: 2.2rem;
@@ -117,12 +125,27 @@
         <section class="doctors" id="doc">
             <h1 class="heading">Đội ngũ bác sĩ</h1>
             <div class="container my-4">
-                <form class="form-inline row justify-content-center" th:action="@{/doctors/search}" method="get" style="gap: 10px">
+                <form class="form-inline row justify-content-center" th:action="@{/doctors/search}" method="get"
+                      style="gap: 10px">
                     <div class="col-auto">
-    <input style="font-size: 16px;" class="form-control input-large" type="text" name="keyword"
-           placeholder="Tên, chuyên môn, email..." th:value="${keyword}">
-</div>
-
+                        <input style="font-size: 16px;" class="form-control input-large" type="text" name="keyword"
+                               placeholder="Tên, chuyên môn, email..." th:value="${keyword}">
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-control" name="specialization" style="font-size: 16px;">
+                            <option value="">Tất cả chuyên khoa</option>
+                            <option value="Da liễu">Da liễu</option>
+                            <option value="Ngoại khoa">Ngoại khoa</option>
+                            <option value="Nhi khoa">Nhi khoa</option>
+                            <option value="Nội khoa">Nội khoa</option>
+                            <option value="Răng – Hàm – Mặt">Răng – Hàm – Mặt</option>
+                            <option value="Sản khoa">Sản khoa</option>
+                            <option value="Tai – Mũi – Họng">Tai – Mũi – Họng</option>
+                            <option value="Thần kinh">Thần kinh</option>
+                            <option value="Tim mạch">Tim mạch</option>
+                            <option value="Ung bướu">Ung bướu</option>
+                        </select>
+                    </div>
                     <div class="col-auto">
                         <button class="btn btn-primary" type="submit">Tìm kiếm</button>
                     </div>
@@ -134,7 +157,7 @@
                     <a th:href="@{/doctors/{id}(id=${doctor.id})}" class="text-decoration-none">
                         <img th:src="@{/assets/Doc1.jpg}" alt="Doctor Image">
                         <h3 th:text="${doctor.firstName + ' ' + doctor.lastName}">Tên bác sĩ</h3>
-                        <span class="specialization" th:text="${doctor.specialization}">Chuyên môn</span>
+                        <span class="specialization" th:text="${doctor.specialization}">Chuyên khoa</span>
                         <p th:text="'Email: ' + ${doctor.email}"></p>
                         <p th:text="'SĐT: ' + ${doctor.phoneNumber}"></p>
                         <p th:text="${T(java.time.Period).between(doctor.createdAt.toLocalDate(), T(java.time.LocalDate).now()).getYears() + 1} + ' năm kinh nghiệm'"></p>

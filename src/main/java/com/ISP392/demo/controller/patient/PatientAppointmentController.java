@@ -178,7 +178,7 @@ public class PatientAppointmentController {
     public ResponseEntity<?> deleteAppointment(@PathVariable Long id) {
         AppointmentEntity appt = appointmentRepository.findById(id).orElse(null);
         if (appt == null) return ResponseEntity.notFound().build();
-        if (appt.getStatus() != 0) return ResponseEntity.badRequest().body("Chỉ xóa lịch đã hủy");
+        if (appt.getStatus() != 0 && appt.getStatus() != -1) return ResponseEntity.badRequest().body("Chỉ xóa lịch đã hủy hoặc chờ xác nhận!");
 
         appointmentRepository.delete(appt);
         return ResponseEntity.ok().build();
