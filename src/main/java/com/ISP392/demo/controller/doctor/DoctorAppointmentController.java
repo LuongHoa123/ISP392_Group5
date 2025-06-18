@@ -12,6 +12,7 @@ import com.ISP392.demo.repository.RoleRepository;
 import com.ISP392.demo.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,6 +41,8 @@ public class DoctorAppointmentController {
     @GetMapping("")
     public String viewAppointmentsForDoctor(Model model,
                                             @RequestParam(value = "keyword", required = false) String keyword,
+                                            @RequestParam(value = "date", required = false)
+                                            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                             @RequestParam(value = "page", defaultValue = "0") int page,
                                             @RequestParam(value = "size", defaultValue = "5") int size) {
 
@@ -64,6 +68,12 @@ public class DoctorAppointmentController {
                     .collect(Collectors.toList());
         }
 
+        if (date != null) {
+            allAppointments = allAppointments.stream()
+                    .filter(a -> a.getAppointmentDateTime().toLocalDate().isEqual(date))
+                    .collect(Collectors.toList());
+        }
+
         int totalItems = allAppointments.size();
         int totalPages = (int) Math.ceil((double) totalItems / size);
         int start = Math.min(page * size, totalItems);
@@ -74,9 +84,11 @@ public class DoctorAppointmentController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("date", date);
 
         return "doctor/appointment/list";
     }
+
 
     @GetMapping("/{id}")
     @ResponseBody

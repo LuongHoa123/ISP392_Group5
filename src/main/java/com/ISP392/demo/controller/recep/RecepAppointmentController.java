@@ -126,6 +126,59 @@ public class RecepAppointmentController {
         return "redirect:/recep/appointment";
     }
 
+
+    @PostMapping("/add")
+    public String addAppointment(@RequestParam String name,
+                                 @RequestParam String phoneNumber,
+                                 @RequestParam String email,
+                                 @RequestParam String reason,
+                                 @RequestParam Long doctorId,
+                                 @RequestParam Long roomId,
+                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime appointmentDateTime,
+                                 RedirectAttributes redirectAttributes) {
+
+        boolean doctorBusy = appointmentRepository.existsByDoctorIdAndAppointmentDateTime(doctorId, appointmentDateTime);
+        boolean roomBusy = appointmentRepository.existsByRoomIdAndAppointmentDateTime(roomId, appointmentDateTime);
+
+        if (doctorBusy || roomBusy) {
+            redirectAttributes.addFlashAttribute("addError", true);
+            redirectAttributes.addFlashAttribute("addErrorMsg",
+                    (doctorBusy ? "Bác sĩ" : "") + (doctorBusy && roomBusy ? " và " : "") + (roomBusy ? "phòng" : "") + " đã có lịch tại thời điểm này!");
+            return "redirect:/recep/appointment";
+        }
+
+        AppointmentEntity newAppt = new AppointmentEntity();
+        newAppt.setName(name);
+        newAppt.setPhoneNumber(phoneNumber);
+        newAppt.setEmail(email);
+        newAppt.setReason(reason);
+        newAppt.setDoctor(doctorRepository.findById(doctorId).orElse(null));
+        newAppt.setRoom(roomRepository.findById(roomId).orElse(null));
+        newAppt.setAppointmentDateTime(appointmentDateTime);
+        newAppt.setStatus(-1);
+
+        appointmentRepository.save(newAppt);
+
+        if (email != null && !email.isEmpty()) {
+            String confirmLink = "http://localhost:8080/appointment/confirm?id=" + newAppt.getId();
+            String message = "Xin chào " + name + ",\n\n"
+                    + "Bạn vừa được tạo lịch khám:\n"
+                    + "📅 Thời gian: " + appointmentDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) + "\n"
+                    + "👨‍⚕️ Bác sĩ: " + newAppt.getDoctor().getFirstName() + " " + newAppt.getDoctor().getLastName() + "\n"
+                    + "🏥 Phòng: " + newAppt.getRoom().getRoomName() + "\n\n"
+                    + "👉 Vui lòng xác nhận lịch khám tại liên kết sau: " + confirmLink + "\n\n"
+                    + "Trân trọng,\nPhòng khám";
+
+            emailSenderService.sendEmail(email, "Xác nhận lịch khám", message);
+        }
+
+        redirectAttributes.addFlashAttribute("successMessage", "Đặt lịch thành công.");
+        return "redirect:/recep/appointment";
+    }
+
+
+
+
     @PostMapping("/delete")
     public String deleteAppointment(@RequestParam("appointmentId") Long appointmentId,
                                     RedirectAttributes redirectAttributes) {
