@@ -27,6 +27,8 @@ public class AppointmentEntity extends AbstractEntity {
 
     private String email;
 
+    private String noteCancel;
+
 	@ManyToOne
 	@JoinColumn(name = "patientId")
 	@EqualsAndHashCode.Exclude

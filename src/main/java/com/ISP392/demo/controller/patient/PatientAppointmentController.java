@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/patient/appointment")
@@ -154,22 +155,30 @@ public class PatientAppointmentController {
 
     @PostMapping("/{id}/cancel")
     @ResponseBody
-    public ResponseEntity<?> cancelAppointment(@PathVariable Long id) {
+    public ResponseEntity<?> cancelAppointment(@PathVariable Long id, @RequestBody Map<String, String> body) {
         AppointmentEntity appt = appointmentRepository.findById(id).orElse(null);
         if (appt == null) return ResponseEntity.notFound().build();
         if (appt.getStatus() != 2) return ResponseEntity.badRequest().body("Không thể hủy");
 
-        appt.setStatus(-1);
+        String noteCancel = body.get("noteCancel");
+        if (noteCancel == null || noteCancel.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Lý do huỷ không được để trống");
+        }
+
+        appt.setNoteCancel(noteCancel);
+        appt.setStatus(0);
         appointmentRepository.save(appt);
+
         return ResponseEntity.ok().build();
     }
+
 
     @DeleteMapping("/{id}")
     @ResponseBody
     public ResponseEntity<?> deleteAppointment(@PathVariable Long id) {
         AppointmentEntity appt = appointmentRepository.findById(id).orElse(null);
         if (appt == null) return ResponseEntity.notFound().build();
-        if (appt.getStatus() != -1) return ResponseEntity.badRequest().body("Chỉ xóa lịch đã hủy");
+        if (appt.getStatus() != 0) return ResponseEntity.badRequest().body("Chỉ xóa lịch đã hủy");
 
         appointmentRepository.delete(appt);
         return ResponseEntity.ok().build();

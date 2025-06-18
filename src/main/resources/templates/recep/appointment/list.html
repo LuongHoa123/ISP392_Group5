@@ -226,7 +226,15 @@
                                         </div>
 
                                         <p class="mt-3"><strong>Trạng thái:</strong>
-                                            <span th:switch="${appt.status}">
+                                        <div th:if="${appt.status == 0 and appt.noteCancel != null}">
+                                            <p><strong>Lý do huỷ:</strong></p>
+                                            <div class="border p-2 bg-light" style="white-space: pre-line;"
+                                                 th:text="${appt.noteCancel}">
+                                                Không có lý do.
+                                            </div>
+                                        </div>
+
+                                        <span th:switch="${appt.status}">
                             <span th:case="-1" class="badge badge-warning">Đang chờ xác nhận</span>
                             <span th:case="0" class="badge badge-secondary">Đã huỷ</span>
                             <span th:case="1" class="badge badge-success">Đã khám</span>
