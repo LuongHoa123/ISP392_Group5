@@ -17,23 +17,31 @@
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/recep/dashboard}">
                     <span class="menu-title">Dashboard</span>
-                    <i class="mdi mdi-home menu-icon"></i>
+                    <i class="mdi mdi-view-dashboard menu-icon"></i> <!-- dashboard icon -->
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/recep/waitlist}">
+                    <span class="menu-title">Khám tại quầy</span>
+                    <i class="mdi mdi-stethoscope menu-icon"></i> <!-- medical-related icon -->
                 </a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/recep/patient}">
                     <span class="menu-title">Tra cứu bệnh nhân</span>
-                    <i class="mdi mdi-home menu-icon"></i>
+                    <i class="mdi mdi-account-search menu-icon"></i> <!-- search person icon -->
                 </a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/recep/appointment}">
                     <span class="menu-title">Sắp xếp lịch hẹn</span>
-                    <i class="mdi mdi-home menu-icon"></i>
+                    <i class="mdi mdi-calendar-clock menu-icon"></i> <!-- appointment icon -->
                 </a>
             </li>
+
         </ul>
     </nav>
 </th:block>
