@@ -3,6 +3,7 @@ package com.ISP392.demo.controller.patient;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,20 +26,6 @@ import com.ISP392.demo.entity.UserEntity;
 import com.ISP392.demo.repository.AppointmentRepository;
 import com.ISP392.demo.repository.PatientRepository;
 import com.ISP392.demo.repository.UserRepository;
-<<<<<<< HEAD
-=======
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
->>>>>>> 974fb80bef45a2e0dc22e34ba7638a5b27dbc1b1
 
 @Controller
 @RequestMapping("/patient/appointment")
@@ -198,7 +186,7 @@ public class PatientAppointmentController {
     public ResponseEntity<?> deleteAppointment(@PathVariable Long id) {
         AppointmentEntity appt = appointmentRepository.findById(id).orElse(null);
         if (appt == null) return ResponseEntity.notFound().build();
-        if (appt.getStatus() != 0) return ResponseEntity.badRequest().body("Chỉ xóa lịch đã hủy");
+        if (appt.getStatus() != 0 && appt.getStatus() != -1) return ResponseEntity.badRequest().body("Chỉ xóa lịch đã hủy hoặc chờ xác nhận!");
 
         appointmentRepository.delete(appt);
         return ResponseEntity.ok().build();
