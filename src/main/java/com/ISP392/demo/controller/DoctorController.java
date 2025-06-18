@@ -59,6 +59,7 @@ public class DoctorController {
     public String getDoctorDetails(@PathVariable Long id, Model model) {
         DoctorEntity doctor = doctorRepository.findById(id).orElse(null);
         if (doctor == null) {
+            model.addAttribute("error", "Không tìm thấy bác sĩ");
             return "redirect:/doctors";
         }
         model.addAttribute("doctor", doctor);

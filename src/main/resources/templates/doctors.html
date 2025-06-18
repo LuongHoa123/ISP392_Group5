@@ -116,6 +116,15 @@
     <th:block th:fragment="pageContent">
         <section class="doctors" id="doc">
             <h1 class="heading">Đội ngũ bác sĩ</h1>
+            
+            <!-- Error message alert -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mx-4" role="alert">
+                <span th:text="${error}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
             <div class="container my-4">
                 <form class="form-inline row justify-content-center" th:action="@{/doctors/search}" method="get" style="gap: 10px">
                     <div class="col-auto">

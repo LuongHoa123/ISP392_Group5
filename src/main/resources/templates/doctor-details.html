@@ -121,7 +121,7 @@
                                         <i class="material-icons text-info mr-2">work</i>
                                         Kinh nghiệm
                                     </h6>
-                                    <span class="text-secondary" th:text="${T(java.time.Period).between(appt.doctor.createdAt.toLocalDate(), T(java.time.LocalDate).now()).getYears() + 1} + ' năm kinh nghiệm'"></span>
+                                    <span class="text-secondary" th:text="${T(java.time.Period).between(doctor.createdAt.toLocalDate(), T(java.time.LocalDate).now()).getYears() + 1} + ' năm kinh nghiệm'"></span>
                                 </li>
                             </ul>
                         </div>
