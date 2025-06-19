@@ -76,7 +76,7 @@ public class SecurityConfig {
                         .failureHandler(new CustomAuthenticationFailureHandler())
                 )
                 .authorizeHttpRequests(at -> at.requestMatchers("/", "/home", "/appointment/**", "/login/**","/loginError/**", "/login-google", "/register", "/save", "re-send", "/image/**", "/js/**", "/css/**", "/lib/**", "/style/**", "/slider/**", "/assets/**",
-                        "/api/storage/**", "recover", "send-otp-recover", "otp-check", "confirm-otp", "send-otp-recover", "confirm-otp-recover",
+                        "/api/storage/**", "recover", "send-otp-recover", "otp-check", "confirm-otp", "send-otp-recover", "confirm-otp-recover", "/sendRequest/**",
                         "/client/payment/pay", "/productListClient/**", "save-new-password", "detail", "change-password", "save-change-password", "/users/**", "/forgot/**", "/forgotPass/**", "/otp-check-pass/**" , "/confirm-otp-pass/**", "/resend-otp-pass/**", "/resend-otp-register/**",
                         "/assets/**", "/assets_admin/**", "/client_assets/**", "/index", "/index/**", "/product/**", "/guest/**", "/doctors/**").permitAll()
                         .requestMatchers("/changePass/**", "/change-password/**").hasAnyRole("ADMIN", "PATIENT", "DOCTOR", "RECEPTIONIST")

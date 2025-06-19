@@ -131,9 +131,25 @@
         .password-container .toggle-password:hover {
             color: #007bff;
         }
+        .custom-alert {
+            background-color: #f8d7da; /* Light pinkish background */
+            color: #721c24; /* Dark red text for contrast */
+            font-style: italic;
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: none;
+            box-shadow: none;
+        }
+
     </style>
 </head>
 <body>
+<div class="text-center mb-3" th:if="${mess}">
+    <div class="custom-alert" th:text="${mess}"></div>
+</div>
 <th:block th:replace="layout/user-layout :: layout">
     <th:block th:fragment="pageContent">
         <section class="appointment">
@@ -148,10 +164,13 @@
                     </div>
 
                     <input type="email" name="email" placeholder="your e-mail" class="box" required>
-                    <div class="error-message" id="email-error">Email không hợp lệ. Vui lòng nhập đúng định dạng email (bao gồm @).</div>
-                    
+                    <div class="error-message" id="email-error">Email không hợp lệ. Vui lòng nhập đúng định dạng email
+                        (bao gồm @).
+                    </div>
+
                     <div class="password-container">
-                        <input type="password" name="password" placeholder="your password" class="box" required id="password">
+                        <input type="password" name="password" placeholder="your password" class="box" required
+                               id="password">
                         <i class="fas fa-eye toggle-password" id="togglePassword"></i>
                     </div>
 
@@ -165,8 +184,38 @@
                     <div class="login-link">
                         <a th:href="@{/forgot}">Quên mật khẩu</a>
                     </div>
-                </form>
+                    <div class="login-link">
+                        <a href="#" data-toggle="modal" data-target="#unlockRequestModal">Tài khoản bị khoá? Yêu cầu mở</a>
+                    </div>
 
+                </form>
+                <div class="modal fade" id="unlockRequestModal" tabindex="-1" aria-labelledby="unlockRequestModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <form method="post" th:action="@{/sendRequest}">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="unlockRequestModalLabel">Yêu cầu mở tài khoản</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Đóng"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label>Email:</label>
+                                        <input type="email" class="form-control" name="email" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Nội dung:</label>
+                                        <textarea class="form-control" name="content" rows="3" required></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Gửi yêu cầu</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
                 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {

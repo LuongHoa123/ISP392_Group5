@@ -1,15 +1,13 @@
 package com.ISP392.demo.controller.recep;
 
-import com.ISP392.demo.entity.AppointmentEntity;
-import com.ISP392.demo.entity.PatientEntity;
+import com.ISP392.demo.entity.*;
 import com.ISP392.demo.enums.GenderEnum;
-import com.ISP392.demo.repository.AppointmentRepository;
-import com.ISP392.demo.repository.DoctorRepository;
-import com.ISP392.demo.repository.PatientRepository;
-import com.ISP392.demo.repository.RoomRepository;
+import com.ISP392.demo.repository.*;
 import com.ISP392.demo.service.EmailSenderService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +34,31 @@ public class RecepAppointmentController {
 
     @Autowired
     private RoomRepository roomRepository;
+
+    @Autowired
+    private LogsRepository logsRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private RecepRepository recepRepository;
+
+    private void saveLog(String content) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByEmail(email).orElse(null);
+        if (user != null) {
+            RecepEntity recep = recepRepository.findByUser(user);
+            if (recep != null) {
+                LogsEntity log = new LogsEntity();
+                log.setContent(content);
+                log.setRecep(recep);
+                log.setCreatedAt(LocalDateTime.now());
+                logsRepository.save(log);
+            }
+        }
+    }
+
 
     @GetMapping("")
     public String appointmentSchedulePage(Model model,
@@ -110,6 +133,9 @@ public class RecepAppointmentController {
 
         appointmentRepository.save(appointment);
 
+        saveLog("Chỉ định bác sĩ cho lịch hẹn: ID " + appointmentId);
+
+
         if (appointment.getEmail() != null) {
             String confirmLink = "http://localhost:8080/appointment/confirm?id=" + appointment.getId();
             String message = "Xin chào " + appointment.getName() + ",\n\n"
@@ -155,22 +181,10 @@ public class RecepAppointmentController {
         newAppt.setDoctor(doctorRepository.findById(doctorId).orElse(null));
         newAppt.setRoom(roomRepository.findById(roomId).orElse(null));
         newAppt.setAppointmentDateTime(appointmentDateTime);
-        newAppt.setStatus(-1);
+        newAppt.setStatus(2);
 
         appointmentRepository.save(newAppt);
-
-        if (email != null && !email.isEmpty()) {
-            String confirmLink = "http://localhost:8080/appointment/confirm?id=" + newAppt.getId();
-            String message = "Xin chào " + name + ",\n\n"
-                    + "Bạn vừa được tạo lịch khám:\n"
-                    + "📅 Thời gian: " + appointmentDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) + "\n"
-                    + "👨‍⚕️ Bác sĩ: " + newAppt.getDoctor().getFirstName() + " " + newAppt.getDoctor().getLastName() + "\n"
-                    + "🏥 Phòng: " + newAppt.getRoom().getRoomName() + "\n\n"
-                    + "👉 Vui lòng xác nhận lịch khám tại liên kết sau: " + confirmLink + "\n\n"
-                    + "Trân trọng,\nPhòng khám";
-
-            emailSenderService.sendEmail(email, "Xác nhận lịch khám", message);
-        }
+        saveLog("Tạo mới lịch hẹn cho bệnh nhân: " + name + ", thời gian: " + appointmentDateTime);
 
         redirectAttributes.addFlashAttribute("successMessage", "Đặt lịch thành công.");
         return "redirect:/recep/appointment";
@@ -184,6 +198,8 @@ public class RecepAppointmentController {
                                     RedirectAttributes redirectAttributes) {
         try {
             appointmentRepository.deleteById(appointmentId);
+            saveLog("Xoá lịch hẹn có id: " + appointmentId);
+
             redirectAttributes.addFlashAttribute("successMessage", "Xoá lịch hẹn thành công.");
         } catch (Exception e) {
             e.printStackTrace();

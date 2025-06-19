@@ -43,4 +43,26 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
             "GROUP BY MONTH(a.appointmentDateTime)")
     List<Object[]> countAppointmentsByMonth(@Param("year") int year);
 
+
+    @Query(
+            value = "SELECT DATE(a.appointment_date_time) AS day, COUNT(*) AS cnt " +
+                    "FROM appointments a " +
+                    "WHERE YEAR(a.appointment_date_time) = :year " +
+                    "GROUP BY DATE(a.appointment_date_time)",
+            nativeQuery = true)
+    List<Object[]> countAppointmentsByDay(@Param("year") int year);
+
+    @Query(value = """
+    SELECT 
+        DAYOFWEEK(a.appointment_date_time) AS weekday,
+        COUNT(*) AS count
+    FROM appointments a
+    WHERE YEAR(a.appointment_date_time) = :year
+    GROUP BY DAYOFWEEK(a.appointment_date_time)
+""", nativeQuery = true)
+    List<Object[]> countAppointmentsByWeekday(@Param("year") int year);
+
+
+
+
 }

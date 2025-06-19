@@ -1,7 +1,9 @@
 package com.ISP392.demo.controller.auth;
 
+import com.ISP392.demo.entity.RequestEntity;
 import com.ISP392.demo.entity.UserEntity;
 import com.ISP392.demo.repository.PatientRepository;
+import com.ISP392.demo.repository.RequestRepository;
 import com.ISP392.demo.repository.UserRepository;
 import com.ISP392.demo.service.EmailSenderService;
 import com.ISP392.demo.service.UserService;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Controller
@@ -187,4 +190,29 @@ public class AuthController {
         return "change-password";
     }
 
+    @Autowired
+    private RequestRepository requestRepository;
+
+    @PostMapping("/sendRequest")
+    public String sendRequest(
+            @RequestParam String email,
+            @RequestParam String content,
+            Model model
+    ) {
+        Optional<UserEntity> optionalUser = userService.findByEmail(email);
+        if (optionalUser.isEmpty()) {
+            model.addAttribute("mess", "Email không tồn tại!");
+            return "login";
+        }
+
+        UserEntity user = optionalUser.get();
+        RequestEntity request = new RequestEntity();
+        request.setUser(user);
+        request.setContent(content);
+        request.setCreatedAt(LocalDateTime.now());
+
+        requestRepository.save(request);
+        model.addAttribute("mess", "Gửi yêu cầu mở khoá thành công!");
+        return "login";
+    }
 }
