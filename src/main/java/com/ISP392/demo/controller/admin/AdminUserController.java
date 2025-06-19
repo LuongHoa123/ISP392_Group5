@@ -132,7 +132,7 @@ public class AdminUserController {
         user.setRole(selectedRole);
         user.setStatus(userDto.getStatus());
         userRepository.save(user);
-        saveLog("Thêm người dùng có email " + user.getEmail() + ", quyền " + user.getRole().getName());
+        saveLog("Thêm người dùng " + user.getEmail() + ", quyền " + user.getRole().getName());
 
         return "redirect:/admin/user?add=true";
     }
@@ -187,7 +187,7 @@ public class AdminUserController {
             user.setRole(selectedRole);
 
             userRepository.save(user);
-            saveLog("Cập nhật người dùng có id " + user.getId());
+            saveLog("Cập nhật người dùng " + user.getEmail());
 
         }
 
@@ -204,7 +204,7 @@ public class AdminUserController {
             UserEntity user = optional.get();
             user.setStatus(status);
             userRepository.save(user);
-            saveLog("Cập nhật trạng thái của người dùng thành " + (status == 1 ? "Mở khoá" : "Khoá") + " có id " + user.getId());
+            saveLog("Cập nhật trạng thái của " + user.getEmail() + " thành " + (status == 1 ? "mở khoá" : "khoá"));
 
         }
         return "redirect:/admin/user?update=true";
@@ -212,8 +212,10 @@ public class AdminUserController {
 
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable("id") Long id) {
+        Optional<UserEntity> optional = userRepository.findById(id);
+        String email = optional.map(UserEntity::getEmail).orElse("");
         userRepository.deleteById(id);
-        saveLog("Xoá người dùng có id " + id);
+        saveLog("Xoá người dùng " + email);
 
         return "redirect:/admin/user?delete=true";
     }
