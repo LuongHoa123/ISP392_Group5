@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,16 +20,21 @@ import java.util.Optional;
 @SpringBootApplication
 public interface DoctorRepository extends JpaRepository<DoctorEntity, Long> {
     DoctorEntity findByUser(UserEntity user);
+
     Optional<DoctorEntity> findByPhoneNumber(String phone);
 
-       @Query("SELECT d FROM DoctorEntity d WHERE " +
+    @Query("SELECT d FROM DoctorEntity d WHERE " +
             "(:keyword IS NULL OR LOWER(CONCAT(d.firstName, ' ', d.lastName)) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "   OR LOWER(d.specialization) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "   OR LOWER(d.email) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
-            "AND (:specialization IS NULL OR LOWER(d.specialization) LIKE LOWER(CONCAT('%', :specialization, '%'))) ")
+            "AND (:specialization IS NULL OR LOWER(d.specialization) LIKE LOWER(CONCAT('%', :specialization, '%'))) " +
+            "AND (:minCreatedAt IS NULL OR d.createdAt <= :minCreatedAt) " +
+            "AND (:maxCreatedAt IS NULL OR d.createdAt >= :maxCreatedAt)")
     Page<DoctorEntity> searchByMultipleFilters(
             @Param("keyword") String keyword,
             @Param("specialization") String specialization,
+            @Param("minCreatedAt") LocalDateTime minCreatedAt,
+            @Param("maxCreatedAt") LocalDateTime maxCreatedAt,
             Pageable pageable
     );
 

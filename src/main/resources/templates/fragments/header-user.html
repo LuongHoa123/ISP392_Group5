@@ -1,6 +1,9 @@
 <th:block th:fragment="header">
     <header class="header" id="nav">
-        <a th:href="@{/}" class="logo"><i class="fa-solid fa-heart-pulse"></i> Hospital</a>
+        <a th:href="@{/}" class="logo d-flex align-items-center">
+            <img th:src="@{/assets/logo.png}" alt="Logo" style="height: 30px; margin-right: 8px;">
+            Veritas ENT
+        </a>
         <nav class="navbar">
             <a th:href="@{/}" class="nav-links">Trang chủ</a>
             <a th:href="@{/doctors}" class="nav-links">Bác sĩ</a>
