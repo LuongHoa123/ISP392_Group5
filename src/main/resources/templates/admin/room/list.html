@@ -28,6 +28,14 @@
                 Xoá phòng thành công!
             </div>
 
+            <div th:if="${successMessage}" class="alert alert-success" role="alert">
+                [[${successMessage}]]
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                [[${errorMessage}]]
+            </div>
+
             <!-- Form tìm kiếm -->
             <form class="form-inline mb-3" method="get" th:action="@{/admin/room}">
                 <div class="form-group mr-2">
@@ -47,7 +55,9 @@
                             <th>#</th>
                             <th>Tên phòng</th>
                             <th>Loại phòng</th>
-                            <th>Vị trí</th>
+                            <th>Tầng</th>
+                            <th>Bác sĩ phụ trách</th>
+                            <th>Số điện thoại</th>
                             <th>Hành động</th>
                         </tr>
                         </thead>
@@ -57,6 +67,8 @@
                             <td th:text="${room.roomName}"></td>
                             <td th:text="${room.roomType}"></td>
                             <td th:text="${room.location}"></td>
+                            <td th:text="${room.primaryDoctor != null ? room.primaryDoctor.firstName + ' ' + room.primaryDoctor.lastName : '---'}"></td>
+                            <td th:text="${room.phoneNumber != null ? room.phoneNumber : '---'}"></td>
                             <td>
                                 <a class="btn btn-warning btn-sm"
                                    th:href="@{'/admin/room/edit/' + ${room.id}}">Sửa</a>

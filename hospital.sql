@@ -456,6 +456,40 @@ LOCK TABLES `waiting_list` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `rooms`
+--
+
+DROP TABLE IF EXISTS `rooms`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rooms` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `roomName` varchar(100) NOT NULL,
+  `location` varchar(255) DEFAULT NULL,
+  `description` varchar(500) DEFAULT NULL,
+  `roomType` varchar(100) DEFAULT NULL,
+  `capacity` int DEFAULT NULL,
+  `doctor_id` int DEFAULT NULL,
+  `created_date_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_date_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_by` varchar(255) DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`doctor_id`) REFERENCES `doctors` (`doctorId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `rooms`
+--
+
+LOCK TABLES `rooms` WRITE;
+/*!40000 ALTER TABLE `rooms` DISABLE KEYS */;
+/*!40000 ALTER TABLE `rooms` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Dumping events for database 'hospital'
 --
 

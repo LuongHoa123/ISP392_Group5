@@ -4,6 +4,7 @@ import com.ISP392.demo.entity.RoomEntity;
 import com.ISP392.demo.entity.UserEntity;
 import com.ISP392.demo.repository.RoomRepository;
 import com.ISP392.demo.repository.UserRepository;
+import com.ISP392.demo.repository.DoctorRepository;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,9 @@ public class AdminRoomController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private DoctorRepository doctorRepository;
+
     @GetMapping("")
     public String listRooms(Model model,
                             @RequestParam(value = "search", required = false) String keyword,
@@ -40,8 +45,8 @@ public class AdminRoomController {
                     .filter(room ->
                             (room.getRoomName() != null && room.getRoomName().toLowerCase().contains(lowerKeyword)) ||
                                     (room.getRoomType() != null && room.getRoomType().toLowerCase().contains(lowerKeyword)) ||
-                                    (room.getDescription() != null && room.getDescription().toLowerCase().contains(lowerKeyword)) ||
-                                    (room.getLocation() != null && room.getLocation().toLowerCase().contains(lowerKeyword))
+                                    (room.getLocation() != null && room.getLocation().toLowerCase().contains(lowerKeyword)) ||
+                                    (room.getDescription() != null && room.getDescription().toLowerCase().contains(lowerKeyword))
                     )
                     .collect(Collectors.toList());
         }
@@ -62,12 +67,10 @@ public class AdminRoomController {
         return "admin/room/list";
     }
 
-
-
     @GetMapping("/add")
     public String addRoomForm(Model model) {
         model.addAttribute("room", new RoomEntity());
-        model.addAttribute("users", userRepository.findAll());
+        model.addAttribute("doctors", doctorRepository.findAll());
         return "admin/room/add";
     }
 
@@ -76,6 +79,7 @@ public class AdminRoomController {
                            BindingResult result,
                            Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("doctors", doctorRepository.findAll());
             return "admin/room/add";
         }
 
@@ -88,6 +92,7 @@ public class AdminRoomController {
         Optional<RoomEntity> optional = roomRepository.findById(id);
         if (optional.isPresent()) {
             model.addAttribute("room", optional.get());
+            model.addAttribute("doctors", doctorRepository.findAll());
             return "admin/room/edit";
         }
         return "redirect:/admin/room";
@@ -99,6 +104,7 @@ public class AdminRoomController {
                              BindingResult result,
                              Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("doctors", doctorRepository.findAll());
             return "admin/room/edit";
         }
 
@@ -108,8 +114,23 @@ public class AdminRoomController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteRoom(@PathVariable("id") Long id) {
-        roomRepository.deleteById(id);
-        return "redirect:/admin/room?delete=true";
+    public String deleteRoom(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        try {
+            Optional<RoomEntity> roomOptional = roomRepository.findById(id);
+            if (roomOptional.isPresent()) {
+                RoomEntity room = roomOptional.get();
+                // Xóa liên kết với bác sĩ trước khi xóa phòng
+                room.setPrimaryDoctor(null);
+                room.setPhoneNumber(null);
+                roomRepository.save(room);
+                // Sau đó xóa phòng
+                roomRepository.delete(room);
+                redirectAttributes.addFlashAttribute("successMessage", "Xóa phòng thành công!");
+                return "redirect:/admin/room?delete=true";
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa phòng. Phòng đang được sử dụng!");
+        }
+        return "redirect:/admin/room";
     }
 }

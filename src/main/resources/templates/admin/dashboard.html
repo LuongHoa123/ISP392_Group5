@@ -40,7 +40,9 @@
                         <h4 class="font-weight-normal mb-3">Số bệnh nhân hiện tại <i
                                 class="mdi mdi-chart-line mdi-24px float-right"></i>
                         </h4>
-                        <h2 class="mb-5"><span th:text="${countPatient}"></span></h2>
+                        <a th:href="@{/admin/patient}" style="text-decoration: none; color: white;">
+                            <h2 class="mb-5"><span th:text="${countPatient}"></span></h2>
+                        </a>
                     </div>
                 </div>
             </div>

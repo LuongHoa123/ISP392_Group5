@@ -62,7 +62,6 @@ public class AdminAppointmentController {
         model.addAttribute("searchKeyword", searchKeyword);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
-        model.addAttribute("appointments", appointments);
         model.addAttribute("doctors", doctorRepository.findAll());
         model.addAttribute("rooms", roomRepository.findAll());
 
