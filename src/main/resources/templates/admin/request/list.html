@@ -38,7 +38,7 @@
                             <td th:text="${iterStat.index + 1}"></td>
                             <td th:text="${request.user.email}"></td>
                             <td th:text="${request.content}"></td>
-                            <td th:text="${#temporals.format(log.createdAt, 'dd/MM/yyyy HH:mm:ss')}"></td>
+                            <td th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm:ss')}"></td>
                             <td>
                                 <form th:action="@{'/admin/request/delete/' + ${request.id}}"
                                       method="get" style="display:inline-block;"
