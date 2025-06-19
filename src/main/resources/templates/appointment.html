@@ -80,10 +80,10 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center">
             <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="successModalLabel">Thành công</h5>
+                <h5 class="modal-title" id="errorModalLabel" style="font-size: 2.2rem; font-weight: bold;">Thành công</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="font-size: 2rem; font-weight: green;">
                 Đặt lịch thành công! Cảm ơn bạn đã tin tưởng chúng tôi.
             </div>
             <div class="modal-footer">
@@ -105,10 +105,10 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center">
             <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="errorModalLabel">Lỗi</h5>
+                <h5 class="modal-title" id="errorModalLabel" style="font-size: 2.2rem; font-weight: bold;">Lỗi</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="font-size: 2rem; font-weight: green;">
                 <span th:text="${param.error == 'no_patient' ? 'Không tìm thấy thông tin bệnh nhân.' : 'Email sai!'}"></span>
             </div>
             <div class="modal-footer">
