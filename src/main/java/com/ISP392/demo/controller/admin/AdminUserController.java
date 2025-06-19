@@ -1,10 +1,15 @@
 package com.ISP392.demo.controller.admin;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.ISP392.demo.entity.LogsEntity;
+import com.ISP392.demo.repository.DoctorRepository;
+import com.ISP392.demo.repository.LogsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,6 +42,25 @@ public class AdminUserController {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private DoctorRepository doctorRepository;
+
+    @Autowired
+    private LogsRepository logsRepository;
+
+
+    private void saveLog(String content) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByEmail(email).orElse(null);
+        if (user != null) {
+            LogsEntity log = new LogsEntity();
+            log.setContent(content);
+            log.setUser(user);
+            log.setCreatedAt(LocalDateTime.now());
+            logsRepository.save(log);
+        }
+    }
 
     @GetMapping("")
     public String userListPage(Model model,
@@ -108,6 +132,8 @@ public class AdminUserController {
         user.setRole(selectedRole);
         user.setStatus(userDto.getStatus());
         userRepository.save(user);
+        saveLog("Thêm người dùng có email " + user.getEmail() + ", quyền " + user.getRole().getName());
+
         return "redirect:/admin/user?add=true";
     }
 
@@ -140,7 +166,6 @@ public class AdminUserController {
             return "admin/user/edit";
         }
 
-        // Check for duplicate email (excluding current user)
         Optional<UserEntity> emailUser = userRepository.findByEmail(userDto.getEmail());
         if (emailUser.isPresent() && !emailUser.get().getId().equals(id)) {
             model.addAttribute("roles", roleRepository.findAll());
@@ -162,6 +187,8 @@ public class AdminUserController {
             user.setRole(selectedRole);
 
             userRepository.save(user);
+            saveLog("Cập nhật người dùng có id " + user.getId());
+
         }
 
         return "redirect:/admin/user?edit=true";
@@ -177,6 +204,8 @@ public class AdminUserController {
             UserEntity user = optional.get();
             user.setStatus(status);
             userRepository.save(user);
+            saveLog("Cập nhật trạng thái của người dùng thành " + (status == 1 ? "Mở khoá" : "Khoá") + " có id " + user.getId());
+
         }
         return "redirect:/admin/user?update=true";
     }
@@ -184,6 +213,8 @@ public class AdminUserController {
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable("id") Long id) {
         userRepository.deleteById(id);
+        saveLog("Xoá người dùng có id " + id);
+
         return "redirect:/admin/user?delete=true";
     }
 }

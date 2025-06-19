@@ -1,4 +1,4 @@
-package com.ISP392.demo.controller.recep;
+package com.ISP392.demo.controller.admin;
 
 import com.ISP392.demo.entity.LogsEntity;
 import com.ISP392.demo.repository.LogsRepository;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @Controller
-@RequestMapping("/recep/logs")
-public class RecepLogsController {
+@RequestMapping("/admin/logs")
+public class AdminLogsController {
 
     @Autowired
     private LogsRepository logsRepository;
@@ -37,6 +37,6 @@ public class RecepLogsController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
 
-        return "recep/logs/list";
+        return "admin/logs/list";
     }
 }

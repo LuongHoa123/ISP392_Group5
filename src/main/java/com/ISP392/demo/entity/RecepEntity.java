@@ -31,9 +31,5 @@ public class RecepEntity extends AbstractEntity {
     @JsonBackReference
     private UserEntity user;
 
-    @OneToMany(mappedBy = "recep", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    private Set<LogsEntity> logs;
+
 }

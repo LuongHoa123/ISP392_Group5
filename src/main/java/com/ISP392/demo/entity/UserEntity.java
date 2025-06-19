@@ -44,4 +44,10 @@ public class UserEntity extends AbstractEntity {
     @ToString.Exclude
     @JsonManagedReference
     private Set<RequestEntity> requests;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonManagedReference
+    private Set<LogsEntity> logs;
 }

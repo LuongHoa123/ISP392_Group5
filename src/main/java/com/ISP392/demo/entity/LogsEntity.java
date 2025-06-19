@@ -15,8 +15,8 @@ public class LogsEntity extends AbstractEntity {
     private String content;
 
 	@ManyToOne
-	@JoinColumn(name = "recepId")
+	@JoinColumn(name = "userId")
 	@EqualsAndHashCode.Exclude
 	@JsonBackReference
-	private RecepEntity recep;
+	private UserEntity user;
 }

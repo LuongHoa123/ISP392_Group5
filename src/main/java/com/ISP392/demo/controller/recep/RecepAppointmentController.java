@@ -44,20 +44,7 @@ public class RecepAppointmentController {
     @Autowired
     private RecepRepository recepRepository;
 
-    private void saveLog(String content) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserEntity user = userRepository.findByEmail(email).orElse(null);
-        if (user != null) {
-            RecepEntity recep = recepRepository.findByUser(user);
-            if (recep != null) {
-                LogsEntity log = new LogsEntity();
-                log.setContent(content);
-                log.setRecep(recep);
-                log.setCreatedAt(LocalDateTime.now());
-                logsRepository.save(log);
-            }
-        }
-    }
+
 
 
     @GetMapping("")
@@ -133,7 +120,6 @@ public class RecepAppointmentController {
 
         appointmentRepository.save(appointment);
 
-        saveLog("Chỉ định bác sĩ cho lịch hẹn: ID " + appointmentId);
 
 
         if (appointment.getEmail() != null) {
@@ -184,7 +170,6 @@ public class RecepAppointmentController {
         newAppt.setStatus(2);
 
         appointmentRepository.save(newAppt);
-        saveLog("Tạo mới lịch hẹn cho bệnh nhân: " + name + ", thời gian: " + appointmentDateTime);
 
         redirectAttributes.addFlashAttribute("successMessage", "Đặt lịch thành công.");
         return "redirect:/recep/appointment";
@@ -198,7 +183,6 @@ public class RecepAppointmentController {
                                     RedirectAttributes redirectAttributes) {
         try {
             appointmentRepository.deleteById(appointmentId);
-            saveLog("Xoá lịch hẹn có id: " + appointmentId);
 
             redirectAttributes.addFlashAttribute("successMessage", "Xoá lịch hẹn thành công.");
         } catch (Exception e) {

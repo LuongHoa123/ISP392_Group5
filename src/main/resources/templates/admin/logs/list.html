@@ -11,7 +11,7 @@
     <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
 </head>
 <body>
-<th:block th:replace="layout/recep-layout :: layout">
+<th:block th:replace="layout/admin-layout :: layout">
     <th:block th:fragment="pageContent">
         <div class="container mt-4">
             <h3 class="mb-3">Lịch sử thao tác</h3>
@@ -31,7 +31,7 @@
                         <tr th:each="log, iterStat : ${logs}">
                             <td th:text="${iterStat.index + 1}"></td>
                             <td th:text="${log.content}"></td>
-                            <td th:text="${log.recep != null ? log.recep.firstName + ' ' + log.recep.lastName : 'Không xác định'}"></td>
+                            <td th:text="${log.user != null ? log.user.email : 'Không xác định'}"></td>
                             <td th:text="${#temporals.format(log.createdAt, 'dd/MM/yyyy HH:mm:ss')}"></td>
                         </tr>
                         </tbody>
@@ -41,14 +41,14 @@
                     <nav th:if="${totalPages > 1}">
                         <ul class="pagination justify-content-center mt-3">
                             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                                <a class="page-link" th:href="@{/recep/logs(page=${currentPage - 1})}">Trước</a>
+                                <a class="page-link" th:href="@{/admin/logs(page=${currentPage - 1})}">Trước</a>
                             </li>
                             <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                                 th:classappend="${i == currentPage} ? 'active'">
-                                <a class="page-link" th:text="${i + 1}" th:href="@{/recep/logs(page=${i})}"></a>
+                                <a class="page-link" th:text="${i + 1}" th:href="@{/admin/logs(page=${i})}"></a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                                <a class="page-link" th:href="@{/recep/logs(page=${currentPage + 1})}">Sau</a>
+                                <a class="page-link" th:href="@{/admin/logs(page=${currentPage + 1})}">Sau</a>
                             </li>
                         </ul>
                     </nav>

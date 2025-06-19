@@ -1,10 +1,12 @@
 package com.ISP392.demo.controller.admin;
 
 import com.ISP392.demo.entity.AppointmentEntity;
-import com.ISP392.demo.repository.AppointmentRepository;
-import com.ISP392.demo.repository.DoctorRepository;
-import com.ISP392.demo.repository.RoomRepository;
+import com.ISP392.demo.entity.LogsEntity;
+import com.ISP392.demo.entity.RecepEntity;
+import com.ISP392.demo.entity.UserEntity;
+import com.ISP392.demo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +31,25 @@ public class AdminAppointmentController {
 
     @Autowired
     private RoomRepository roomRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private LogsRepository logsRepository;
+
+
+    private void saveLog(String content) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByEmail(email).orElse(null);
+        if (user != null) {
+            LogsEntity log = new LogsEntity();
+            log.setContent(content);
+            log.setUser(user);
+            log.setCreatedAt(LocalDateTime.now());
+            logsRepository.save(log);
+        }
+    }
 
     @GetMapping("")
     public String appointmentSchedulePage(Model model,
@@ -73,6 +95,7 @@ public class AdminAppointmentController {
                                     RedirectAttributes redirectAttributes) {
         try {
             appointmentRepository.deleteById(appointmentId);
+            saveLog("Xoá lịch hẹn có id: " + appointmentId);
             redirectAttributes.addFlashAttribute("successMessage", "Xoá lịch hẹn thành công.");
         } catch (Exception e) {
             e.printStackTrace();
