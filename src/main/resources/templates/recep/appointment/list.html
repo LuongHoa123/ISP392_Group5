@@ -435,5 +435,38 @@
     }
 </script>
 
+<script>
+    function isFutureDateTime(dateTimeStr) {
+        const selectedDate = new Date(dateTimeStr);
+        const now = new Date();
+        return selectedDate.getTime() >= now.getTime();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Add form validation for Add Appointment Modal
+        const addForm = document.querySelector('#addAppointmentModal form');
+        if (addForm) {
+            addForm.addEventListener('submit', function (e) {
+                const input = document.getElementById('appointmentDateNew');
+                if (input && !isFutureDateTime(input.value)) {
+                    e.preventDefault();
+                    alert("Vui lòng chọn thời gian sau thời điểm hiện tại.");
+                }
+            });
+        }
+
+        // Add form validation for Assign Modals
+        document.querySelectorAll('form[action$="/appointment/assign"]').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                const input = form.querySelector('input[name="appointmentDateTime"]');
+                if (input && !isFutureDateTime(input.value)) {
+                    e.preventDefault();
+                    alert("Vui lòng chọn thời gian sau thời điểm hiện tại.");
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 </html>
