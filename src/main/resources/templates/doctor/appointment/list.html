@@ -14,19 +14,25 @@
 <th:block th:replace="layout/doctor-layout :: layout">
     <th:block th:fragment="pageContent">
         <div class="container mt-4">
-            <h3 class="mb-3">Lịch hẹn khám của tôi</h3>
+            <h3 class="mb-3">Danh sách lịch hẹn</h3>
 
-            <form method="get" th:action="@{/doctor/appointment}" class="form-inline mb-3">
-                <input type="text" class="form-control mr-2" name="keyword" placeholder="Tìm kiếm..."
-                       th:value="${keyword}" style="min-width: 300px;">
-
-                <input type="date" class="form-control mr-2" name="date"
-                       th:value="${date != null ? #temporals.format(date, 'yyyy-MM-dd') : ''}">
-
-                <button type="submit" class="btn btn-primary">
-                    <i class="mdi mdi-magnify"></i> Tìm kiếm
-                </button>
-            </form>
+            <div class="row mb-3">
+                <div class="col">
+                    <form method="get" th:action="@{/doctor/appointment}" class="form-inline">
+                        <input type="text" class="form-control mr-2" name="keyword" placeholder="Tìm kiếm..."
+                               th:value="${keyword}" style="min-width: 200px;">
+                        <input type="date" class="form-control mr-2" name="date" th:value="${date}">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="mdi mdi-magnify"></i> Tìm kiếm
+                        </button>
+                    </form>
+                </div>
+                <div class="col-auto">
+                    <a th:href="@{/doctor/appointment/export-excel}" class="btn btn-success">
+                        <i class="mdi mdi-file-excel"></i> Xuất Excel
+                    </a>
+                </div>
+            </div>
 
             <div class="card">
                 <div class="card-body">
@@ -50,8 +56,7 @@
                             <td th:text="${appt.phoneNumber}"></td>
                             <td th:text="${appt.email}"></td>
                             <td th:text="${#temporals.format(appt.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></td>
-
-                            <td th:text="${appt.room != null ? (appt.room.roomName) : '---'}"></td>
+<td th:text="${appt.room != null ? (appt.room.roomName) : '---'}"></td>
                             <td>
                                 <button type="button"
                                         class="btn btn-sm btn-info"
@@ -96,7 +101,7 @@
                                                   th:text="${appt.doctor.firstName + ' ' + appt.doctor.lastName}"></span>
                                             <span th:if="${appt.doctor == null}">---</span>
                                         </p>
-                                        <p><strong>Phòng:</strong>
+<p><strong>Phòng:</strong>
                                             <span th:if="${appt.room != null}" th:text="${appt.room.roomName}"></span>
                                             <span th:if="${appt.room == null}">---</span>
                                         </p>
@@ -139,7 +144,7 @@
                             </li>
                             <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/doctor/appointment(page=${currentPage + 1}, searchKeyword=${searchKeyword}, date=${#temporals.format(date, 'yyyy-MM-dd')})}">Sau</a>
+th:href="@{/doctor/appointment(page=${currentPage + 1}, searchKeyword=${searchKeyword}, date=${#temporals.format(date, 'yyyy-MM-dd')})}">Sau</a>
                             </li>
                         </ul>
                     </nav>

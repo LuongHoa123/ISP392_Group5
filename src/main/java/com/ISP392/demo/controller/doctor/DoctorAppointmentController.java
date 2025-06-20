@@ -10,9 +10,15 @@ import com.ISP392.demo.repository.AppointmentRepository;
 import com.ISP392.demo.repository.DoctorRepository;
 import com.ISP392.demo.repository.RoleRepository;
 import com.ISP392.demo.repository.UserRepository;
+import com.ISP392.demo.service.ExcelExportService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -20,7 +26,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,6 +46,9 @@ public class DoctorAppointmentController {
 
     @Autowired
     private DoctorRepository doctorRepository;
+
+    @Autowired
+    private ExcelExportService excelExportService;
 
     @GetMapping("")
     public String viewAppointmentsForDoctor(Model model,
@@ -95,6 +107,38 @@ public class DoctorAppointmentController {
     public AppointmentEntity getAppointmentDetails(@PathVariable Long id) {
         System.out.println(appointmentRepository.findById(id));
         return appointmentRepository.findById(id).orElse(null);
+    }
+
+    @GetMapping("/export-excel")
+    public ResponseEntity<Resource> exportToExcel() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
+        if (userEntity == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        DoctorEntity doctor = doctorRepository.findByUser(userEntity);
+        if (doctor == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<AppointmentEntity> appointments = appointmentRepository.findByDoctor(doctor);
+
+        try {
+            ByteArrayInputStream excelFile = excelExportService.exportAppointmentsToExcel(appointments);
+            
+            String filename = "lich_hen_kham_" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".xlsx";
+            
+            InputStreamResource file = new InputStreamResource(excelFile);
+            
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
 }
