@@ -45,19 +45,23 @@
                 </div>
             </div>
 
-            <!-- Hiển thị thông báo -->
-            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-                <div th:if="${newAccountEmail}" class="account-success-details">
-                    <h5><i class="mdi mdi-check-circle"></i> Tạo tài khoản bệnh nhân thành công!</h5>
-                    <hr>
+            <!-- Thông báo thành công -->
+            <div th:if="${newAccountEmail}" class="alert alert-success alert-dismissible fade show success-notification" role="alert" id="successNotification">
+                <div class="success-header">
+                    <h4><i class="mdi mdi-check-circle"></i> Tạo tài khoản bệnh nhân thành công!</h4>
+                </div>
+                
+                <div class="success-body mt-3">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label><strong>📧 Email đăng nhập:</strong></label>
+                                <label class="font-weight-bold text-success">
+                                    <i class="mdi mdi-email"></i> Email đăng nhập:
+                                </label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" th:value="${newAccountEmail}" id="copyEmail" readonly>
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('copyEmail')">
+                                        <button class="btn btn-outline-success" type="button" onclick="copyToClipboard('copyEmail')">
                                             <i class="mdi mdi-content-copy"></i>
                                         </button>
                                     </div>
@@ -66,11 +70,13 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label><strong>🔑 Mật khẩu mặc định:</strong></label>
+                                <label class="font-weight-bold text-success">
+                                    <i class="mdi mdi-key"></i> Mật khẩu mặc định:
+                                </label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" th:value="${newAccountPassword}" id="copyPassword" readonly>
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('copyPassword')">
+                                        <button class="btn btn-outline-success" type="button" onclick="copyToClipboard('copyPassword')">
                                             <i class="mdi mdi-content-copy"></i>
                                         </button>
                                     </div>
@@ -78,22 +84,28 @@
                             </div>
                         </div>
                     </div>
-                    <div class="alert alert-warning mt-3 mb-0">
-                        <i class="mdi mdi-alert"></i> 
-                        <strong>Quan trọng:</strong> Đây là tài khoản do LỄ TÂN tạo - Bệnh nhân BẮT BUỘC xác thực OTP qua email khi đăng nhập lần đầu.<br>
-                        <small>📱 Hướng dẫn bệnh nhân kiểm tra email (kể cả thư mục spam) để nhận mã OTP.</small><br>
-                        <small>ℹ️ Lưu ý: Tài khoản tự đăng ký hoặc có sẵn sẽ không cần xác thực OTP.</small>
+                    
+                    <div class="alert alert-warning mt-3">
+                        <h6><i class="mdi mdi-alert"></i> <strong>Lưu ý quan trọng:</strong></h6>
+                        <ul class="mb-0">
+                            <li><strong>Xác thực OTP:</strong> Bệnh nhân BẮT BUỘC xác thực OTP qua email khi đăng nhập lần đầu</li>
+                            <li><strong>Kiểm tra email:</strong> Hướng dẫn bệnh nhân kiểm tra email (kể cả thư mục spam)</li>
+                            <li><strong>Chỉ tài khoản mới:</strong> Chỉ tài khoản do lễ tân tạo mới cần xác thực OTP</li>
+                        </ul>
                     </div>
                 </div>
-                <div th:if="${!newAccountEmail}">
-                    <span th:text="${successMessage}"></span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            
+
+            <!-- Hiển thị thông báo lỗi -->
             <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
                 <span th:text="${errorMessage}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
 
             <!-- Bảng danh sách bệnh nhân -->
@@ -150,29 +162,63 @@
 <script th:src="@{/assets_admin/js/off-canvas.js}"></script>
 <script th:src="@{/assets_admin/js/misc.js}"></script>
 
+
 <style>
-    .account-success-details {
+    .success-notification {
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        border: 3px solid #28a745;
+        border-radius: 10px;
+        padding: 25px;
+        margin: 20px 0;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    }
+    
+    .success-header h4 {
+        color: #155724;
+        margin-bottom: 0;
+        font-weight: bold;
+    }
+    
+    .success-body {
         background: #f8f9fa;
         padding: 20px;
         border-radius: 8px;
-        margin-top: 10px;
+        border: 2px solid #28a745;
     }
-    .account-success-details h5 {
-        color: #155724;
-        margin-bottom: 15px;
-    }
-    .account-success-details .form-group label {
+    
+    .success-body .form-group label {
         font-size: 14px;
-        margin-bottom: 5px;
-        color: #495057;
+        margin-bottom: 8px;
+        font-weight: bold;
     }
-    .account-success-details .form-control {
+    
+    .success-body .form-control {
         background-color: #fff;
-        border: 1px solid #28a745;
+        border: 2px solid #28a745;
+        font-weight: bold;
+        color: #155724;
+        font-size: 14px;
     }
+    
     .copy-success {
         background-color: #28a745 !important;
         color: white !important;
+        border-color: #28a745 !important;
+    }
+    
+    .alert-warning {
+        border-left: 4px solid #ffc107;
+        background-color: #fff3cd;
+        border-color: #ffeaa7;
+    }
+    
+    .alert-warning h6 {
+        color: #856404;
+    }
+    
+    .alert-warning li {
+        color: #856404;
+        margin-bottom: 5px;
     }
 </style>
 
@@ -207,11 +253,27 @@
         element.blur();
     }
     
-    // Auto focus vào thông báo thành công nếu có
+    // Auto scroll đến thông báo thành công và highlight
     document.addEventListener('DOMContentLoaded', function() {
-        const successAlert = document.querySelector('.alert-success');
-        if (successAlert) {
-            successAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const successNotification = document.getElementById('successNotification');
+        if (successNotification) {
+            // Scroll đến thông báo
+            successNotification.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+            
+            // Thêm hiệu ứng highlight
+            successNotification.style.boxShadow = '0 0 20px rgba(40, 167, 69, 0.5)';
+            successNotification.style.border = '3px solid #28a745';
+            
+            // Tự động ẩn thông báo sau 15 giây
+            setTimeout(function() {
+                if (successNotification) {
+                    successNotification.style.transition = 'opacity 1s';
+                    successNotification.style.opacity = '0.7';
+                }
+            }, 15000);
         }
     });
 </script>

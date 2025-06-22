@@ -43,7 +43,8 @@ public class RecepPatientController {
                                   @RequestParam(value = "searchKeyword", required = false) String searchKeyword,
                                   @RequestParam(value = "gender", required = false) String gender,
                                   @RequestParam(value = "page", defaultValue = "0") int page,
-                                  @RequestParam(value = "size", defaultValue = "5") int size) {
+                                  @RequestParam(value = "size", defaultValue = "5") int size,
+                                  @RequestParam(value = "add", required = false) String add) {
 
         List<PatientEntity> allPatients = patientRepository.findAll();
 
@@ -83,6 +84,13 @@ public class RecepPatientController {
         model.addAttribute("gender", gender);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
+
+        // Debug flash attributes
+        System.out.println("=== DEBUG: GET /recep/patient ===");
+        System.out.println("Success Message from model: " + model.getAttribute("successMessage"));
+        System.out.println("New Account Email from model: " + model.getAttribute("newAccountEmail"));
+        System.out.println("New Account Password from model: " + model.getAttribute("newAccountPassword"));
+        System.out.println("Add parameter: " + add);
 
         return "recep/patient/list";
     }
@@ -144,19 +152,19 @@ public class RecepPatientController {
             patientRepository.save(patient);
 
             // Tạo thông báo chi tiết về tài khoản đã tạo
-            String successMsg = String.format(
-                "✅ Tạo tài khoản bệnh nhân mới thành công!\n\n" +
-                "📧 Email đăng nhập: %s\n" +
-                "🔑 Mật khẩu mặc định: %s\n\n" +
-                "⚠️ Quan trọng: Đây là tài khoản MỚI, bệnh nhân BẮT BUỘC phải xác thực OTP qua email khi đăng nhập lần đầu.\n" +
-                "📱 Hướng dẫn bệnh nhân kiểm tra email (kể cả thư mục spam) để nhận mã OTP.",
-                email, defaultPassword
-            );
+            String successMsg = "Tạo tài khoản bệnh nhân thành công!";
+            
+            System.out.println("=== DEBUG: Setting flash attributes ===");
+            System.out.println("Success Message: " + successMsg);
+            System.out.println("Email: " + email);
+            System.out.println("Password: " + defaultPassword);
             
             redirectAttributes.addFlashAttribute("successMessage", successMsg);
             redirectAttributes.addFlashAttribute("newAccountEmail", email);
             redirectAttributes.addFlashAttribute("newAccountPassword", defaultPassword);
-            return "redirect:/recep/patient?add=true";
+            
+            System.out.println("=== Redirecting to: /recep/patient ===");
+            return "redirect:/recep/patient";
 
         } catch (Exception e) {
             e.printStackTrace();
