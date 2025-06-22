@@ -14,7 +14,7 @@
                     <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
                 </a>
             </li>
-            <li class="nav-item">r
+            <li class="nav-item">
                 <a class="nav-link" th:href="@{/admin/dashboard}">
                     <span class="menu-title">Dashboard</span>
                     <i class="mdi mdi-view-dashboard menu-icon"></i>
@@ -22,10 +22,21 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/admin/user}">
+                <a class="nav-link" data-bs-toggle="collapse" href="#user-management" aria-expanded="false" aria-controls="user-management">
                     <span class="menu-title">Quản lý người dùng</span>
+                    <i class="menu-arrow"></i>
                     <i class="mdi mdi-account-multiple menu-icon"></i>
                 </a>
+                <div class="collapse" id="user-management">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/admin/user}">Danh sách người dùng</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/admin/request}">Yêu cầu mở khoá</a>
+                        </li>
+                    </ul>
+                </div>
             </li>
 
             <li class="nav-item">
@@ -41,6 +52,15 @@
                     <i class="mdi mdi-calendar-check menu-icon"></i>
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/admin/logs}">
+                    <span class="menu-title">Logs hệ thống</span>
+                    <i class="mdi mdi-calendar-clock menu-icon"></i> <!-- appointment icon -->
+                </a>
+            </li>
+
+
         </ul>
     </nav>
 </th:block>

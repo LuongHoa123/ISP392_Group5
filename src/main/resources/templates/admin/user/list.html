@@ -9,6 +9,12 @@
     <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
     <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
     <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+    <style>
+        .btn {
+            font-size: 1rem;
+            padding: 0.6rem 1.2rem;
+        }
+    </style>
 </head>
 <body>
 <th:block th:replace="layout/admin-layout :: layout">
@@ -32,24 +38,29 @@
                 Xoá thành công!
             </div>
 
-            <!-- Form tìm kiếm -->
-            <form class="form-inline mb-3" method="get" th:action="@{/admin/user}">
-                <div class="form-group mr-2">
-                    <input type="text" class="form-control" name="email" placeholder="Tìm theo email"
-                           th:value="${email}">
-                </div>
-                <div class="form-group mr-2">
-                    <select class="form-control" name="role">
-                        <option value="">Tất cả vai trò</option>
-                        <option th:each="r : ${roles}"
-                                th:value="${r.name}"
-                                th:selected="${selectedRole == r.name}"
-                                th:text="${r.name}"></option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary mr-2">Tìm kiếm</button>
-                <a class="btn btn-success" th:href="@{/admin/user/add}">Thêm người dùng</a>
-            </form>
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                <form class="form-inline d-flex flex-wrap" method="get" th:action="@{/admin/user}">
+                    <div class="d-flex align-items-center flex-wrap" style="gap: 10px;">
+                        <div class="form-group mb-2">
+                            <input type="text" class="form-control" name="email" placeholder="Tìm kiếm..."
+                                   th:value="${email}">
+                        </div>
+                        <div class="form-group mb-2">
+                            <select class="form-control" name="role">
+                                <option value="">Tất cả vai trò</option>
+                                <option th:each="r : ${roles}"
+                                        th:value="${r.name}"
+                                        th:selected="${selectedRole == r.name}"
+                                        th:text="${r.name}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Tìm kiếm</button>
+                        </div>
+                    </div>
+                </form>
+                <a class="btn btn-success btn-lg mb-2" th:href="@{/admin/user/add}">Thêm người dùng</a>
+            </div>
 
             <!-- Bảng danh sách người dùng -->
             <div class="card">
@@ -74,19 +85,19 @@
                               th:classappend="${user.status == 1} ? 'text-success' : 'text-danger'"></span>
                             </td>
                             <td>
-                                <a class="btn btn-warning btn-sm" th:href="@{'/admin/user/edit/' + ${user.id}}">Sửa</a>
+                                <a class="btn btn-warning btn-lg" th:href="@{'/admin/user/edit/' + ${user.id}}">Sửa</a>
                                 <form th:action="@{'/admin/user/update-status/' + ${user.id}}"
                                       method="post" style="display:inline-block;">
                                     <input type="hidden" name="status" th:value="${user.status == 1 ? 0 : 1}"/>
                                     <button type="submit"
-                                            class="btn btn-secondary btn-sm"
+                                            class="btn btn-secondary btn-lg"
                                             th:text="${user.status == 1 ? 'Khóa' : 'Mở'}"
                                             onclick="return confirm('Bạn có chắc muốn thay đổi trạng thái người dùng này?')"></button>
                                 </form>
                                 <form th:action="@{'/admin/user/delete/' + ${user.id}}"
                                       method="get" style="display:inline-block;"
                                       onsubmit="return confirm('Bạn có chắc chắn muốn xóa người dùng này không?');">
-                                    <button type="submit" class="btn btn-danger btn-sm">Xoá</button>
+                                    <button type="submit" class="btn btn-danger btn-lg">Xoá</button>
                                 </form>
                             </td>
                         </tr>

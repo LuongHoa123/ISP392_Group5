@@ -47,7 +47,8 @@
             <div class="col-md-4 stretch-card grid-margin">
                 <div class="card bg-gradient-info card-img-holder text-white">
                     <div class="card-body">
-                        <img th:src="@{/assets_admin/images/dashboard/circle.svg}" class="card-img-absolute" alt="circle-image"/>
+                        <img th:src="@{/assets_admin/images/dashboard/circle.svg}" class="card-img-absolute"
+                             alt="circle-image"/>
                         <h4 class="font-weight-normal mb-3">Số bác sĩ <i
                                 class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
                         </h4>
@@ -58,7 +59,8 @@
             <div class="col-md-4 stretch-card grid-margin">
                 <div class="card bg-gradient-success card-img-holder text-white">
                     <div class="card-body">
-                        <img th:src="@{/assets_admin/images/dashboard/circle.svg}" class="card-img-absolute" alt="circle-image"/>
+                        <img th:src="@{/assets_admin/images/dashboard/circle.svg}" class="card-img-absolute"
+                             alt="circle-image"/>
                         <h4 class="font-weight-normal mb-3">Số tài khoản <i
                                 class="mdi mdi-diamond mdi-24px float-right"></i>
                         </h4>
@@ -129,13 +131,12 @@
         </div>
 
 
-
         <div class="row">
             <div class="col-md-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Lịch hẹn theo tháng trong năm</h4>
-                        <canvas id="appointmentsBarChart" height="120"></canvas>
+                        <h4 class="card-title">Thống kê lịch hẹn theo các ngày trong tuần</h4>
+                        <canvas id="appointmentsWeekdayChart" height="100"></canvas>
                     </div>
                 </div>
             </div>
@@ -155,35 +156,32 @@
     </th:block>
 </th:block>
 <script th:inline="javascript">
-    let barChartRawData = /*[[${appointmentsByMonth}]]*/ [];
-    let barLabels = [];
-    let barData = [];
+    const weekdayLabels = /*[[${weekdayLabels}]]*/ [];
+    const weekdayCounts = /*[[${weekdayCounts}]]*/ [];
 
-    barChartRawData.forEach(item => {
-        barLabels.push('Tháng ' + item[0]);
-        barData.push(item[1]);
-    });
-
-    new Chart(document.getElementById("appointmentsBarChart"), {
-        type: 'bar',
+    new Chart(document.getElementById("appointmentsWeekdayChart"), {
+        type: "bar",
         data: {
-            labels: barLabels,
+            labels: weekdayLabels,
             datasets: [{
-                label: 'Số lịch hẹn',
-                data: barData,
-                backgroundColor: '#4b49ac'
+                label: "Số lịch hẹn",
+                data: weekdayCounts,
+                backgroundColor: "#4e73df"
             }]
         },
         options: {
-            responsive: true,
             scales: {
                 y: {
                     beginAtZero: true,
+                    ticks: {
+                        stepSize: 10
+                    },
                     title: {
                         display: true,
-                        text: 'Số lượng'
+                        text: 'Số lượng lịch hẹn'
                     }
-                }
+                },
+                x: {title: {display: true, text: 'Ngày trong tuần'}}
             }
         }
     });

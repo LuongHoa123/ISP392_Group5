@@ -9,8 +9,49 @@
     <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            font-weight: 500;
+            padding: 15px;
+            font-size: 16px;
+            box-shadow: 0 2px 6px rgba(0, 128, 0, 0.1);
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            font-weight: 500;
+            padding: 15px;
+            font-size: 16px;
+            box-shadow: 0 2px 6px rgba(255, 0, 0, 0.1);
+        }
+
+        .alert {
+            background-color: transparent;
+            width: 60%;
+            margin: 0 auto;
+            margin-top: 0;
+            text-align: center;
+            position: relative;
+            top: 85px;
+}
+
+
+    </style>
 </head>
 <body>
+<div th:if="${successMessage}" class="alert alert-success text-center mt-3" role="alert" th:text="${successMessage}">
+</div>
+
+<div th:if="${errorMessage}" class="alert alert-danger text-center mt-3" role="alert" th:text="${errorMessage}">
+</div>
+
 <th:block th:replace="layout/recep-layout :: layout">
     <th:block th:fragment="pageContent">
         <div class="container mt-4">
@@ -29,7 +70,8 @@
             </button>
 
             <!-- Modal thêm mới -->
-            <div class="modal fade" id="addAppointmentModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+            <div class="modal fade" id="addAppointmentModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
+                 aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <form th:action="@{/recep/appointment/add}" method="post" class="modal-content">
                         <div class="modal-header">
@@ -66,12 +108,15 @@
                             <div class="form-group">
                                 <label>Phòng khám</label>
                                 <select name="roomId" class="form-control" required>
-                                    <option th:each="room : ${rooms}" th:value="${room.id}" th:text="${room.roomName}"></option>
+                                    <option th:each="room : ${rooms}" th:value="${room.id}"
+                                            th:text="${room.roomName}"></option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label>Thời gian</label>
-                                <input type="datetime-local" name="appointmentDateTime" class="form-control" required>
+                                <input type="datetime-local" name="appointmentDateTime" id="appointmentDateNew"
+                                       th:attr="min=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+                                       class="form-control" required>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -97,7 +142,6 @@
                             <th>Chi tiết</th>
                             <th>Trạng thái</th>
                             <th>Chỉ định</th>
-                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -196,10 +240,12 @@
                                         <div class="form-group">
                                             <label>Thời gian khám</label>
                                             <input type="datetime-local" class="form-control"
-                                                   name="appointmentDateTime"
+                                                   name="appointmentDateTime" id="appointmentDate"
                                                    th:value="${(assignErrorId != null && assignErrorId == appt.id and assignTimeError != null)
                                ? #temporals.format(assignTimeError, 'yyyy-MM-dd''T''HH:mm')
-                               : #temporals.format(appt.appointmentDateTime, 'yyyy-MM-dd''T''HH:mm')}" required>
+                               : #temporals.format(appt.appointmentDateTime, 'yyyy-MM-dd''T''HH:mm')}"
+                                                   th:attr="min=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+                                                   required>
                                         </div>
                                     </div>
 
@@ -335,7 +381,39 @@
     </th:block>
 </th:block>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function setMinDateTime(inputId) {
+        const now = new Date();
+        now.setSeconds(0, 0); // Remove seconds and milliseconds for compatibility
+
+        const localISOTime = now.toISOString().slice(0, 16); // "yyyy-MM-ddTHH:mm"
+        const input = document.getElementById(inputId);
+        if (input) {
+            input.min = localISOTime;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // For Add Modal
+        setMinDateTime('appointmentDateNew');
+
+        // For Assign Modals (if multiple, loop them)
+        document.querySelectorAll('input[id^="appointmentDate"]').forEach(input => {
+            setMinDateTime(input.id);
+        });
+    });
+</script>
+
+
+<script>
+    setTimeout(function () {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => alert.style.display = 'none');
+    }, 4000);
+</script>
+
 
 <script th:inline="javascript">
     let hasAddError = [[${addError}]];
@@ -355,6 +433,39 @@
             $(modalId).modal('show');
         });
     }
+</script>
+
+<script>
+    function isFutureDateTime(dateTimeStr) {
+        const selectedDate = new Date(dateTimeStr);
+        const now = new Date();
+        return selectedDate.getTime() >= now.getTime();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Add form validation for Add Appointment Modal
+        const addForm = document.querySelector('#addAppointmentModal form');
+        if (addForm) {
+            addForm.addEventListener('submit', function (e) {
+                const input = document.getElementById('appointmentDateNew');
+                if (input && !isFutureDateTime(input.value)) {
+                    e.preventDefault();
+                    alert("Vui lòng chọn thời gian sau thời điểm hiện tại.");
+                }
+            });
+        }
+
+        // Add form validation for Assign Modals
+        document.querySelectorAll('form[action$="/appointment/assign"]').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                const input = form.querySelector('input[name="appointmentDateTime"]');
+                if (input && !isFutureDateTime(input.value)) {
+                    e.preventDefault();
+                    alert("Vui lòng chọn thời gian sau thời điểm hiện tại.");
+                }
+            });
+        });
+    });
 </script>
 
 </body>
