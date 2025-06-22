@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm bệnh nhân mới</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+</head>
+<body>
+<th:block th:replace="layout/recep-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0">Thêm bệnh nhân mới</h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Hiển thị thông báo lỗi -->
+                            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <span th:text="${errorMessage}"></span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+
+                            <form th:action="@{/recep/patient/save}" method="post">
+                                <!-- Thông tin tài khoản -->
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h5 class="text-primary mb-3">Thông tin tài khoản</h5>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="email">Email <span class="text-danger">*</span></label>
+                                            <input type="email" class="form-control" id="email" name="email" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Mật khẩu mặc định</label>
+                                            <input type="text" class="form-control" value="123456a@A" readonly style="background-color: #f8f9fa;">
+                                            <small class="form-text text-muted">Mật khẩu mặc định cho tài khoản mới</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                                <!-- Thông tin cá nhân -->
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h5 class="text-primary mb-3">Thông tin cá nhân</h5>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="firstName">Họ và tên đệm <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="firstName" name="firstName" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="lastName">Tên <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="lastName" name="lastName" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="phone">Số điện thoại <span class="text-danger">*</span></label>
+                                            <input type="tel" class="form-control" id="phone" name="phone" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="dateOfBirth">Ngày sinh <span class="text-danger">*</span></label>
+                                            <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="gender">Giới tính <span class="text-danger">*</span></label>
+                                            <select class="form-control" id="gender" name="gender" required>
+                                                <option value="">Chọn giới tính</option>
+                                                <option value="MALE">Nam</option>
+                                                <option value="FEMALE">Nữ</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="address">Địa chỉ</label>
+                                            <input type="text" class="form-control" id="address" name="address">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mt-4">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="mdi mdi-content-save"></i> Lưu thông tin
+                                    </button>
+                                    <a th:href="@{/recep/patient}" class="btn btn-secondary ml-2">
+                                        <i class="mdi mdi-arrow-left"></i> Quay lại
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+
+<script th:src="@{/assets_admin/vendors/js/vendor.bundle.base.js}"></script>
+<script th:src="@{/assets_admin/js/off-canvas.js}"></script>
+<script th:src="@{/assets_admin/js/misc.js}"></script>
+</body>
+</html> 

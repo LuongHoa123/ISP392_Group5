@@ -27,6 +27,9 @@ public class UserEntity extends AbstractEntity {
     @Size(max = 120)
     private String password;
 
+    @Column(columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private Boolean isFirstLogin = true;
+
 	@ManyToOne
 	@JoinColumn(name = "roleId")
 	@EqualsAndHashCode.Exclude

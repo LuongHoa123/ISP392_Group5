@@ -80,6 +80,7 @@ public class SecurityConfig {
                         "/client/payment/pay", "/productListClient/**", "save-new-password", "detail", "change-password", "save-change-password", "/users/**", "/forgot/**", "/forgotPass/**", "/otp-check-pass/**" , "/confirm-otp-pass/**", "/resend-otp-pass/**", "/resend-otp-register/**",
                         "/assets/**", "/assets_admin/**", "/client_assets/**", "/index", "/index/**", "/product/**", "/guest/**", "/doctors/**").permitAll()
                         .requestMatchers("/changePass/**", "/change-password/**").hasAnyRole("ADMIN", "PATIENT", "DOCTOR", "RECEPTIONIST")
+                        .requestMatchers("/auth/first-login", "/auth/send-otp", "/auth/verify-otp", "/auth/resend-otp").hasAnyRole("ADMIN", "PATIENT", "DOCTOR", "RECEPTIONIST")
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN")
                         .requestMatchers("/patient/**").hasAnyRole("PATIENT")
                         .requestMatchers("/doctor/**").hasAnyRole("DOCTOR")

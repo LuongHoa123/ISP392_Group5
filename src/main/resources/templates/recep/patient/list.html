@@ -17,24 +17,43 @@
             <h3 class="mb-3">Tra cứu bệnh nhân</h3>
 
             <!-- Form tìm kiếm -->
-            <form class="form-inline mb-3" method="get" th:action="@{/recep/patient}">
-                <div class="form-group mr-2 flex-fill">
-                    <input type="text" class="form-control" name="searchKeyword" 
-                           placeholder="Tìm theo họ, tên hoặc số điện thoại..."
-                           th:value="${searchKeyword}" 
-                           style="min-width: 300px;">
+            <div class="row mb-3">
+                <div class="col">
+                    <form class="form-inline" method="get" th:action="@{/recep/patient}">
+                        <div class="form-group mr-2 flex-fill">
+                            <input type="text" class="form-control" name="searchKeyword" 
+                                   placeholder="Tìm theo họ, tên hoặc số điện thoại..."
+                                   th:value="${searchKeyword}" 
+                                   style="min-width: 300px;">
+                        </div>
+                        <div class="form-group mr-2">
+                            <select class="form-control" name="gender">
+                                <option value="">Tất cả giới tính</option>
+                                <option value="MALE" th:selected="${gender == 'MALE'}">Nam</option>
+                                <option value="FEMALE" th:selected="${gender == 'FEMALE'}">Nữ</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary mr-2">
+                            <i class="mdi mdi-magnify"></i> Tìm kiếm
+                        </button>
+                    </form>
                 </div>
-                <div class="form-group mr-2">
-                    <select class="form-control" name="gender">
-                        <option value="">Tất cả giới tính</option>
-                        <option value="MALE" th:selected="${gender == 'MALE'}">Nam</option>
-                        <option value="FEMALE" th:selected="${gender == 'FEMALE'}">Nữ</option>
-                    </select>
+                <div class="col-auto">
+                    <a th:href="@{/recep/patient/add}" class="btn btn-success">
+                        <i class="mdi mdi-plus"></i> Thêm bệnh nhân
+                    </a>
                 </div>
-                <button type="submit" class="btn btn-primary mr-2">
-                    <i class="mdi mdi-magnify"></i> Tìm kiếm
-                </button>
-            </form>
+            </div>
+
+            <!-- Hiển thị thông báo -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
 
             <!-- Bảng danh sách bệnh nhân -->
             <div class="card">
