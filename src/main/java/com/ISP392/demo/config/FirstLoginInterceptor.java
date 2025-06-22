@@ -41,13 +41,20 @@ public class FirstLoginInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // Kiểm tra user có cần xác thực lần đầu không
+        // CHỈ PATIENT mới cần xác thực, ADMIN/DOCTOR/RECEPTIONIST không cần
         String username = auth.getName();
         UserEntity user = userRepository.findByEmail(username).orElse(null);
         
-        if (user != null && user.getIsFirstLogin() != null && user.getIsFirstLogin()) {
-            response.sendRedirect("/auth/first-login");
-            return false;
+        if (user != null && user.getRole() != null) {
+            String roleName = user.getRole().getName().name();
+            
+            // CHỈ kiểm tra PATIENT được tạo bởi lễ tân VÀ lần đầu đăng nhập
+            if ("PATIENT".equals(roleName) && 
+                Boolean.TRUE.equals(user.getIsFirstLogin()) && 
+                Boolean.TRUE.equals(user.getCreatedByReceptionist())) {
+                response.sendRedirect("/auth/first-login");
+                return false;
+            }
         }
 
         return true;

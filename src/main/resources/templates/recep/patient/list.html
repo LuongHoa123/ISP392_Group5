@@ -47,9 +47,50 @@
 
             <!-- Hiển thị thông báo -->
             <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-                <span th:text="${successMessage}"></span>
+                <div th:if="${newAccountEmail}" class="account-success-details">
+                    <h5><i class="mdi mdi-check-circle"></i> Tạo tài khoản bệnh nhân thành công!</h5>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label><strong>📧 Email đăng nhập:</strong></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" th:value="${newAccountEmail}" id="copyEmail" readonly>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('copyEmail')">
+                                            <i class="mdi mdi-content-copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label><strong>🔑 Mật khẩu mặc định:</strong></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" th:value="${newAccountPassword}" id="copyPassword" readonly>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('copyPassword')">
+                                            <i class="mdi mdi-content-copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-warning mt-3 mb-0">
+                        <i class="mdi mdi-alert"></i> 
+                        <strong>Quan trọng:</strong> Đây là tài khoản do LỄ TÂN tạo - Bệnh nhân BẮT BUỘC xác thực OTP qua email khi đăng nhập lần đầu.<br>
+                        <small>📱 Hướng dẫn bệnh nhân kiểm tra email (kể cả thư mục spam) để nhận mã OTP.</small><br>
+                        <small>ℹ️ Lưu ý: Tài khoản tự đăng ký hoặc có sẵn sẽ không cần xác thực OTP.</small>
+                    </div>
+                </div>
+                <div th:if="${!newAccountEmail}">
+                    <span th:text="${successMessage}"></span>
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
+            
             <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
                 <span th:text="${errorMessage}"></span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -108,5 +149,71 @@
 <script th:src="@{/assets_admin/vendors/js/vendor.bundle.base.js}"></script>
 <script th:src="@{/assets_admin/js/off-canvas.js}"></script>
 <script th:src="@{/assets_admin/js/misc.js}"></script>
+
+<style>
+    .account-success-details {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+    .account-success-details h5 {
+        color: #155724;
+        margin-bottom: 15px;
+    }
+    .account-success-details .form-group label {
+        font-size: 14px;
+        margin-bottom: 5px;
+        color: #495057;
+    }
+    .account-success-details .form-control {
+        background-color: #fff;
+        border: 1px solid #28a745;
+    }
+    .copy-success {
+        background-color: #28a745 !important;
+        color: white !important;
+    }
+</style>
+
+<script>
+    function copyToClipboard(elementId) {
+        const element = document.getElementById(elementId);
+        const button = element.nextElementSibling.querySelector('button');
+        
+        element.select();
+        element.setSelectionRange(0, 99999); // For mobile devices
+        
+        try {
+            document.execCommand('copy');
+            
+            // Đổi màu nút và icon để báo hiệu đã copy
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="mdi mdi-check"></i>';
+            button.classList.add('copy-success');
+            
+            // Đổi lại sau 2 giây
+            setTimeout(() => {
+                button.innerHTML = originalHTML;
+                button.classList.remove('copy-success');
+            }, 2000);
+            
+        } catch (err) {
+            console.error('Không thể copy: ', err);
+            alert('Không thể copy tự động. Vui lòng copy thủ công.');
+        }
+        
+        // Bỏ chọn text
+        element.blur();
+    }
+    
+    // Auto focus vào thông báo thành công nếu có
+    document.addEventListener('DOMContentLoaded', function() {
+        const successAlert = document.querySelector('.alert-success');
+        if (successAlert) {
+            successAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+</script>
 </body>
 </html>

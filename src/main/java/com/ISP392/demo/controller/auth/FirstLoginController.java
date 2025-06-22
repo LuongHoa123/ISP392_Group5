@@ -31,7 +31,11 @@ public class FirstLoginController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userRepository.findByEmail(username).orElse(null);
         
-        if (user == null || !user.getIsFirstLogin()) {
+        // CHỈ PATIENT được tạo bởi lễ tân VÀ lần đầu đăng nhập mới được vào trang xác thực
+        if (user == null || user.getRole() == null || 
+            !"PATIENT".equals(user.getRole().getName().name()) || 
+            !Boolean.TRUE.equals(user.getIsFirstLogin()) ||
+            !Boolean.TRUE.equals(user.getCreatedByReceptionist())) {
             return "redirect:/";
         }
         
@@ -45,9 +49,10 @@ public class FirstLoginController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userRepository.findByEmail(username).orElse(null);
         
-        if (user == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy tài khoản!");
-            return "redirect:/auth/first-login";
+        if (user == null || !"PATIENT".equals(user.getRole().getName().name()) || 
+            !Boolean.TRUE.equals(user.getCreatedByReceptionist())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Chỉ tài khoản bệnh nhân do lễ tân tạo mới cần xác thực!");
+            return "redirect:/";
         }
 
         try {
@@ -97,9 +102,10 @@ public class FirstLoginController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userRepository.findByEmail(username).orElse(null);
         
-        if (user == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy tài khoản!");
-            return "redirect:/auth/first-login";
+        if (user == null || !"PATIENT".equals(user.getRole().getName().name()) || 
+            !Boolean.TRUE.equals(user.getCreatedByReceptionist())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Chỉ tài khoản bệnh nhân do lễ tân tạo mới cần xác thực!");
+            return "redirect:/";
         }
 
         String sessionOtp = (String) session.getAttribute("verificationOtp");

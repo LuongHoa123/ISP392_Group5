@@ -118,7 +118,8 @@ public class RecepPatientController {
             user.setEmail(email);
             user.setPassword(passwordEncoder.encode(defaultPassword));
             user.setStatus(1); // Active
-            user.setIsFirstLogin(true); // Đánh dấu cần xác thực khi đăng nhập lần đầu
+            user.setIsFirstLogin(true); // CHỈ tài khoản do lễ tân tạo mới cần xác thực OTP
+            user.setCreatedByReceptionist(true); // Đánh dấu được tạo bởi lễ tân
 
             // Gán role PATIENT
             RoleEntity patientRole = roleRepository.findByName(RoleEnum.PATIENT);
@@ -142,7 +143,19 @@ public class RecepPatientController {
 
             patientRepository.save(patient);
 
-            redirectAttributes.addFlashAttribute("successMessage", "Tạo tài khoản bệnh nhân thành công!");
+            // Tạo thông báo chi tiết về tài khoản đã tạo
+            String successMsg = String.format(
+                "✅ Tạo tài khoản bệnh nhân mới thành công!\n\n" +
+                "📧 Email đăng nhập: %s\n" +
+                "🔑 Mật khẩu mặc định: %s\n\n" +
+                "⚠️ Quan trọng: Đây là tài khoản MỚI, bệnh nhân BẮT BUỘC phải xác thực OTP qua email khi đăng nhập lần đầu.\n" +
+                "📱 Hướng dẫn bệnh nhân kiểm tra email (kể cả thư mục spam) để nhận mã OTP.",
+                email, defaultPassword
+            );
+            
+            redirectAttributes.addFlashAttribute("successMessage", successMsg);
+            redirectAttributes.addFlashAttribute("newAccountEmail", email);
+            redirectAttributes.addFlashAttribute("newAccountPassword", defaultPassword);
             return "redirect:/recep/patient?add=true";
 
         } catch (Exception e) {
