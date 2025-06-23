@@ -9,40 +9,55 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         .update-profile {
-            padding: 50px 0;
+            padding: 60px 0;
             background-color: #f8f9fa;
         }
 
         .update-profile .heading {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             color: #007bff;
+            font-size: 3.5rem;
+            font-weight: bold;
         }
 
         .update-profile form {
             background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 450px;
+            padding: 40px 40px 35px 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 18px rgba(0, 0, 0, 0.13);
+            max-width: 700px;
             margin: 0 auto;
         }
 
         .update-profile form h3 {
             color: #28a745;
-            margin-bottom: 20px;
+            margin-bottom: 28px;
             text-align: center;
+            font-size: 2rem;
+            font-weight: 600;
         }
 
         .update-profile form .form-control {
-            margin-bottom: 15px;
+            margin-bottom: 22px;
+            font-size: 1.15rem;
+            padding: 14px 12px;
+            height: auto;
+        }
+
+        .update-profile form label {
+            font-size: 1.13rem;
+            font-weight: 500;
         }
 
         .update-profile form .btn {
             background-color: #28a745;
             color: white;
-            padding: 12px;
+            padding: 16px;
             width: 100%;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 6px;
         }
 
         .update-profile form .btn:hover {
@@ -54,9 +69,68 @@
             text-align: center;
         }
         .required-star {
-    color: red;
-}
-
+            color: red;
+        }
+        .update-profile form .text-danger {
+            font-size: 1rem;
+        }
+        .update-profile form .form-control#firstName,
+        .update-profile form .form-control#lastName {
+            font-size: 1.35rem;
+            height: 56px;
+            padding: 16px 16px;
+        }
+        .update-profile form label[for="firstName"],
+        .update-profile form label[for="lastName"] {
+            font-size: 1.25rem;
+        }
+        .update-profile form .btn[type="submit"] {
+            font-size: 1.7rem;
+            padding: 22px;
+            height: 64px;
+        }
+        .update-profile form label[for="firstName"] {
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+        .update-profile form label[for="firstName"] .required-star {
+            font-size: 1.3rem;
+        }
+        .update-profile form label[for="lastName"] {
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+        .update-profile form label[for="lastName"] .required-star {
+            font-size: 1.3rem;
+        }
+        .update-profile form label[for="dateOfBirth"] {
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+        .update-profile form label[for="dateOfBirth"] .required-star {
+            font-size: 1.3rem;
+        }
+        .update-profile form label[for="gender"] {
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+        .update-profile form label[for="gender"] .required-star {
+            font-size: 1.3rem;
+        }
+        .update-profile form label[for="address"] {
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+        .update-profile form label[for="address"] .required-star {
+            font-size: 1.3rem;
+        }
+        .update-profile form label[for="phone"] {
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+        .update-profile form label[for="phone"] .required-star {
+            font-size: 1.3rem;
+        }
     </style>
 </head>
 <body>
