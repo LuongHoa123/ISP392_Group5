@@ -62,7 +62,117 @@
             font-family: 'Arial', sans-serif;
         }
 
+        /* Registration Success Modal Styles */
+        .registration-modal .modal-dialog {
+            max-width: 450px;
+            margin: 1.75rem auto;
+        }
 
+        .registration-modal .modal-content {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .registration-modal .modal-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border-radius: 12px 12px 0 0;
+            border: none;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .registration-modal .modal-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 0 auto;
+        }
+
+        .registration-modal .modal-body {
+            padding: 25px;
+            background-color: #f8f9fa;
+        }
+
+        .registration-modal .user-info {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .registration-modal .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .registration-modal .info-row:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+        }
+
+        .registration-modal .info-label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .registration-modal .info-value {
+            color: #212529;
+            font-size: 14px;
+            text-align: right;
+            max-width: 60%;
+            word-wrap: break-word;
+        }
+
+        .registration-modal .success-note {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+            color: #0c5460;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .registration-modal .modal-footer {
+            border: none;
+            padding: 15px 25px 25px 25px;
+            background-color: #f8f9fa;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .registration-modal .btn-close-modal {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .registration-modal .btn-close-modal:hover {
+            background: linear-gradient(135deg, #5a6268 0%, #3d4142 100%);
+            transform: translateY(-1px);
+        }
+
+        .registration-modal .close {
+            color: white;
+            opacity: 0.8;
+            font-size: 1.5rem;
+        }
+
+        .registration-modal .close:hover {
+            opacity: 1;
+        }
     </style>
 
 </head>
@@ -72,10 +182,67 @@
     <div class="alert alert-danger custom-alert-error text-center" th:text="${mess}"></div>
 </div>
 
+<!-- Keep old success alert for backward compatibility -->
 <div class="container mt-3" th:if="${param.successReg}">
     <div class="alert alert-success custom-alert-success text-center">Đăng ký thành công!</div>
 </div>
 
+<!-- Registration Success Modal -->
+<div class="modal fade registration-modal" id="registrationSuccessModal" tabindex="-1" role="dialog" aria-labelledby="registrationModalLabel" aria-hidden="true" th:if="${registrationSuccess}">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registrationModalLabel">
+                    <i class="fas fa-check-circle mr-2"></i>Tạo tài khoản bệnh nhân thành công!
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="success-note">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Tài khoản của bạn đã được tạo thành công. Vui lòng lưu lại thông tin bên dưới.
+                </div>
+                
+                <div class="user-info">
+                    <div class="info-row">
+                        <span class="info-label">Họ tên bệnh nhân:</span>
+                        <span class="info-value" th:text="${userFullName}">Nguyễn Trang</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">SĐT:</span>
+                        <span class="info-value" th:text="${userPhone}">0987666111</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value" th:text="${userEmail}">user@gmail.com</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Ngày sinh:</span>
+                        <span class="info-value" th:text="${userDob}">05/12/2000</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Giới tính:</span>
+                        <span class="info-value" th:text="${userGender}">Nữ</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Địa chỉ:</span>
+                        <span class="info-value" th:text="${userAddress}">Tphcm</span>
+                    </div>
+                </div>
+                
+                <div class="success-note">
+                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                    <strong>Lưu ý:</strong> Bạn có thể đăng nhập vào hệ thống bằng email và mật khẩu đã đăng ký.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-close-modal" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <th:block th:replace="layout/user-layout :: layout">
     <th:block th:fragment="pageContent">
@@ -219,6 +386,11 @@
             e.preventDefault();
             window.scrollTo({top: 0, behavior: "smooth"});
         });
+
+        // Show registration success modal if registration was successful
+        if (document.getElementById('registrationSuccessModal')) {
+            $('#registrationSuccessModal').modal('show');
+        }
     });
 </script>
 

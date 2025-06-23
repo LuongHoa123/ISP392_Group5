@@ -49,7 +49,7 @@ public class OtpController {
     }
 
     @RequestMapping(value = "confirm-otp", method = RequestMethod.POST)
-    public String checkOtp(HttpSession session, @RequestParam("otp") String otp, Model model) {
+    public String checkOtp(HttpSession session, @RequestParam("otp") String otp, Model model, RedirectAttributes redirectAttributes) {
         String otpRegister = (String) session.getAttribute("otp-register");
         if (otp.equals(otpRegister)) {
             UserEntity userEntity = new UserEntity();
@@ -76,7 +76,16 @@ public class OtpController {
 
             patientRepository.save(patientEntity);
 
-            return "redirect:/?successReg=true";
+                    // Truyền thông tin tài khoản vừa tạo qua redirectAttributes
+        redirectAttributes.addFlashAttribute("registrationSuccess", true);
+        redirectAttributes.addFlashAttribute("userFullName", patientEntity.getFirstName() + " " + patientEntity.getLastName());
+        redirectAttributes.addFlashAttribute("userEmail", userEntity.getEmail());
+        redirectAttributes.addFlashAttribute("userPhone", patientEntity.getPhone());
+        redirectAttributes.addFlashAttribute("userGender", patientEntity.getGender() == GenderEnum.MALE ? "Nam" : "Nữ");
+        redirectAttributes.addFlashAttribute("userDob", DateUtils.toString(patientEntity.getDateOfBirth()));
+        redirectAttributes.addFlashAttribute("userAddress", patientEntity.getAddress());
+
+            return "redirect:/";
         }
         model.addAttribute("mess", "OTP is not correct! Please check your email.");
         return "otpConfirm";
