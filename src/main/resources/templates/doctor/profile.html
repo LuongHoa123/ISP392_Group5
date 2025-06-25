@@ -10,6 +10,16 @@
     <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
     <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
     <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+    <style>
+        body, .form-control, .btn, .card-title, .page-title, label {
+            font-size: 1.2rem !important; /* Increase font size for all text elements */
+        }
+        .btn-warning {
+            background-color: #28a745 !important; /* Green background for change password button */
+            border-color: #28a745 !important;
+            color: #fff !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -58,7 +68,6 @@
                                 <div id="phoneError" class="text-danger"></div>
                             </div>
 
-
                             <div class="form-group">
                                 <label>Email (không thể sửa)</label>
                                 <input type="email" class="form-control" th:value="*{email}" name="email" readonly>
@@ -76,14 +85,10 @@
                                 </div>
                             </div>
 
-
                             <button type="submit" class="btn btn-primary">Lưu</button>
                         </form>
-
-
                     </div>
                 </div>
-
             </div>
         </div>
     </th:block>
@@ -135,6 +140,5 @@
         });
     });
 </script>
-
 </body>
 </html>
