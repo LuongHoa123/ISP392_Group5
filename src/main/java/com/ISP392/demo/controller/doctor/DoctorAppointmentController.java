@@ -11,6 +11,7 @@ import com.ISP392.demo.repository.DoctorRepository;
 import com.ISP392.demo.repository.RoleRepository;
 import com.ISP392.demo.repository.UserRepository;
 import com.ISP392.demo.service.ExcelExportService;
+import com.ISP392.demo.service.PdfExportService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -49,6 +50,9 @@ public class DoctorAppointmentController {
 
     @Autowired
     private ExcelExportService excelExportService;
+
+    @Autowired
+    private PdfExportService pdfExportService;
 
     @GetMapping("")
     public String viewAppointmentsForDoctor(Model model,
@@ -134,6 +138,35 @@ public class DoctorAppointmentController {
             return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/export-pdf")
+    public ResponseEntity<Resource> exportToPdf() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
+        if (userEntity == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        DoctorEntity doctor = doctorRepository.findByUser(userEntity);
+        if (doctor == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<AppointmentEntity> appointments = appointmentRepository.findByDoctor(doctor);
+
+        try {
+            ByteArrayInputStream pdfFile = pdfExportService.exportAppointmentsToPdf(appointments);
+            String filename = "lich_hen_kham_" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".pdf";
+            InputStreamResource file = new InputStreamResource(pdfFile);
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.APPLICATION_PDF)
                 .body(file);
         } catch (IOException e) {
             e.printStackTrace();
