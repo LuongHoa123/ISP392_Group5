@@ -35,26 +35,26 @@
                               th:object="${room}" method="post">
 
                             <div class="form-group">
-                                <label for="roomName">Tên phòng</label>
+                                <label for="roomName">Tên phòng <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" th:field="*{roomName}" placeholder="Tên phòng" required>
                                 <div class="text-danger" th:if="${#fields.hasErrors('roomName')}" th:errors="*{roomName}"></div>
                             </div>
 
                             <div class="form-group">
-                                <label for="roomType">Loại phòng</label>
+                                <label for="roomType">Loại phòng <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" th:field="*{roomType}" placeholder="Loại phòng" required>
                                 <div class="text-danger" th:if="${#fields.hasErrors('roomType')}" th:errors="*{roomType}"></div>
                             </div>
 
                             <div class="form-group">
-                                <label for="location">Vị trí</label>
+                                <label for="location">Vị trí <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" th:field="*{location}" placeholder="Vị trí" required>
                                 <div class="text-danger" th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></div>
                             </div>
 
                             <div class="form-group">
-                                <label for="doctor">Bác sĩ phụ trách</label>
-                                <select class="form-control" id="doctorSelect" th:field="*{primaryDoctor}" onchange="updateDoctorPhone()">
+                                <label for="doctor">Bác sĩ phụ trách <span class="text-danger">*</span></label>
+                                <select class="form-control" id="doctorSelect" th:field="*{primaryDoctor}" onchange="updateDoctorPhone()" required>
                                     <option value="">Chọn bác sĩ</option>
                                     <option th:each="doc : ${doctors}" 
                                             th:value="${doc.id}"
