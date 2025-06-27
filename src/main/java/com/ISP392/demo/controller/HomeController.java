@@ -32,6 +32,9 @@ public class HomeController {
         } else if (authorities.stream().anyMatch(authority -> "ROLE_RECEPTIONIST".equals(authority.getAuthority()))) {
             model.addAttribute("email", username);
             return "redirect:/recep/dashboard";
+        } else if (authorities.stream().anyMatch(authority -> "ROLE_NURSE".equals(authority.getAuthority()))) {
+            model.addAttribute("email", username);
+            return "redirect:/nurse/dashboard";
         } else {
             return "index";
         }

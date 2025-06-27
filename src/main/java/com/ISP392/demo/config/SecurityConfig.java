@@ -85,6 +85,7 @@ public class SecurityConfig {
                         .requestMatchers("/patient/**").hasAnyRole("PATIENT")
                         .requestMatchers("/doctor/**").hasAnyRole("DOCTOR")
                         .requestMatchers("/recep/**").hasAnyRole("RECEPTIONIST")
+                        .requestMatchers("/nurse/**").hasAnyRole("NURSE")
                         .anyRequest().authenticated());
         return http.build();
     }
