@@ -31,7 +31,7 @@ public class ShiftEntity extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "nurse_id")
     @EqualsAndHashCode.Exclude
-    private NurseEntity nurseEntity;
+    private NurseEntity nurse;
 
     public LocalDateTime getStartTime() {
         return startTime;
@@ -73,11 +73,11 @@ public class ShiftEntity extends AbstractEntity {
         this.doctor = doctor;
     }
 
-    public NurseEntity getNurseEntity() {
-        return nurseEntity;
+    public NurseEntity getNurse() {
+        return nurse;
     }
 
-    public void setNurseEntity(NurseEntity nurseEntity) {
-        this.nurseEntity = nurseEntity;
+    public void setNurse(NurseEntity nurseEntity) {
+        this.nurse = nurseEntity;
     }
 }
