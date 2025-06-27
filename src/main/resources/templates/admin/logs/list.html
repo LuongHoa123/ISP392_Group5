@@ -18,6 +18,17 @@
 
             <div class="card">
                 <div class="card-body">
+                    <div class="mb-3">
+                        <form class="form-inline" method="get" th:action="@{/admin/logs}">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Tìm kiếm nội dung hoặc email"
+                                       name="keyword" th:value="${keyword}">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                     <table class="table table-bordered">
                         <thead class="thead-dark">
                         <tr>
@@ -41,14 +52,18 @@
                     <nav th:if="${totalPages > 1}">
                         <ul class="pagination justify-content-center mt-3">
                             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                                <a class="page-link" th:href="@{/admin/logs(page=${currentPage - 1})}">Trước</a>
+                                <a class="page-link"
+                                   th:href="@{/admin/logs(page=${currentPage - 1}, keyword=${keyword})}">Trước</a>
                             </li>
                             <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                                 th:classappend="${i == currentPage} ? 'active'">
-                                <a class="page-link" th:text="${i + 1}" th:href="@{/admin/logs(page=${i})}"></a>
+                                <a class="page-link"
+                                   th:href="@{/admin/logs(page=${i}, keyword=${keyword})}"
+                                   th:text="${i + 1}"></a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                                <a class="page-link" th:href="@{/admin/logs(page=${currentPage + 1})}">Sau</a>
+                                <a class="page-link"
+                                   th:href="@{/admin/logs(page=${currentPage + 1}, keyword=${keyword})}">Sau</a>
                             </li>
                         </ul>
                     </nav>

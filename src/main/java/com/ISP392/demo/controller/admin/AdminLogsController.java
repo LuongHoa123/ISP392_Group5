@@ -21,9 +21,17 @@ public class AdminLogsController {
     @GetMapping("")
     public String patientListPage(Model model,
                                   @RequestParam(value = "page", defaultValue = "0") int page,
-                                  @RequestParam(value = "size", defaultValue = "5") int size) {
+                                  @RequestParam(value = "size", defaultValue = "5") int size,
+                                  @RequestParam(value = "keyword", required = false) String keyword) {
 
-        List<LogsEntity> allLogs = logsRepository.findAll();
+        List<LogsEntity> allLogs;
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            allLogs = logsRepository.findByContentContainingIgnoreCaseOrUser_EmailContainingIgnoreCase(keyword, keyword);
+            model.addAttribute("keyword", keyword);
+        } else {
+            allLogs = logsRepository.findAll();
+        }
 
         int totalItems = allLogs.size();
         int totalPages = (int) Math.ceil((double) totalItems / size);
@@ -39,4 +47,5 @@ public class AdminLogsController {
 
         return "admin/logs/list";
     }
+
 }

@@ -141,11 +141,9 @@ public class AdminRoomController {
             Optional<RoomEntity> roomOptional = roomRepository.findById(id);
             if (roomOptional.isPresent()) {
                 RoomEntity room = roomOptional.get();
-                // Xóa liên kết với bác sĩ trước khi xóa phòng
                 room.setPrimaryDoctor(null);
                 room.setPhoneNumber(null);
                 roomRepository.save(room);
-                // Sau đó xóa phòng
                 roomRepository.delete(room);
                 saveLog("Xoá phòng có id " + room.getId());
 
