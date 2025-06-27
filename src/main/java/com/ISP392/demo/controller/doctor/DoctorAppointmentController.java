@@ -12,6 +12,7 @@ import com.ISP392.demo.repository.RoleRepository;
 import com.ISP392.demo.repository.UserRepository;
 import com.ISP392.demo.service.ExcelExportService;
 import com.ISP392.demo.service.PdfExportService;
+import com.ISP392.demo.service.WordExportService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -53,6 +54,9 @@ public class DoctorAppointmentController {
 
     @Autowired
     private PdfExportService pdfExportService;
+
+    @Autowired
+    private WordExportService wordExportService;
 
     @GetMapping("")
     public String viewAppointmentsForDoctor(Model model,
@@ -167,6 +171,35 @@ public class DoctorAppointmentController {
             return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .contentType(MediaType.APPLICATION_PDF)
+                .body(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/export-word")
+    public ResponseEntity<Resource> exportToWord() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
+        if (userEntity == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        DoctorEntity doctor = doctorRepository.findByUser(userEntity);
+        if (doctor == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<AppointmentEntity> appointments = appointmentRepository.findByDoctor(doctor);
+
+        try {
+            ByteArrayInputStream wordFile = wordExportService.exportAppointmentsToWord(appointments);
+            String filename = "lich_hen_kham_" + java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".docx";
+            InputStreamResource file = new InputStreamResource(wordFile);
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
                 .body(file);
         } catch (IOException e) {
             e.printStackTrace();
