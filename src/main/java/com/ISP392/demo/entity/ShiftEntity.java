@@ -17,9 +17,6 @@ public class ShiftEntity extends AbstractEntity {
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
-    @Column(name = "type")
-    private String type;
-
     @Column(name = "description")
     private String description;
 
@@ -47,14 +44,6 @@ public class ShiftEntity extends AbstractEntity {
 
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getDescription() {
