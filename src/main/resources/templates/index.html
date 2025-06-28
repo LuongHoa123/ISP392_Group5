@@ -365,6 +365,118 @@
     </th:block>
 </th:block>
 
+<script>
+    function openChat() {
+        document.getElementById("chatWidget").style.display = "block";
+        document.querySelector(".chat-bubble").style.display = "none";
+    }
+
+    function closeChat() {
+        document.getElementById("chatWidget").style.display = "none";
+        document.querySelector(".chat-bubble").style.display = "block";
+    }
+</script>
+<div class="chat-widget" id="chatWidget" style="display: none;">
+    <div class="chat-header">
+        <div class="avatar"></div>
+        <div class="header-text">
+            <strong>Tư vấn Chatbot</strong><br>
+            Tôi có thể giúp gì cho bạn?
+        </div>
+        <button class="close-chat" onclick="closeChat()">×</button>
+    </div>
+    <div class="chat-body" id="chats">
+        <div class="message time">21:29</div>
+    </div>
+    <div class="chat-input">
+        <input type="text" id="myMessage" placeholder="Nhập tin nhắn..."
+               onkeydown="if(event.key === 'Enter') sendMessage()">
+        <button class="send-btn" onclick="sendMessage()">📨</button>
+    </div>
+</div>
+
+<div class="chat-bubble" onclick="openChat()">
+    <img src="https://cdn-icons-png.flaticon.com/512/1827/1827392.png" alt="Chat Icon">
+    <span>Cần hỗ trợ?<br>Chat ngay!</span>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
+<script th:src="@{/js/script.js}"></script>
+<script>
+
+    $(document).ready(function () {
+        let initialMessage = "Tôi là Chatbot AI, có thể giúp gì cho bạn?";
+        $("#chats").append(`
+      <div class="received-chats">
+        <div class="received-msg">
+          <div class="received-msg-inbox">
+            <p class="multi-msg">${initialMessage}</p>
+            <span class="time">${getCurrentTime()}</span>
+          </div>
+        </div>
+      </div>`);
+        scrollToBottom();
+    });
+
+    function getCurrentTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        return `${hours}:${minutes}`;
+    }
+
+    function sendMessage() {
+        let message = $("#myMessage").val();
+        if (!message.trim()) return;
+
+        $("#chats").append(`
+      <div class="outgoing-chats">
+        <div class="outgoing-msg" >
+          <p class="multi-msg" style="color: white !important;">${message}</p>
+          <span class="time">${getCurrentTime()}</span>
+        </div>
+      </div>`);
+        $("#myMessage").val('');
+        scrollToBottom();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "http://localhost:8080/generate_response",
+            data: JSON.stringify({message, userId: 0}),
+            dataType: 'json',
+            success: function (response) {
+                $("#chats").append(`
+          <div class="received-chats">
+            <div class="received-msg">
+              <div class="received-msg-inbox">
+                <p class="multi-msg">${response.message}</p>
+                <span class="time">${getCurrentTime()}</span>
+              </div>
+            </div>
+          </div>`);
+                scrollToBottom();
+            },
+            error: function (e) {
+                console.error("Lỗi khi gửi:", e);
+            }
+        });
+    }
+
+    function scrollToBottom() {
+        const chatBody = document.getElementById('chats');
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    $("#myMessage").on("keydown", function (event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
+        }
+    });
+</script>
+
 <a href="#" class="back-to-top" id="backToTop" title="Lên đầu trang">
     <i class="fas fa-chevron-up"></i>
 </a>

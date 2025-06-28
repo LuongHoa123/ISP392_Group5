@@ -46,6 +46,7 @@
                 <div class="form-group">
                     <label for="doctor">Bác sĩ:</label>
                     <select id="doctor" class="form-control" th:field="*{doctor}">
+                        <option value="">-- Chọn bác sĩ --</option>
                         <option th:each="d : ${doctors}" th:value="${d.id}"
                                 th:text="${d.firstName + ' ' + d.lastName}">Doctor
                         </option>
