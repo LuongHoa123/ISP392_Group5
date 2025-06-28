@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý lịch làm việc</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+</head>
+<body>
+<th:block th:replace="layout/doctor-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container mt-4">
+            <h3 class="mb-3">Ca trực của tôi</h3>
+
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" class="row mb-3">
+                        <div class="col-md-3">
+                            <input type="date" class="form-control" name="date" th:value="${selectedDate}">
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary">Lọc</button>
+                            <a th:href="@{/doctor/shift}" class="btn btn-secondary">Reset</a>
+                        </div>
+                    </form>
+
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Thời gian bắt đầu</th>
+                            <th>Thời gian kết thúc</th>
+                            <th>Người trực</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="shift, iterStat : ${shifts}">
+                            <td th:text="${iterStat.index + 1}"></td>
+                            <td th:text="${#temporals.format(shift.startTime, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td th:text="${#temporals.format(shift.endTime, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td>
+        <span th:if="${shift.doctor != null}"
+              th:text="${shift.doctor.firstName + ' ' + shift.doctor.lastName + ' (Bác sĩ)'}"></span>
+                                <span th:if="${shift.nurse != null}"
+                                      th:text="${shift.nurse.firstName + ' ' + shift.nurse.lastName + ' (Y tá)'}"></span>
+                                <span th:if="${shift.doctor == null and shift.nurse == null}">---</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <nav th:if="${totalPages > 1}">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/doctor/shift(page=${currentPage - 1})}">Trước</a>
+                            </li>
+                            <li class="page-item"
+                                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                th:classappend="${i == currentPage} ? 'active'">
+                                <a class="page-link"
+                                   th:href="@{/doctor/shift(page=${i})}"
+                                   th:text="${i + 1}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/doctor/shift(page=${currentPage + 1})}">Sau</a>
+                            </li>
+                        </ul>
+                    </nav>
+
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+
+<script th:src="@{/assets_admin/vendors/js/vendor.bundle.base.js}"></script>
+<script th:src="@{/assets_admin/js/off-canvas.js}"></script>
+<script th:src="@{/assets_admin/js/misc.js}"></script>
+</body>
+</html>

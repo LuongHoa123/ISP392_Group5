@@ -72,8 +72,7 @@ public class AdminShiftController {
     @PostMapping("/add")
     public String saveNew(@RequestParam("shiftDate") String dateStr,
                           @RequestParam("fixedTime") String fixedTime,
-                          @ModelAttribute ShiftEntity shift,
-                          BindingResult br, Model model) {
+                          @ModelAttribute ShiftEntity shift, Model model) {
 
         try {
             LocalDate date = LocalDate.parse(dateStr);
