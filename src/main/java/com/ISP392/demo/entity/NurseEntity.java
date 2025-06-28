@@ -10,7 +10,7 @@ import lombok.ToString;
 import java.util.Set;
 
 @Entity
-@Table(name = "Doctors")
+@Table(name = "Nurses")
 @Data
 public class NurseEntity extends AbstractEntity {
     @Column(name = "firstName")

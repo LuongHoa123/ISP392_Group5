@@ -16,4 +16,5 @@ public interface ShiftRepository extends JpaRepository<ShiftEntity, Long> {
     Page<ShiftEntity> findByNurseId(Long id, Pageable pageable);
     Page<ShiftEntity> findByStartTimeBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
     Page<ShiftEntity> findByDoctorIdAndStartTimeBetween(Long doctorId, LocalDateTime start, LocalDateTime end, Pageable pageable);
+    Page<ShiftEntity> findByNurseIdAndStartTimeBetween(Long nurseId, LocalDateTime start, LocalDateTime end, Pageable pageable);
 }
