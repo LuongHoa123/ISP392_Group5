@@ -42,13 +42,26 @@
 
                             <div class="form-group">
                                 <label for="roomType">Loại phòng <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" th:field="*{roomType}" placeholder="Loại phòng" required>
+                                <select class="form-control" th:field="*{roomType}" required>
+                                    <option value="">Chọn loại phòng</option>
+                                    <option value="Phòng tai">Phòng khám tai</option>
+                                    <option value="Phòng mũi">Phòng khám mũi</option>
+                                    <option value="Phòng họng">Phòng khám họng</option>
+                                    <option value="Phòng nội soi (tai - mũi/ họng)">Phòng nội soi (tai - mũi/ họng)</option>
+                                    <option value="Phòng thủ thuật (hút mũi, lấy dị vật)">Phòng thủ thuật (hút mũi, lấy dị vật)</option>
+                                    <option value="Phòng xét nghiệm">Phòng xét nghiệm</option>
+                                </select>
                                 <div class="text-danger" th:if="${#fields.hasErrors('roomType')}" th:errors="*{roomType}"></div>
                             </div>
 
                             <div class="form-group">
                                 <label for="location">Vị trí <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" th:field="*{location}" placeholder="Vị trí" required>
+                                <select class="form-control" th:field="*{location}" required>
+                                    <option value="">Chọn tầng</option>
+                                    <option value="Tầng 1">Tầng 1</option>
+                                    <option value="Tầng 2">Tầng 2</option>
+                                    <option value="Tầng 3">Tầng 3</option>
+                                </select>
                                 <div class="text-danger" th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></div>
                             </div>
 
@@ -70,6 +83,23 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="primaryNurse">Y tá phụ trách</label>
+                                <select class="form-control" id="nurseSelect" th:field="*{primaryNurse}" onchange="updateNursePhone()">
+                                    <option value="">Chọn y tá</option>
+                                    <option th:each="nurse : ${nurses}" 
+                                            th:value="${nurse.id}"
+                                            th:text="${nurse.firstName + ' ' + nurse.lastName}"
+                                            th:attr="data-phone=${nurse.phoneNumber}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Số điện thoại y tá</label>
+                                <input type="text" class="form-control" id="nursePhoneNumber" readonly>
+                            </div>
+
+                            <div class="form-group">
                                 <label for="description">Mô tả</label>
                                 <textarea class="form-control" th:field="*{description}" rows="3" placeholder="Mô tả chi tiết"></textarea>
                                 <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
@@ -86,9 +116,17 @@
                                 document.getElementsByName('phoneNumber')[0].value = phone;
                             }
 
+                            function updateNursePhone() {
+                                var select = document.getElementById('nurseSelect');
+                                var selectedOption = select.options[select.selectedIndex];
+                                var phone = selectedOption.getAttribute('data-phone') || '';
+                                document.getElementById('nursePhoneNumber').value = phone;
+                            }
+
                             // Tự động điền số điện thoại khi trang load
                             window.onload = function() {
                                 updateDoctorPhone();
+                                updateNursePhone();
                             }
                             </script>
                         </form>

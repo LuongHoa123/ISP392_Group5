@@ -7,6 +7,7 @@ import com.ISP392.demo.repository.LogsRepository;
 import com.ISP392.demo.repository.RoomRepository;
 import com.ISP392.demo.repository.UserRepository;
 import com.ISP392.demo.repository.DoctorRepository;
+import com.ISP392.demo.repository.NurseRepository;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class AdminRoomController {
 
     @Autowired
     private DoctorRepository doctorRepository;
+
+    @Autowired
+    private NurseRepository nurseRepository;
 
     @Autowired
     private LogsRepository logsRepository;
@@ -91,6 +95,7 @@ public class AdminRoomController {
     public String addRoomForm(Model model) {
         model.addAttribute("room", new RoomEntity());
         model.addAttribute("doctors", doctorRepository.findAll());
+        model.addAttribute("nurses", nurseRepository.findAll());
         return "admin/room/add";
     }
 
@@ -100,6 +105,7 @@ public class AdminRoomController {
                            Model model) {
         if (result.hasErrors()) {
             model.addAttribute("doctors", doctorRepository.findAll());
+            model.addAttribute("nurses", nurseRepository.findAll());
             return "admin/room/add";
         }
         saveLog("Thêm phòng " + room.getRoomName() + " ở vị trí " + room.getLocation());
@@ -113,6 +119,7 @@ public class AdminRoomController {
         if (optional.isPresent()) {
             model.addAttribute("room", optional.get());
             model.addAttribute("doctors", doctorRepository.findAll());
+            model.addAttribute("nurses", nurseRepository.findAll());
             return "admin/room/edit";
         }
         return "redirect:/admin/room";
@@ -125,6 +132,7 @@ public class AdminRoomController {
                              Model model) {
         if (result.hasErrors()) {
             model.addAttribute("doctors", doctorRepository.findAll());
+            model.addAttribute("nurses", nurseRepository.findAll());
             return "admin/room/edit";
         }
 
@@ -142,6 +150,7 @@ public class AdminRoomController {
             if (roomOptional.isPresent()) {
                 RoomEntity room = roomOptional.get();
                 room.setPrimaryDoctor(null);
+                room.setPrimaryNurse(null);
                 room.setPhoneNumber(null);
                 roomRepository.save(room);
                 roomRepository.delete(room);
