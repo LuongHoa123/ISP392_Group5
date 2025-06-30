@@ -185,7 +185,7 @@
             <div class="box-container">
                 <div class="box" th:each="doctor : ${doctors}">
                     <a th:href="@{/doctors/{id}(id=${doctor.id})}" class="text-decoration-none">
-                        <img th:src="@{/assets/Doc1.jpg}" alt="Doctor Image">
+                        <img th:src="${doctor.avatar != null} ? ${doctor.avatar} : '/assets/Doc1.jpg'" alt="Doctor Image">
                         <h3 th:text="${doctor.firstName + ' ' + doctor.lastName}">Tên bác sĩ</h3>
                         <span class="specialization" th:text="${doctor.specialization}">Chuyên khoa</span>
                         <p th:text="'Email: ' + ${doctor.email}"></p>
@@ -197,24 +197,31 @@
                 </div>
             </div>
 
-            <!-- Pagination: Provides navigation links for previous, next, and specific pages of doctor results -->
             <nav aria-label="Page navigation" class="my-4 text-center" th:if="${totalPages > 1}">
                 <ul class="pagination justify-content-center">
                     <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                        <a class="page-link nav-btn" th:href="${baseUrl + '&page=' + (currentPage - 1)}">Trước</a>
+                        <a class="page-link nav-btn"
+                           th:href="${baseUrl.contains('?') ? baseUrl + '&page=' + (currentPage - 1) : baseUrl + '?page=' + (currentPage - 1)}">
+                            Trước
+                        </a>
                     </li>
 
                     <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                         th:classappend="${i == currentPage} ? 'active'">
-                        <a class="page-link nav-btn" th:href="${baseUrl + '&page=' + i}" th:text="${i + 1}"></a>
+                        <a class="page-link nav-btn"
+                           th:href="${baseUrl.contains('?') ? baseUrl + '&page=' + i : baseUrl + '?page=' + i}"
+                           th:text="${i + 1}">
+                        </a>
                     </li>
 
                     <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                        <a class="page-link nav-btn" th:href="${baseUrl + '&page=' + (currentPage + 1)}">Tiếp</a>
+                        <a class="page-link nav-btn"
+                           th:href="${baseUrl.contains('?') ? baseUrl + '&page=' + (currentPage + 1) : baseUrl + '?page=' + (currentPage + 1)}">
+                            Tiếp
+                        </a>
                     </li>
                 </ul>
             </nav>
-
 
         </section>
     </th:block>

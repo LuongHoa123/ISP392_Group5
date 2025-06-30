@@ -78,7 +78,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(at -> at.requestMatchers("/", "/home", "/appointment/**", "/login/**", "/loginError/**", "/login-google", "/register", "/save", "re-send", "/image/**", "/js/**", "/css/**", "/lib/**", "/style/**", "/slider/**", "/assets/**",
                         "/api/storage/**", "recover", "send-otp-recover", "otp-check", "confirm-otp", "send-otp-recover", "confirm-otp-recover", "/sendRequest/**", "/generate_response/**",
                         "/client/payment/pay", "/productListClient/**", "save-new-password", "detail", "change-password", "save-change-password", "/users/**", "/forgot/**", "/forgotPass/**", "/otp-check-pass/**", "/confirm-otp-pass/**", "/resend-otp-pass/**", "/resend-otp-register/**",
-                        "/assets/**", "/assets_admin/**", "/client_assets/**", "/index", "/index/**", "/product/**", "/guest/**", "/doctors/**").permitAll()
+                        "/assets/**", "/assets_admin/**", "/client_assets/**", "/index", "/index/**", "/product/**", "/guest/**", "/doctors", "/doctors/**").permitAll()
                         .requestMatchers("/changePass/**", "/change-password/**").hasAnyRole("ADMIN", "PATIENT", "DOCTOR", "RECEPTIONIST")
                         .requestMatchers("/auth/first-login", "/auth/send-otp", "/auth/verify-otp", "/auth/resend-otp").hasAnyRole("ADMIN", "PATIENT", "DOCTOR", "RECEPTIONIST")
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN")
