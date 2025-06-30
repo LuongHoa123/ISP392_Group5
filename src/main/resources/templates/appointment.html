@@ -202,8 +202,7 @@
                     </div>
 
                     <div class="input-wrapper">
-        <textarea name="problem" placeholder="Mô tả vấn đề sức khỏe của bạn..." class="problem" rows="4"
-                  required></textarea>
+                        <textarea name="problem" placeholder="Mô tả vấn đề sức khỏe của bạn..." class="problem italic-placeholder" rows="4" required></textarea>
                         <span class="required-star">*</span>
                     </div>
 
@@ -255,6 +254,11 @@
     });
 </script>
 
+<style>
+    .italic-placeholder::placeholder {
+        font-style: italic;
+    }
+</style>
 
 </body>
 </html>
