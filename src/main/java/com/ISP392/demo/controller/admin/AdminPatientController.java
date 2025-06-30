@@ -22,6 +22,11 @@ public class AdminPatientController {
 
     private static final int PAGE_SIZE = 5;
 
+    @GetMapping("/test")
+    public String testPage() {
+        return "admin/patient/test";
+    }
+
     @GetMapping("")
     public String listPatients(Model model,
                              @RequestParam(value = "page", defaultValue = "0") int page,

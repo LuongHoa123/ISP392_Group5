@@ -57,6 +57,7 @@
                             <th>Loại phòng</th>
                             <th>Tầng</th>
                             <th>Bác sĩ phụ trách</th>
+                            <th>Y tá phụ trách</th>
                             <th>Số điện thoại</th>
                             <th>Hành động</th>
                         </tr>
@@ -68,6 +69,7 @@
                             <td th:text="${room.roomType}"></td>
                             <td th:text="${room.location}"></td>
                             <td th:text="${room.primaryDoctor != null ? room.primaryDoctor.firstName + ' ' + room.primaryDoctor.lastName : '---'}"></td>
+                            <td th:text="${room.primaryNurse != null ? room.primaryNurse.firstName + ' ' + room.primaryNurse.lastName : '---'}"></td>
                             <td th:text="${room.phoneNumber != null ? room.phoneNumber : '---'}"></td>
                             <td>
                                 <a class="btn btn-warning btn-sm"

@@ -27,6 +27,10 @@ public class RoomEntity extends AbstractEntity {
     @JoinColumn(name = "Primary_doctor")
     private DoctorEntity primaryDoctor;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "Primary_nurse")
+    private NurseEntity primaryNurse;
+
     @Column(name = "phone_number", length = 20)
     private String phoneNumber;
 }
