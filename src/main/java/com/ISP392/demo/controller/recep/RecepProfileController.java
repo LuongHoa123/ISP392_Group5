@@ -42,7 +42,6 @@ public class RecepProfileController {
         return "redirect:/";
     }
 
-
     @PostMapping("/profile/save")
     public String updateRecepProfile(RecepEntity formRecep) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

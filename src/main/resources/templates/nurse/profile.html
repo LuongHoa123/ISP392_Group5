@@ -14,6 +14,7 @@
         body, .form-control, .btn, .card-title, .page-title, label {
             font-size: 1.2rem !important; /* Increase font size for all text elements */
         }
+
         .btn-warning {
             background-color: #28a745 !important; /* Green background for change password button */
             border-color: #28a745 !important;
@@ -47,29 +48,55 @@
                         <form id="updateProfileForm" th:action="@{/nurse/profile/save}" th:object="${nurse}"
                               method="post" enctype="multipart/form-data">
 
-                            <div class="form-group">
-                                <label for="firstName">Họ <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" th:field="*{firstName}" name="firstName"
-                                       placeholder="Họ" required>
-                                <div id="firstNameError" class="text-danger"></div>
+                            <div style="display: flex; align-items: flex-start; gap: 40px;">
+                                <!-- Bên trái: Avatar -->
+                                <div style="min-width: 200px; text-align: center;">
+                                    <label for="avatarFile">Ảnh đại diện</label>
+                                    <input type="file" id="avatarFile" name="avatarFile" accept="image/*"
+                                           class="form-control mb-3"/>
+
+                                    <img id="avatarPreview"
+                                         th:if="${nurse.avatar != null}"
+                                         th:src="@{${nurse.avatar}}"
+                                         alt="Preview avatar"
+                                         style="max-width: 200px; border-radius: 8px; display: block; margin: auto;"/>
+
+                                    <img id="avatarPreview"
+                                         th:if="${nurse.avatar == null}"
+                                         src="#"
+                                         alt="Preview avatar"
+                                         style="max-width: 200px; border-radius: 8px; display: none; margin: auto;"/>
+                                </div>
+
+                                <div style="flex:1">
+                                    <div class="form-group">
+                                        <label for="firstName">Họ <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" th:field="*{firstName}" name="firstName"
+                                               placeholder="Họ" required>
+                                        <div id="firstNameError" class="text-danger"></div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="lastName">Tên <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" th:field="*{lastName}" name="lastName"
+                                               placeholder="Tên" required>
+                                        <div id="lastNameError" class="text-danger"></div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="phoneNumber">Số điện thoại <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" th:field="*{phoneNumber}"
+                                               name="phoneNumber"
+                                               placeholder="Số điện thoại" required>
+                                        <div id="phoneError" class="text-danger"></div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="lastName">Tên <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" th:field="*{lastName}" name="lastName"
-                                       placeholder="Tên" required>
-                                <div id="lastNameError" class="text-danger"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="phoneNumber">Số điện thoại <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" th:field="*{phoneNumber}" name="phoneNumber"
-                                       placeholder="Số điện thoại" required>
-                                <div id="phoneError" class="text-danger"></div>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">Lưu</button>
+                            <button type="submit" class="btn btn-primary mt-3">Lưu</button>
                         </form>
+
                     </div>
                 </div>
             </div>
@@ -122,6 +149,31 @@
             }
         });
     });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const avatarInput = document.getElementById('avatarFile');
+        const avatarPreview = document.getElementById('avatarPreview');
+
+        avatarInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    avatarPreview.src = e.target.result;
+                    avatarPreview.style.display = 'block';
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                avatarPreview.src = '#';
+                avatarPreview.style.display = 'none';
+            }
+        });
+    });
+
 </script>
+
+
 </body>
 </html>

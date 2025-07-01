@@ -23,6 +23,7 @@ public class NurseEntity extends AbstractEntity {
     @Column(name = "phoneNumber", nullable = true, length = 20)
     private String phoneNumber;
     private String address;
+    private String avatar;
 
 	@ManyToOne
 	@JoinColumn(name = "userId")
@@ -35,6 +36,22 @@ public class NurseEntity extends AbstractEntity {
     @ToString.Exclude
     @JsonManagedReference
     private Set<ShiftEntity> shifts;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
 
     public Set<ShiftEntity> getShifts() {
         return shifts;

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bệnh nhân theo ngày</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+</head>
+<body>
+<th:block th:replace="layout/nurse-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container mt-4">
+            <h3 class="mb-3">Bệnh nhân theo ngày</h3>
+
+            <!-- Form tìm kiếm -->
+            <form class="form-inline mb-3" method="get" th:action="@{/nurse/patient}">
+                <div class="form-group mr-2 flex-fill">
+                    <input type="text" class="form-control" name="searchKeyword" 
+                           placeholder="Tìm theo họ, tên hoặc số điện thoại..."
+                           th:value="${searchKeyword}" 
+                           style="min-width: 300px;">
+                </div>
+                <button type="submit" class="btn btn-primary mr-2">
+                    <i class="mdi mdi-magnify"></i> Tìm kiếm
+                </button>
+            </form>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <a class="btn btn-outline-primary"
+                       th:href="@{/nurse/patient(date=${prevDate}, page=0)}">
+                        ← Ngày trước: <span th:text="${#temporals.format(prevDate, 'dd/MM/yyyy')}"></span>
+                    </a>
+                </div>
+                <h4 th:text="${#temporals.format(selectedDate, 'EEEE, dd MMMM yyyy')}">Ngày</h4>
+                <div>
+                    <a class="btn btn-outline-primary"
+                       th:href="@{/nurse/patient(date=${nextDate}, page=0)}">
+                        Ngày sau: <span th:text="${#temporals.format(nextDate, 'dd/MM/yyyy')}"></span> →
+                    </a>
+                </div>
+            </div>
+
+
+            <!-- Bảng danh sách bệnh nhân -->
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Họ</th>
+                            <th>Tên</th>
+                            <th>Ngày sinh</th>
+                            <th>Giới tính</th>
+                            <th>Số điện thoại</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="appt, iterStat : ${appointments}"
+                            data-bs-toggle="modal"
+                            th:attr="data-bs-target='#apptModal__${appt.id}'">
+                            <td th:text="${iterStat.index + 1}"></td>
+                            <td th:text="${appt.patient.firstName}"></td>
+                            <td th:text="${appt.patient.lastName}"></td>
+                            <td th:text="${#temporals.format(appt.patient.dateOfBirth, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${appt.patient.gender.name() == 'MALE' ? 'Nam' : 'Nữ'}"></td>
+                            <td th:text="${appt.patient.phone}"></td>
+                            <td>
+                                <button class="btn btn-sm btn-info"
+                                        data-bs-toggle="modal"
+                                        th:attr="data-bs-target='#apptModal__' + ${appt.id}">
+                                    Chi tiết
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div th:each="appt : ${appointments}">
+                        <div class="modal fade" th:id="'apptModal__' + ${appt.id}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Chi tiết lịch hẹn</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>Họ tên bệnh nhân:</strong> <span th:text="${appt.patient.firstName + ' ' + appt.patient.lastName}"></span></p>
+                                        <p><strong>Ngày sinh:</strong> <span th:text="${#temporals.format(appt.patient.dateOfBirth, 'dd/MM/yyyy')}"></span></p>
+                                        <p><strong>Giới tính:</strong> <span th:text="${appt.patient.gender.name() == 'MALE' ? 'Nam' : 'Nữ'}"></span></p>
+                                        <p><strong>Thời gian hẹn:</strong> <span th:text="${#temporals.format(appt.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></span></p>
+                                        <p><strong>Lý do:</strong> <span th:text="${appt.reason}"></span></p>
+                                        <p><strong>Email:</strong> <span th:text="${appt.email}"></span></p>
+                                        <p><strong>Ghi chú huỷ (nếu có):</strong> <span th:text="${appt.noteCancel ?: 'Không'}"></span></p>
+                                        <p><strong>Phòng:</strong> <span th:text="${appt.room.roomName}"></span></p>
+                                        <p><strong>Bác sĩ:</strong> <span th:text="${appt.doctor.firstName + ' ' + appt.doctor.lastName + ' - Chuyên khoa: ' + appt.doctor.specialization}"></span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+<script th:src="@{/assets_admin/vendors/js/vendor.bundle.base.js}"></script>
+<script th:src="@{/assets_admin/js/off-canvas.js}"></script>
+<script th:src="@{/assets_admin/js/misc.js}"></script>
+</body>
+</html>
