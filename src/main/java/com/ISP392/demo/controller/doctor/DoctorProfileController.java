@@ -4,6 +4,7 @@ import com.ISP392.demo.entity.DoctorEntity;
 import com.ISP392.demo.entity.UserEntity;
 import com.ISP392.demo.repository.DoctorRepository;
 import com.ISP392.demo.repository.UserRepository;
+import com.ISP392.demo.service.CloudinaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -37,6 +38,9 @@ public class DoctorProfileController {
     @Autowired
     private DoctorRepository doctorRepository;
 
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
     private static final String CERTIFICATE_UPLOAD_DIR = "uploads/certificates";
 
     @GetMapping("/profile")
@@ -57,7 +61,7 @@ public class DoctorProfileController {
     }
 
     @PostMapping("/profile/save")
-    public String updateDoctorProfile(@RequestParam("certificateFile") MultipartFile file,
+    public String updateDoctorProfile(@RequestParam(value = "certificateFile", required = false) MultipartFile file, @RequestParam(name = "avatarFile", required = false) MultipartFile avatarFile,
                                       DoctorEntity formDoctor) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
@@ -77,8 +81,9 @@ public class DoctorProfileController {
         doctor.setPhoneNumber(formDoctor.getPhoneNumber());
         doctor.setSpecialization(formDoctor.getSpecialization());
 
-        // Xử lý upload file PDF
         if (file != null && !file.isEmpty()) {
+            String certificateFileName = cloudinaryService.uploadFile(file);
+            doctor.setCertificateFileName(certificateFileName);
             try {
                 Files.createDirectories(Paths.get(CERTIFICATE_UPLOAD_DIR));
                 String filename = "doctor_" + doctor.getId() + "_certificate.pdf";
@@ -89,6 +94,11 @@ public class DoctorProfileController {
                 e.printStackTrace();
                 return "redirect:/doctor/profile?error=file";
             }
+        }
+
+        if(!avatarFile.isEmpty() && avatarFile != null) {
+            String img = cloudinaryService.uploadFile(avatarFile);
+            doctor.setAvatar(img);
         }
 
         doctorRepository.save(doctor);
