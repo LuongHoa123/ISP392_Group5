@@ -25,29 +25,29 @@ DROP TABLE IF EXISTS `appointments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `appointments` (
-                                `id` bigint NOT NULL AUTO_INCREMENT,
-                                `created_date_time` datetime(6) DEFAULT NULL,
-                                `created_by` varchar(255) DEFAULT NULL,
-                                `status` int DEFAULT NULL,
-                                `modified_date_time` datetime(6) DEFAULT NULL,
-                                `updated_by` varchar(255) DEFAULT NULL,
-                                `age` int DEFAULT NULL,
-                                `appointment_date_time` datetime(6) DEFAULT NULL,
-                                `email` varchar(255) DEFAULT NULL,
-                                `name` varchar(255) DEFAULT NULL,
-                                `phone_number` varchar(255) DEFAULT NULL,
-                                `reason` varchar(255) DEFAULT NULL,
-                                `doctor_id` bigint DEFAULT NULL,
-                                `patient_id` bigint DEFAULT NULL,
-                                `room_id` bigint DEFAULT NULL,
-                                `note_cancel` varchar(255) DEFAULT NULL,
-                                PRIMARY KEY (`id`),
-                                KEY `FKmujeo4tymoo98cmf7uj3vsv76` (`doctor_id`),
-                                KEY `FK8exap5wmg8kmb1g1rx3by21yt` (`patient_id`),
-                                KEY `FKbsma6x4pnujct0e6xkycu9864` (`room_id`),
-                                CONSTRAINT `FK8exap5wmg8kmb1g1rx3by21yt` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`),
-                                CONSTRAINT `FKbsma6x4pnujct0e6xkycu9864` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`),
-                                CONSTRAINT `FKmujeo4tymoo98cmf7uj3vsv76` FOREIGN KEY (`doctor_id`) REFERENCES `doctors` (`id`)
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_date_time` datetime(6) DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  `modified_date_time` datetime(6) DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `age` int DEFAULT NULL,
+  `appointment_date_time` datetime(6) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `phone_number` varchar(255) DEFAULT NULL,
+  `reason` varchar(255) DEFAULT NULL,
+  `doctor_id` bigint DEFAULT NULL,
+  `patient_id` bigint DEFAULT NULL,
+  `room_id` bigint DEFAULT NULL,
+  `note_cancel` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKmujeo4tymoo98cmf7uj3vsv76` (`doctor_id`),
+  KEY `FK8exap5wmg8kmb1g1rx3by21yt` (`patient_id`),
+  KEY `FKbsma6x4pnujct0e6xkycu9864` (`room_id`),
+  CONSTRAINT `FK8exap5wmg8kmb1g1rx3by21yt` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`),
+  CONSTRAINT `FKbsma6x4pnujct0e6xkycu9864` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`),
+  CONSTRAINT `FKmujeo4tymoo98cmf7uj3vsv76` FOREIGN KEY (`doctor_id`) REFERENCES `doctors` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -57,7 +57,7 @@ CREATE TABLE `appointments` (
 
 LOCK TABLES `appointments` WRITE;
 /*!40000 ALTER TABLE `appointments` DISABLE KEYS */;
-INSERT INTO `appointments` VALUES (1,NULL,NULL,0,NULL,NULL,18,'2000-12-11 17:00:00.000000','chuyendizz@gmail.com','Nguyễn Trang','0987666111','Tôi bị đau trong tai, có dấu hiệu ù ù trong đầu. Tôi muốn được khám chuyên sâu',1,4,NULL,NULL),(3,NULL,NULL,0,NULL,NULL,19,'2025-06-16 09:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Tôi bị đau họng. Nghi do bị cúm. Cần khám tổng quát',1,4,2,NULL),(5,NULL,NULL,0,NULL,NULL,20,'2025-06-16 17:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Tôi bị đau họng',3,4,2,NULL),(9,NULL,NULL,0,NULL,NULL,22,'2025-06-18 17:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Bị đau họng',1,4,2,'Có việc gấp'),(10,NULL,NULL,2,NULL,NULL,NULL,'2025-06-17 19:08:00.000000','chuyendizz@gmail.com','Lâm Thị Bình','0917666555','Có vấn đề về họng',1,NULL,2,NULL),(11,NULL,NULL,2,NULL,NULL,NULL,'2025-06-19 07:09:00.000000','chuyendizz@gmail.com','Mic Le Bim','0947134196','Có vấn đề về tai',3,NULL,2,NULL),(13,NULL,NULL,2,NULL,NULL,NULL,'2025-06-16 08:43:00.000000','ntt@gmail.com','Nguyễn Thuỳ Trang','6308348000','Yếu',1,NULL,2,NULL),(14,NULL,NULL,-1,NULL,NULL,NULL,'2025-06-21 10:34:00.000000','hvv@gmail.com','Hoàng Văn Vinh','0947134196','Yếu tai',1,NULL,2,NULL);
+INSERT INTO `appointments` VALUES (1,NULL,NULL,0,NULL,NULL,18,'2000-12-11 17:00:00.000000','chuyendizz@gmail.com','Nguyễn Trang','0987666111','Tôi bị đau trong tai, có dấu hiệu ù ù trong đầu. Tôi muốn được khám chuyên sâu',1,4,NULL,NULL),(3,NULL,NULL,0,NULL,NULL,19,'2025-06-16 09:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Tôi bị đau họng. Nghi do bị cúm. Cần khám tổng quát',1,4,2,NULL),(5,NULL,NULL,0,NULL,NULL,20,'2025-06-16 17:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Tôi bị đau họng',3,4,2,NULL),(9,NULL,NULL,0,NULL,NULL,22,'2025-06-18 17:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Bị đau họng',1,4,2,'Có việc gấp'),(10,NULL,NULL,2,NULL,NULL,NULL,'2025-06-17 19:08:00.000000','chuyendizz@gmail.com','Lâm Thị Bình','0917666555','Có vấn đề về họng',1,3,2,NULL),(11,NULL,NULL,2,NULL,NULL,NULL,'2025-06-19 07:09:00.000000','chuyendizz@gmail.com','Mic Le Bim','0947134196','Có vấn đề về tai',3,3,2,NULL),(13,NULL,NULL,2,NULL,NULL,NULL,'2025-06-16 08:43:00.000000','ntt@gmail.com','Nguyễn Thuỳ Trang','6308348000','Yếu',1,3,2,NULL),(14,NULL,NULL,-1,NULL,NULL,NULL,'2025-06-21 10:34:00.000000','hvv@gmail.com','Hoàng Văn Vinh','0947134196','Yếu tai',1,3,2,NULL);
 /*!40000 ALTER TABLE `appointments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -69,25 +69,25 @@ DROP TABLE IF EXISTS `doctors`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `doctors` (
-                           `id` bigint NOT NULL AUTO_INCREMENT,
-                           `created_date_time` datetime(6) DEFAULT NULL,
-                           `created_by` varchar(255) DEFAULT NULL,
-                           `status` int DEFAULT NULL,
-                           `modified_date_time` datetime(6) DEFAULT NULL,
-                           `updated_by` varchar(255) DEFAULT NULL,
-                           `email` varchar(255) DEFAULT NULL,
-                           `first_name` varchar(255) DEFAULT NULL,
-                           `last_name` varchar(255) DEFAULT NULL,
-                           `phone_number` varchar(20) DEFAULT NULL,
-                           `specialization` varchar(255) DEFAULT NULL,
-                           `yoe` int DEFAULT NULL,
-                           `user_id` bigint DEFAULT NULL,
-                           `avatar` varchar(255) DEFAULT NULL,
-                           `certificate_file_name` varchar(255) DEFAULT NULL,
-                           `address` varchar(255) DEFAULT NULL,
-                           PRIMARY KEY (`id`),
-                           KEY `FKe9pf5qtxxkdyrwibaevo9frtk` (`user_id`),
-                           CONSTRAINT `FKe9pf5qtxxkdyrwibaevo9frtk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_date_time` datetime(6) DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  `modified_date_time` datetime(6) DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `first_name` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  `phone_number` varchar(20) DEFAULT NULL,
+  `specialization` varchar(255) DEFAULT NULL,
+  `yoe` int DEFAULT NULL,
+  `user_id` bigint DEFAULT NULL,
+  `avatar` varchar(255) DEFAULT NULL,
+  `certificate_file_name` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKe9pf5qtxxkdyrwibaevo9frtk` (`user_id`),
+  CONSTRAINT `FKe9pf5qtxxkdyrwibaevo9frtk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -109,20 +109,20 @@ DROP TABLE IF EXISTS `logs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `logs` (
-                        `id` bigint NOT NULL AUTO_INCREMENT,
-                        `created_date_time` datetime(6) DEFAULT NULL,
-                        `created_by` varchar(255) DEFAULT NULL,
-                        `status` int DEFAULT NULL,
-                        `modified_date_time` datetime(6) DEFAULT NULL,
-                        `updated_by` varchar(255) DEFAULT NULL,
-                        `content` varchar(255) DEFAULT NULL,
-                        `recep_id` bigint DEFAULT NULL,
-                        `user_id` bigint DEFAULT NULL,
-                        PRIMARY KEY (`id`),
-                        KEY `FK95ecsavc1r109m33nsi3mihbi` (`recep_id`),
-                        KEY `FKgqy8beil5y4almtq1tiyofije` (`user_id`),
-                        CONSTRAINT `FK95ecsavc1r109m33nsi3mihbi` FOREIGN KEY (`recep_id`) REFERENCES `receptionists` (`id`),
-                        CONSTRAINT `FKgqy8beil5y4almtq1tiyofije` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_date_time` datetime(6) DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  `modified_date_time` datetime(6) DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `content` varchar(255) DEFAULT NULL,
+  `recep_id` bigint DEFAULT NULL,
+  `user_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK95ecsavc1r109m33nsi3mihbi` (`recep_id`),
+  KEY `FKgqy8beil5y4almtq1tiyofije` (`user_id`),
+  CONSTRAINT `FK95ecsavc1r109m33nsi3mihbi` FOREIGN KEY (`recep_id`) REFERENCES `receptionists` (`id`),
+  CONSTRAINT `FKgqy8beil5y4almtq1tiyofije` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -144,20 +144,21 @@ DROP TABLE IF EXISTS `nurses`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `nurses` (
-                          `id` bigint NOT NULL AUTO_INCREMENT,
-                          `created_date_time` datetime(6) DEFAULT NULL,
-                          `created_by` varchar(255) DEFAULT NULL,
-                          `status` int DEFAULT NULL,
-                          `modified_date_time` datetime(6) DEFAULT NULL,
-                          `updated_by` varchar(255) DEFAULT NULL,
-                          `address` varchar(255) DEFAULT NULL,
-                          `first_name` varchar(255) DEFAULT NULL,
-                          `last_name` varchar(255) DEFAULT NULL,
-                          `phone_number` varchar(20) DEFAULT NULL,
-                          `user_id` bigint DEFAULT NULL,
-                          PRIMARY KEY (`id`),
-                          KEY `FK91rtea8eoy5devpkpwuqsjk7c` (`user_id`),
-                          CONSTRAINT `FK91rtea8eoy5devpkpwuqsjk7c` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_date_time` datetime(6) DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  `modified_date_time` datetime(6) DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `first_name` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  `phone_number` varchar(20) DEFAULT NULL,
+  `user_id` bigint DEFAULT NULL,
+  `avatar` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK91rtea8eoy5devpkpwuqsjk7c` (`user_id`),
+  CONSTRAINT `FK91rtea8eoy5devpkpwuqsjk7c` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -167,7 +168,7 @@ CREATE TABLE `nurses` (
 
 LOCK TABLES `nurses` WRITE;
 /*!40000 ALTER TABLE `nurses` DISABLE KEYS */;
-INSERT INTO `nurses` VALUES (1,'2025-06-28 00:00:00.000000','ADMIN',1,'2025-06-28 00:00:00.000000','ADMIN','Hanoi','Nguyen Y','Ta','0987111222',10);
+INSERT INTO `nurses` VALUES (1,'2025-06-28 00:00:00.000000','ADMIN',1,'2025-06-28 00:00:00.000000','ADMIN','Hanoi','Nguyen Y','Ta','0987111222',10,'http://res.cloudinary.com/djyw3ytjd/image/upload/v1751355879/mq4rtfef9wdo1jcdxque.jpg');
 /*!40000 ALTER TABLE `nurses` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -179,22 +180,22 @@ DROP TABLE IF EXISTS `patients`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `patients` (
-                            `id` bigint NOT NULL AUTO_INCREMENT,
-                            `created_date_time` datetime(6) DEFAULT NULL,
-                            `created_by` varchar(255) DEFAULT NULL,
-                            `status` int DEFAULT NULL,
-                            `modified_date_time` datetime(6) DEFAULT NULL,
-                            `updated_by` varchar(255) DEFAULT NULL,
-                            `address` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-                            `date_of_birth` date DEFAULT NULL,
-                            `first_name` varchar(255) DEFAULT NULL,
-                            `gender` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-                            `last_name` varchar(255) DEFAULT NULL,
-                            `phone` varchar(20) DEFAULT NULL,
-                            `user_id` bigint DEFAULT NULL,
-                            PRIMARY KEY (`id`),
-                            KEY `FKuwca24wcd1tg6pjex8lmc0y7` (`user_id`),
-                            CONSTRAINT `FKuwca24wcd1tg6pjex8lmc0y7` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_date_time` datetime(6) DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  `modified_date_time` datetime(6) DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `address` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `date_of_birth` date DEFAULT NULL,
+  `first_name` varchar(255) DEFAULT NULL,
+  `gender` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `user_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKuwca24wcd1tg6pjex8lmc0y7` (`user_id`),
+  CONSTRAINT `FKuwca24wcd1tg6pjex8lmc0y7` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -216,20 +217,20 @@ DROP TABLE IF EXISTS `receptionists`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `receptionists` (
-                                 `id` bigint NOT NULL AUTO_INCREMENT,
-                                 `created_date_time` datetime(6) DEFAULT NULL,
-                                 `created_by` varchar(255) DEFAULT NULL,
-                                 `status` int DEFAULT NULL,
-                                 `modified_date_time` datetime(6) DEFAULT NULL,
-                                 `updated_by` varchar(255) DEFAULT NULL,
-                                 `email` varchar(255) DEFAULT NULL,
-                                 `first_name` varchar(255) DEFAULT NULL,
-                                 `last_name` varchar(255) DEFAULT NULL,
-                                 `phone_number` varchar(20) DEFAULT NULL,
-                                 `user_id` bigint DEFAULT NULL,
-                                 PRIMARY KEY (`id`),
-                                 KEY `FKq3ssn9a7reu88v2rnejl6vmte` (`user_id`),
-                                 CONSTRAINT `FKq3ssn9a7reu88v2rnejl6vmte` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_date_time` datetime(6) DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  `modified_date_time` datetime(6) DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `first_name` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  `phone_number` varchar(20) DEFAULT NULL,
+  `user_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKq3ssn9a7reu88v2rnejl6vmte` (`user_id`),
+  CONSTRAINT `FKq3ssn9a7reu88v2rnejl6vmte` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -251,17 +252,17 @@ DROP TABLE IF EXISTS `request`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `request` (
-                           `id` bigint NOT NULL AUTO_INCREMENT,
-                           `created_date_time` datetime(6) DEFAULT NULL,
-                           `created_by` varchar(255) DEFAULT NULL,
-                           `status` int DEFAULT NULL,
-                           `modified_date_time` datetime(6) DEFAULT NULL,
-                           `updated_by` varchar(255) DEFAULT NULL,
-                           `content` varchar(50) NOT NULL,
-                           `user_id` bigint DEFAULT NULL,
-                           PRIMARY KEY (`id`),
-                           KEY `FKg03bldv86pfuboqfefx48p6u3` (`user_id`),
-                           CONSTRAINT `FKg03bldv86pfuboqfefx48p6u3` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_date_time` datetime(6) DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  `modified_date_time` datetime(6) DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `content` varchar(50) NOT NULL,
+  `user_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKg03bldv86pfuboqfefx48p6u3` (`user_id`),
+  CONSTRAINT `FKg03bldv86pfuboqfefx48p6u3` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -283,15 +284,15 @@ DROP TABLE IF EXISTS `roles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `roles` (
-                         `id` bigint NOT NULL AUTO_INCREMENT,
-                         `created_date_time` datetime(6) DEFAULT NULL,
-                         `created_by` varchar(255) DEFAULT NULL,
-                         `status` int DEFAULT NULL,
-                         `modified_date_time` datetime(6) DEFAULT NULL,
-                         `updated_by` varchar(255) DEFAULT NULL,
-                         `name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-                         PRIMARY KEY (`id`),
-                         UNIQUE KEY `UKofx66keruapi6vyqpv6f2or37` (`name`)
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_date_time` datetime(6) DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  `modified_date_time` datetime(6) DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UKofx66keruapi6vyqpv6f2or37` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -313,25 +314,25 @@ DROP TABLE IF EXISTS `rooms`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `rooms` (
-                         `id` bigint NOT NULL AUTO_INCREMENT,
-                         `created_date_time` datetime(6) DEFAULT NULL,
-                         `created_by` varchar(255) DEFAULT NULL,
-                         `status` int DEFAULT NULL,
-                         `modified_date_time` datetime(6) DEFAULT NULL,
-                         `updated_by` varchar(255) DEFAULT NULL,
-                         `capacity` int DEFAULT NULL,
-                         `description` varchar(500) DEFAULT NULL,
-                         `location` varchar(255) DEFAULT NULL,
-                         `room_name` varchar(100) NOT NULL,
-                         `room_type` varchar(100) DEFAULT NULL,
-                         `phone_number` varchar(20) DEFAULT NULL,
-                         `primary_doctor` bigint DEFAULT NULL,
-                         `primary_nurse` bigint DEFAULT NULL,
-                         PRIMARY KEY (`id`),
-                         KEY `FK3kldibiwp67ay4xxxx2kjyv3u` (`primary_doctor`),
-                         KEY `FKmvj0epabe0f67exysw48uif1t` (`primary_nurse`),
-                         CONSTRAINT `FK3kldibiwp67ay4xxxx2kjyv3u` FOREIGN KEY (`primary_doctor`) REFERENCES `doctors` (`id`),
-                         CONSTRAINT `FKmvj0epabe0f67exysw48uif1t` FOREIGN KEY (`primary_nurse`) REFERENCES `nurses` (`id`)
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_date_time` datetime(6) DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  `modified_date_time` datetime(6) DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `capacity` int DEFAULT NULL,
+  `description` varchar(500) DEFAULT NULL,
+  `location` varchar(255) DEFAULT NULL,
+  `room_name` varchar(100) NOT NULL,
+  `room_type` varchar(100) DEFAULT NULL,
+  `phone_number` varchar(20) DEFAULT NULL,
+  `primary_doctor` bigint DEFAULT NULL,
+  `primary_nurse` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK3kldibiwp67ay4xxxx2kjyv3u` (`primary_doctor`),
+  KEY `FKmvj0epabe0f67exysw48uif1t` (`primary_nurse`),
+  CONSTRAINT `FK3kldibiwp67ay4xxxx2kjyv3u` FOREIGN KEY (`primary_doctor`) REFERENCES `doctors` (`id`),
+  CONSTRAINT `FKmvj0epabe0f67exysw48uif1t` FOREIGN KEY (`primary_nurse`) REFERENCES `nurses` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -353,24 +354,24 @@ DROP TABLE IF EXISTS `shifts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `shifts` (
-                          `id` bigint NOT NULL AUTO_INCREMENT,
-                          `created_date_time` datetime(6) DEFAULT NULL,
-                          `created_by` varchar(255) DEFAULT NULL,
-                          `status` int DEFAULT NULL,
-                          `modified_date_time` datetime(6) DEFAULT NULL,
-                          `updated_by` varchar(255) DEFAULT NULL,
-                          `description` varchar(255) DEFAULT NULL,
-                          `end_time` datetime(6) NOT NULL,
-                          `start_time` datetime(6) NOT NULL,
-                          `type` varchar(255) DEFAULT NULL,
-                          `doctor_id` bigint DEFAULT NULL,
-                          `nurse_id` bigint DEFAULT NULL,
-                          PRIMARY KEY (`id`),
-                          KEY `FKjm5n210pw8co0ftrntordidel` (`doctor_id`),
-                          KEY `FK9aegt7kvo6nvdt3eb7a11v86n` (`nurse_id`),
-                          CONSTRAINT `FK9aegt7kvo6nvdt3eb7a11v86n` FOREIGN KEY (`nurse_id`) REFERENCES `nurses` (`id`),
-                          CONSTRAINT `FKjm5n210pw8co0ftrntordidel` FOREIGN KEY (`doctor_id`) REFERENCES `doctors` (`id`),
-                          CONSTRAINT `FKk06mv2ogrb522aklvwlujwqmv` FOREIGN KEY (`nurse_id`) REFERENCES `doctors` (`id`)
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_date_time` datetime(6) DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  `modified_date_time` datetime(6) DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `end_time` datetime(6) NOT NULL,
+  `start_time` datetime(6) NOT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `doctor_id` bigint DEFAULT NULL,
+  `nurse_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKjm5n210pw8co0ftrntordidel` (`doctor_id`),
+  KEY `FK9aegt7kvo6nvdt3eb7a11v86n` (`nurse_id`),
+  CONSTRAINT `FK9aegt7kvo6nvdt3eb7a11v86n` FOREIGN KEY (`nurse_id`) REFERENCES `nurses` (`id`),
+  CONSTRAINT `FKjm5n210pw8co0ftrntordidel` FOREIGN KEY (`doctor_id`) REFERENCES `doctors` (`id`),
+  CONSTRAINT `FKk06mv2ogrb522aklvwlujwqmv` FOREIGN KEY (`nurse_id`) REFERENCES `doctors` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -392,21 +393,21 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
-                         `id` bigint NOT NULL AUTO_INCREMENT,
-                         `created_date_time` datetime(6) DEFAULT NULL,
-                         `created_by` varchar(255) DEFAULT NULL,
-                         `status` int DEFAULT NULL,
-                         `modified_date_time` datetime(6) DEFAULT NULL,
-                         `updated_by` varchar(255) DEFAULT NULL,
-                         `email` varchar(50) NOT NULL,
-                         `password` varchar(120) NOT NULL,
-                         `role_id` bigint DEFAULT NULL,
-                         `created_by_receptionist` tinyint(1) DEFAULT '0',
-                         `is_first_login` tinyint(1) DEFAULT '0',
-                         PRIMARY KEY (`id`),
-                         UNIQUE KEY `UK6dotkott2kjsp8vw4d0m25fb7` (`email`),
-                         KEY `FKp56c1712k691lhsyewcssf40f` (`role_id`),
-                         CONSTRAINT `FKp56c1712k691lhsyewcssf40f` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_date_time` datetime(6) DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  `modified_date_time` datetime(6) DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `email` varchar(50) NOT NULL,
+  `password` varchar(120) NOT NULL,
+  `role_id` bigint DEFAULT NULL,
+  `created_by_receptionist` tinyint(1) DEFAULT '0',
+  `is_first_login` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK6dotkott2kjsp8vw4d0m25fb7` (`email`),
+  KEY `FKp56c1712k691lhsyewcssf40f` (`role_id`),
+  CONSTRAINT `FKp56c1712k691lhsyewcssf40f` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -437,4 +438,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-06-30 16:56:44
+-- Dump completed on 2025-07-01 14:58:09
