@@ -39,6 +39,8 @@ public class PatientEntity extends AbstractEntity {
     @Basic
     @Column(name = "phone", nullable = true, length = 20)
     private String phone;
+    
+    private String avatar;
 
 	@ManyToOne
 	@JoinColumn(name = "userId")

@@ -1,12 +1,15 @@
 package com.ISP392.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "Appointments")
@@ -29,6 +32,10 @@ public class AppointmentEntity extends AbstractEntity {
 
     private String noteCancel;
 
+    private String conclusion;
+
+    private String prescription;
+
 	@ManyToOne
 	@JoinColumn(name = "patientId")
 	@EqualsAndHashCode.Exclude
@@ -46,6 +53,12 @@ public class AppointmentEntity extends AbstractEntity {
     @EqualsAndHashCode.Exclude
     @JsonBackReference
     private RoomEntity room;
+
+    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonManagedReference
+    private Set<DiagnosisEntity> diagnosisEntities;
 
     public RoomEntity getRoom() {
         return room;

@@ -24,6 +24,7 @@ public class RecepEntity extends AbstractEntity {
     private String phoneNumber;
 
     private String email;
+    private String avatar;
 
     @ManyToOne
     @JoinColumn(name = "userId")
