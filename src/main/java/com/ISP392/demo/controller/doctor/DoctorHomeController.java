@@ -38,6 +38,7 @@ public class DoctorHomeController {
             return "redirect:/doctor/dashboard";
         }
         session.setAttribute("fullName", doctor.getFirstName() + " " + doctor.getLastName());
+        session.setAttribute("avatar", doctor.getAvatar());
         session.setAttribute("specialization", "Chuyên khoa: " + doctor.getSpecialization());
         return "doctor/dashboard";
     }

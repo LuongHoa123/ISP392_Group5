@@ -4,12 +4,16 @@ import com.ISP392.demo.entity.PatientEntity;
 import com.ISP392.demo.entity.UserEntity;
 import com.ISP392.demo.repository.PatientRepository;
 import com.ISP392.demo.repository.UserRepository;
+import com.ISP392.demo.service.CloudinaryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/patient")
@@ -17,6 +21,9 @@ public class PatientProfileController {
 
     private final UserRepository userRepository;
     private final PatientRepository patientRepository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     public PatientProfileController(UserRepository userRepository, PatientRepository patientRepository) {
         this.userRepository = userRepository;
@@ -44,7 +51,7 @@ public class PatientProfileController {
     }
 
     @PostMapping("/update")
-    public String updateProfile(PatientEntity patient) {
+    public String updateProfile(PatientEntity patient, @RequestParam(name = "avatarFile", required = false) MultipartFile avatarFile) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
@@ -65,6 +72,11 @@ public class PatientProfileController {
         existingPatient.setGender(patient.getGender());
         existingPatient.setAddress(patient.getAddress());
         existingPatient.setPhone(patient.getPhone());
+
+        if(!avatarFile.isEmpty() && avatarFile != null) {
+            String img = cloudinaryService.uploadFile(avatarFile);
+            existingPatient.setAvatar(img);
+        }
 
         patientRepository.save(existingPatient);
 

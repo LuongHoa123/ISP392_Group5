@@ -68,66 +68,83 @@
             color: #dc3545;
             text-align: center;
         }
+
         .required-star {
             color: red;
         }
+
         .update-profile form .text-danger {
             font-size: 1rem;
         }
+
         .update-profile form .form-control#firstName,
         .update-profile form .form-control#lastName {
             font-size: 1.35rem;
             height: 56px;
             padding: 16px 16px;
         }
+
         .update-profile form label[for="firstName"],
         .update-profile form label[for="lastName"] {
             font-size: 1.25rem;
         }
+
         .update-profile form .btn[type="submit"] {
             font-size: 1.7rem;
             padding: 22px;
             height: 64px;
         }
+
         .update-profile form label[for="firstName"] {
             font-size: 1.7rem;
             font-weight: 700;
         }
+
         .update-profile form label[for="firstName"] .required-star {
             font-size: 1.3rem;
         }
+
         .update-profile form label[for="lastName"] {
             font-size: 1.7rem;
             font-weight: 700;
         }
+
         .update-profile form label[for="lastName"] .required-star {
             font-size: 1.3rem;
         }
+
         .update-profile form label[for="dateOfBirth"] {
             font-size: 1.7rem;
             font-weight: 700;
         }
+
         .update-profile form label[for="dateOfBirth"] .required-star {
             font-size: 1.3rem;
         }
+
         .update-profile form label[for="gender"] {
             font-size: 1.7rem;
             font-weight: 700;
         }
+
         .update-profile form label[for="gender"] .required-star {
             font-size: 1.3rem;
         }
+
         .update-profile form label[for="address"] {
             font-size: 1.7rem;
             font-weight: 700;
         }
+
         .update-profile form label[for="address"] .required-star {
             font-size: 1.3rem;
         }
+
         .update-profile form label[for="phone"] {
             font-size: 1.7rem;
             font-weight: 700;
         }
+
         .update-profile form label[for="phone"] .required-star {
             font-size: 1.3rem;
         }
@@ -148,55 +165,89 @@
                 <div class="alert alert-danger text-center">Có lỗi xảy ra trong quá trình cập nhật thông tin!</div>
             </div>
 
-            <form id="updateProfileForm" th:action="@{/patient/update}" method="post" th:object="${patient}">
+            <form id="updateProfileForm" th:action="@{/patient/update}" method="post" th:object="${patient}"
+                  enctype="multipart/form-data">
                 <h3>Cập nhật thông tin</h3>
 
-                <!-- Họ và Tên -->
-<div class="form-group">
-    <label for="firstName">Họ<span class="required-star">*</span></label>
-    <input type="text" id="firstName" name="firstName" class="form-control" th:field="*{firstName}" required>
-    <div id="firstNameError" class="text-danger"></div>
-</div>
+                <div class="row">
+                    <!-- Cột trái: Ảnh đại diện -->
+                    <div class="col-md-4 text-center">
+                        <label class="font-weight-bold" for="avatarFile">Ảnh đại diện</label>
+                        <input type="file" id="avatarFile" name="avatarFile" accept="image/*"
+                               class="form-control mb-3"/>
 
-<div class="form-group">
-    <label for="lastName">Tên<span class="required-star">*</span></label>
-    <input type="text" id="lastName" name="lastName" class="form-control" th:field="*{lastName}" required>
-    <div id="lastNameError" class="text-danger"></div>
-</div>
+                        <!-- Nếu có ảnh -->
+                        <img id="avatarPreview"
+                             th:if="${patient.avatar != null}"
+                             th:src="@{${patient.avatar}}"
+                             alt="Preview avatar"
+                             style="max-width: 100%; border-radius: 8px; display: block; margin: auto;"/>
 
-<!-- Ngày sinh -->
-<div class="form-group">
-    <label for="dateOfBirth">Ngày sinh<span class="required-star">*</span></label>
-    <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" th:field="*{dateOfBirth}" required>
-    <div id="dateOfBirthError" class="text-danger"></div>
-</div>
+                        <!-- Nếu chưa có ảnh -->
+                        <img id="avatarPreview"
+                             th:if="${patient.avatar == null}"
+                             src="#"
+                             alt="Preview avatar"
+                             style="max-width: 100%; border-radius: 8px; display: none; margin: auto;"/>
+                    </div>
 
-<!-- Giới tính -->
-<div class="form-group">
-    <label for="gender">Giới tính<span class="required-star">*</span></label>
-    <select id="gender" name="gender" class="form-control" th:field="*{gender}" required>
-        <option value="">-- Chọn giới tính --</option>
-        <option value="MALE" th:selected="*{gender == 'MALE'}">Nam</option>
-        <option value="FEMALE" th:selected="*{gender == 'FEMALE'}">Nữ</option>
-    </select>
-    <div id="genderError" class="text-danger"></div>
-</div>
+                    <!-- Cột phải: Form nhập thông tin -->
+                    <div class="col-md-8">
+                        <!-- Họ và Tên -->
+                        <div class="form-group">
+                            <label for="firstName">Họ<span class="required-star">*</span></label>
+                            <input type="text" id="firstName" name="firstName" class="form-control"
+                                   th:field="*{firstName}" required>
+                            <div id="firstNameError" class="text-danger"></div>
+                        </div>
 
-<!-- Địa chỉ -->
-<div class="form-group">
-    <label for="address">Địa chỉ<span class="required-star">*</span></label>
-    <input type="text" id="address" name="address" class="form-control" th:field="*{address}" required>
-    <div id="addressError" class="text-danger"></div>
-</div>
+                        <div class="form-group">
+                            <label for="lastName">Tên<span class="required-star">*</span></label>
+                            <input type="text" id="lastName" name="lastName" class="form-control" th:field="*{lastName}"
+                                   required>
+                            <div id="lastNameError" class="text-danger"></div>
+                        </div>
 
-<!-- Số điện thoại -->
-<div class="form-group">
-    <label for="phone">Số điện thoại<span class="required-star">*</span></label>
-    <input type="text" id="phone" name="phone" class="form-control" th:field="*{phone}" required>
-    <div id="phoneError" class="text-danger"></div>
-</div>
-                <button type="submit" class="btn btn-success">Cập nhật</button>
+                        <!-- Ngày sinh -->
+                        <div class="form-group">
+                            <label for="dateOfBirth">Ngày sinh<span class="required-star">*</span></label>
+                            <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control"
+                                   th:field="*{dateOfBirth}" required>
+                            <div id="dateOfBirthError" class="text-danger"></div>
+                        </div>
+
+                        <!-- Giới tính -->
+                        <div class="form-group">
+                            <label for="gender">Giới tính<span class="required-star">*</span></label>
+                            <select id="gender" name="gender" class="form-control" th:field="*{gender}" required>
+                                <option value="">-- Chọn giới tính --</option>
+                                <option value="MALE" th:selected="*{gender == 'MALE'}">Nam</option>
+                                <option value="FEMALE" th:selected="*{gender == 'FEMALE'}">Nữ</option>
+                            </select>
+                            <div id="genderError" class="text-danger"></div>
+                        </div>
+
+                        <!-- Địa chỉ -->
+                        <div class="form-group">
+                            <label for="address">Địa chỉ<span class="required-star">*</span></label>
+                            <input type="text" id="address" name="address" class="form-control" th:field="*{address}"
+                                   required>
+                            <div id="addressError" class="text-danger"></div>
+                        </div>
+
+                        <!-- Số điện thoại -->
+                        <div class="form-group">
+                            <label for="phone">Số điện thoại<span class="required-star">*</span></label>
+                            <input type="text" id="phone" name="phone" class="form-control" th:field="*{phone}"
+                                   required>
+                            <div id="phoneError" class="text-danger"></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Cập nhật</button>
+                    </div>
+                </div>
             </form>
+
         </section>
     </th:block>
 </th:block>
@@ -209,64 +260,87 @@
 
 <script>
     // Validation khi submit form
-    document.getElementById('updateProfileForm').addEventListener('submit', function(e) {
-        // Clear previous error messages
-        document.getElementById('firstNameError').textContent = '';
-        document.getElementById('lastNameError').textContent = '';
-        document.getElementById('phoneError').textContent = '';
-        document.getElementById('dateOfBirthError').textContent = '';
-        document.getElementById('genderError').textContent = '';
-        document.getElementById('addressError').textContent = '';
+    document.getElementById('updateProfileForm').addEventListener('submit', function (e) {
+            // Clear previous error messages
+            document.getElementById('firstNameError').textContent = '';
+            document.getElementById('lastNameError').textContent = '';
+            document.getElementById('phoneError').textContent = '';
+            document.getElementById('dateOfBirthError').textContent = '';
+            document.getElementById('genderError').textContent = '';
+            document.getElementById('addressError').textContent = '';
 
-        let isValid = true;
+            let isValid = true;
 
-        // Validate First Name and Last Name
-        const firstName = document.getElementById('firstName').value;
-        const lastName = document.getElementById('lastName').value;
-        const namePattern = /^[\p{L} .'-]+$/u; // Chỉ cho phép chữ, dấu chấm, dấu gạch nối và dấu nháy đơn
+            // Validate First Name and Last Name
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const namePattern = /^[\p{L} .'-]+$/u; // Chỉ cho phép chữ, dấu chấm, dấu gạch nối và dấu nháy đơn
 
-        if (!namePattern.test(firstName)) {
-            document.getElementById('firstNameError').textContent = 'Họ và tên không hợp lệ! Vui lòng chỉ nhập chữ.';
-            isValid = false;
+            if (!namePattern.test(firstName)) {
+                document.getElementById('firstNameError').textContent = 'Họ và tên không hợp lệ! Vui lòng chỉ nhập chữ.';
+                isValid = false;
+            }
+            if (!namePattern.test(lastName)) {
+                document.getElementById('lastNameError').textContent = 'Họ và tên không hợp lệ! Vui lòng chỉ nhập chữ.';
+                isValid = false;
+            }
+
+            // Validate Phone Number
+            const phone = document.getElementById('phone').value;
+            const phonePattern = /^[0-9]{10,11}$/;
+
+            if (!phonePattern.test(phone)) {
+                document.getElementById('phoneError').textContent = 'Số điện thoại không hợp lệ!';
+                isValid = false;
+            }
+
+            // Validate Date of Birth
+            const dateOfBirth = document.getElementById('dateOfBirth').value;
+            if (!dateOfBirth) {
+                document.getElementById('dateOfBirthError').textContent = 'Vui lòng nhập ngày sinh!';
+                isValid = false;
+            }
+
+            // Validate Address
+            const address = document.getElementById('address').value;
+            if (address.length < 5) {
+                document.getElementById('addressError').textContent = 'Địa chỉ phải có ít nhất 5 ký tự!';
+                isValid = false;
+            }
+
+            // Validate Gender
+            const gender = document.getElementById('gender').value;
+            if (!gender) {
+                document.getElementById('genderError').textContent = 'Vui lòng chọn giới tính!';
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
         }
-        if (!namePattern.test(lastName)) {
-            document.getElementById('lastNameError').textContent = 'Họ và tên không hợp lệ! Vui lòng chỉ nhập chữ.';
-            isValid = false;
-        }
+    );
 
-        // Validate Phone Number
-        const phone = document.getElementById('phone').value;
-        const phonePattern = /^[0-9]{10,11}$/;
+    document.addEventListener("DOMContentLoaded", function () {
+        const avatarInput = document.getElementById('avatarFile');
+        const avatarPreview = document.getElementById('avatarPreview');
 
-        if (!phonePattern.test(phone)) {
-            document.getElementById('phoneError').textContent = 'Số điện thoại không hợp lệ!';
-            isValid = false;
-        }
+        avatarInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
 
-        // Validate Date of Birth
-        const dateOfBirth = document.getElementById('dateOfBirth').value;
-        if (!dateOfBirth) {
-            document.getElementById('dateOfBirthError').textContent = 'Vui lòng nhập ngày sinh!';
-            isValid = false;
-        }
+                reader.onload = function (e) {
+                    avatarPreview.src = e.target.result;
+                    avatarPreview.style.display = 'block';
+                };
 
-        // Validate Address
-        const address = document.getElementById('address').value;
-        if (address.length < 5) {
-            document.getElementById('addressError').textContent = 'Địa chỉ phải có ít nhất 5 ký tự!';
-            isValid = false;
-        }
-
-        // Validate Gender
-        const gender = document.getElementById('gender').value;
-        if (!gender) {
-            document.getElementById('genderError').textContent = 'Vui lòng chọn giới tính!';
-            isValid = false;
-        }
-
-        if (!isValid) {
-            e.preventDefault();
-        }
+                reader.readAsDataURL(file);
+            } else {
+                avatarPreview.src = '#';
+                avatarPreview.style.display = 'none';
+            }
+        });
     });
 </script>
 </body>

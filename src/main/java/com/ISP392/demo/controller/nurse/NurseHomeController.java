@@ -38,6 +38,8 @@ public class NurseHomeController {
             return "redirect:/nurse/dashboard";
         }
         session.setAttribute("fullName", nurse.getFirstName() + " " + nurse.getLastName());
+        session.setAttribute("avatar", nurse.getAvatar());
+
         return "nurse/dashboard";
     }
 }
