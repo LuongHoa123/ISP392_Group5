@@ -5,6 +5,7 @@ import com.ISP392.demo.entity.UserEntity;
 import com.ISP392.demo.repository.DoctorRepository;
 import com.ISP392.demo.repository.UserRepository;
 import com.ISP392.demo.service.CloudinaryService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -61,7 +62,7 @@ public class DoctorProfileController {
     }
 
     @PostMapping("/profile/save")
-    public String updateDoctorProfile(@RequestParam(value = "certificateFile", required = false) MultipartFile file, @RequestParam(name = "avatarFile", required = false) MultipartFile avatarFile,
+    public String updateDoctorProfile(@RequestParam(value = "certificateFile", required = false) MultipartFile file, @RequestParam(name = "avatarFile", required = false) MultipartFile avatarFile, HttpSession session,
                                       DoctorEntity formDoctor) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
@@ -100,6 +101,8 @@ public class DoctorProfileController {
             String img = cloudinaryService.uploadFile(avatarFile);
             doctor.setAvatar(img);
         }
+        session.setAttribute("avatar", doctor.getAvatar());
+
 
         doctorRepository.save(doctor);
         return "redirect:/doctor/profile?success=true";

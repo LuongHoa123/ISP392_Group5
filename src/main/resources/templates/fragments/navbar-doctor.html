@@ -27,7 +27,11 @@
                     <a class="nav-link" th:href="@{/doctor/profile}">
                         Thông tin cá nhân
                         <div class="nav-profile-img">
-                            <img th:src="@{/assets_admin/images/faces/face3.jpg}" alt="image">
+                            <!-- Nếu có avatar -->
+                            <img th:if="${session.avatar != null}" th:src="@{${session.avatar}}" alt="profile">
+
+                            <!-- Nếu không có avatar -->
+                            <img th:unless="${session.avatar != null}" th:src="@{/assets_admin/images/faces/face3.jpg}" alt="profile">
                             <span class="availability-status online"></span>
                         </div>
                         <div class="nav-profile-text">

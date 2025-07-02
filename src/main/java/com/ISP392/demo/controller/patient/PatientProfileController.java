@@ -5,6 +5,7 @@ import com.ISP392.demo.entity.UserEntity;
 import com.ISP392.demo.repository.PatientRepository;
 import com.ISP392.demo.repository.UserRepository;
 import com.ISP392.demo.service.CloudinaryService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -51,7 +52,7 @@ public class PatientProfileController {
     }
 
     @PostMapping("/update")
-    public String updateProfile(PatientEntity patient, @RequestParam(name = "avatarFile", required = false) MultipartFile avatarFile) {
+    public String updateProfile(PatientEntity patient, @RequestParam(name = "avatarFile", required = false) MultipartFile avatarFile, HttpSession session) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
@@ -77,6 +78,7 @@ public class PatientProfileController {
             String img = cloudinaryService.uploadFile(avatarFile);
             existingPatient.setAvatar(img);
         }
+        session.setAttribute("avatar", patient.getAvatar());
 
         patientRepository.save(existingPatient);
 

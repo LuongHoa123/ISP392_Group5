@@ -6,6 +6,8 @@ import com.ISP392.demo.entity.UserEntity;
 import com.ISP392.demo.repository.PatientRepository;
 import com.ISP392.demo.repository.RecepRepository;
 import com.ISP392.demo.repository.UserRepository;
+import com.ISP392.demo.service.CloudinaryService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/recep")
@@ -23,6 +27,9 @@ public class RecepProfileController {
 
     @Autowired
     private RecepRepository recepRepository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @GetMapping("/profile")
     public String viewRecepProfile(Model model) {
@@ -43,7 +50,7 @@ public class RecepProfileController {
     }
 
     @PostMapping("/profile/save")
-    public String updateRecepProfile(RecepEntity formRecep) {
+    public String updateRecepProfile(RecepEntity formRecep, @RequestParam(name = "avatarFile", required = false) MultipartFile avatarFile, HttpSession session) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
         if (userEntity == null) return "redirect:/index";
@@ -54,6 +61,13 @@ public class RecepProfileController {
         recep.setFirstName(formRecep.getFirstName());
         recep.setLastName(formRecep.getLastName());
         recep.setPhoneNumber(formRecep.getPhoneNumber());
+
+        if(!avatarFile.isEmpty() && avatarFile != null) {
+            String img = cloudinaryService.uploadFile(avatarFile);
+            recep.setAvatar(img);
+        }
+        session.setAttribute("avatar", recep.getAvatar());
+
 
         recepRepository.save(recep);
 

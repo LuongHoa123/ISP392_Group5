@@ -49,6 +49,7 @@ public class RecepHomeController {
             return "redirect:/recep/dashboard";
         }
         session.setAttribute("fullName", recep.getFirstName() + " " + recep.getLastName());
+        session.setAttribute("avatar", recep.getAvatar());
 
         model.addAttribute("countDoctor", doctorRepository.count());
         model.addAttribute("countPatient", patientRepository.countAllByStatus(1));

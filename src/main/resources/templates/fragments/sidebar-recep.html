@@ -4,7 +4,11 @@
             <li class="nav-item nav-profile">
                 <a href="#" class="nav-link">
                     <div class="nav-profile-image">
-                        <img th:src="@{/assets_admin/images/faces/face2.jpg}" alt="profile">
+                        <!-- Nếu có avatar -->
+                        <img th:if="${session.avatar != null}" th:src="@{${session.avatar}}" alt="profile">
+
+                        <!-- Nếu không có avatar -->
+                        <img th:unless="${session.avatar != null}" th:src="@{/assets_admin/images/faces/face3.jpg}" alt="profile">
                         <span class="login-status online"></span>
                     </div>
                     <div class="nav-profile-text d-flex flex-column">

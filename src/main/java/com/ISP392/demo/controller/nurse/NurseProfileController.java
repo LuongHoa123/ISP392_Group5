@@ -9,6 +9,7 @@ import com.ISP392.demo.repository.UserRepository;
 import com.ISP392.demo.service.CloudinaryService;
 import com.ISP392.demo.utils.ImageUtils;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -57,7 +58,7 @@ public class NurseProfileController {
     }
 
     @PostMapping("/profile/save")
-    public String updateProfile(NurseEntity formNurse, @RequestParam(name = "avatarFile", required = false) MultipartFile avatarFile) {
+    public String updateProfile(NurseEntity formNurse, @RequestParam(name = "avatarFile", required = false) MultipartFile avatarFile, HttpSession session) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
         if (userEntity == null) return "redirect:/index";
@@ -78,6 +79,7 @@ public class NurseProfileController {
             String img = cloudinaryService.uploadFile(avatarFile);
             nurse.setAvatar(img);
         }
+        session.setAttribute("avatar", nurse.getAvatar());
 
         nurseRepository.save(nurse);
         return "redirect:/nurse/profile?success=true";
