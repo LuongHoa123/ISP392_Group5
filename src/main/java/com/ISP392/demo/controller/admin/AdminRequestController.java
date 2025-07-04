@@ -44,6 +44,25 @@ public class AdminRequestController {
         }
     }
 
+    @GetMapping("/unlock/{id}")
+    public String unlockAccount(@PathVariable("id") Long id) {
+        RequestEntity request = requestRepository.findById(id).orElse(null);
+        if (request != null && request.getUser() != null) {
+            UserEntity user = request.getUser();
+            user.setLoginAttempts(0);
+            user.setStatus(1); // Set status to active
+            userRepository.save(user);
+            
+            // Save log
+            saveLog("Mở khóa tài khoản cho user: " + user.getEmail());
+            
+            // Delete the request after unlocking
+            requestRepository.deleteById(id);
+            
+            return "redirect:/admin/request?unlock=true";
+        }
+        return "redirect:/admin/request?error=true";
+    }
 
     @GetMapping("")
     public String listRooms(Model model,

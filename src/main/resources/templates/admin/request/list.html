@@ -20,6 +20,14 @@
                 Xoá thành công!
             </div>
 
+            <div th:if="${param.unlock}" class="alert alert-success" role="alert">
+                Mở khóa tài khoản thành công!
+            </div>
+
+            <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                Có lỗi xảy ra khi mở khóa tài khoản!
+            </div>
+
             <!-- Bảng danh sách người dùng -->
             <div class="card">
                 <div class="card-body">
@@ -40,6 +48,11 @@
                             <td th:text="${request.content}"></td>
                             <td th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy HH:mm:ss')}"></td>
                             <td>
+                                <form th:action="@{'/admin/request/unlock/' + ${request.id}}"
+                                      method="get" style="display:inline-block; margin-right: 5px;"
+                                      onsubmit="return confirm('Bạn có chắc chắn muốn mở khóa tài khoản này không?');">
+                                    <button type="submit" class="btn btn-success btn-sm">Mở khóa</button>
+                                </form>
                                 <form th:action="@{'/admin/request/delete/' + ${request.id}}"
                                       method="get" style="display:inline-block;"
                                       onsubmit="return confirm('Bạn có chắc chắn muốn xóa yêu cầu này không?');">

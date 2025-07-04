@@ -1,6 +1,8 @@
 package com.ISP392.demo.config;
 
 
+import com.ISP392.demo.entity.UserEntity;
+import com.ISP392.demo.repository.UserRepository;
 import com.ISP392.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -25,6 +27,11 @@ public class SecurityConfig {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    private static final int MAX_LOGIN_ATTEMPTS = 3;
+
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
@@ -46,6 +53,12 @@ public class SecurityConfig {
     @Bean
     ApplicationListener<AuthenticationSuccessEvent> successEvent() {
         return event -> {
+            String email = event.getAuthentication().getName();
+            UserEntity user = userRepository.findByEmail(email).orElse(null);
+            if (user != null) {
+                user.setLoginAttempts(0); // Reset login attempts on successful login
+                userRepository.save(user);
+            }
             System.out.println("Success Login " + event.getAuthentication().getClass().getSimpleName() + " - " + event.getAuthentication().getName());
         };
     }
@@ -53,6 +66,18 @@ public class SecurityConfig {
     @Bean
     ApplicationListener<AuthenticationFailureBadCredentialsEvent> failureEvent() {
         return event -> {
+            String email = event.getAuthentication().getName();
+            UserEntity user = userRepository.findByEmail(email).orElse(null);
+            if (user != null) {
+                int attempts = user.getLoginAttempts() + 1;
+                user.setLoginAttempts(attempts);
+                
+                if (attempts >= MAX_LOGIN_ATTEMPTS) {
+                    user.setStatus(0); // Lock the account
+                }
+                
+                userRepository.save(user);
+            }
             System.err.println("Bad Credentials Login " + event.getAuthentication().getClass().getSimpleName() + " - " + event.getAuthentication().getName());
         };
     }

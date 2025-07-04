@@ -33,6 +33,12 @@ public class UserEntity extends AbstractEntity {
     @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean createdByReceptionist = false;
 
+    @Column(columnDefinition = "INT DEFAULT 0")
+    private Integer loginAttempts = 0;
+
+    @Column(columnDefinition = "INT DEFAULT 1")
+    private Integer status = 1; // 1: active, 0: locked
+
 	@ManyToOne
 	@JoinColumn(name = "roleId")
 	@EqualsAndHashCode.Exclude
