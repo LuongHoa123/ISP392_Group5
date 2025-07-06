@@ -60,6 +60,12 @@ public class AppointmentEntity extends AbstractEntity {
     @JsonManagedReference
     private Set<DiagnosisEntity> diagnosisEntities;
 
+    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonManagedReference
+    private ConclusionEntity conclusionEntity;
+
     public RoomEntity getRoom() {
         return room;
     }

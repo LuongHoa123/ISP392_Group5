@@ -1,18 +1,13 @@
 package com.ISP392.demo.controller.doctor;
 
 import com.ISP392.demo.dto.UserDto;
-import com.ISP392.demo.entity.AppointmentEntity;
-import com.ISP392.demo.entity.DoctorEntity;
-import com.ISP392.demo.entity.RoleEntity;
-import com.ISP392.demo.entity.UserEntity;
+import com.ISP392.demo.entity.*;
 import com.ISP392.demo.enums.RoleEnum;
-import com.ISP392.demo.repository.AppointmentRepository;
-import com.ISP392.demo.repository.DoctorRepository;
-import com.ISP392.demo.repository.RoleRepository;
-import com.ISP392.demo.repository.UserRepository;
+import com.ISP392.demo.repository.*;
 import com.ISP392.demo.service.ExcelExportService;
 import com.ISP392.demo.service.PdfExportService;
 import com.ISP392.demo.service.WordExportService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -21,6 +16,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -206,5 +202,57 @@ public class DoctorAppointmentController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @Autowired
+    private ConclusionRepository conclusionRepository;
+
+    @GetMapping("/conclusion/{id}")
+    public String showConclusionPage(@PathVariable Long id, Model model) {
+        AppointmentEntity appointment = appointmentRepository.findById(id).orElse(null);
+        if (appointment == null) {
+            return "redirect:/doctor/appointment";
+        }
+
+        ConclusionEntity conclusion = appointment.getConclusionEntity();
+        if (conclusion == null) {
+            conclusion = new ConclusionEntity();
+        }
+
+        model.addAttribute("appointment", appointment);
+        model.addAttribute("conclusion", conclusion);
+        return "doctor/appointment/conclusion";
+    }
+
+    @PostMapping("/conclusion/{id}")
+    @Transactional
+    public String saveConclusion(@PathVariable Long id, @RequestParam(required = false) String content, @RequestParam(required = false) String prescription) {
+        AppointmentEntity appointment = appointmentRepository.findById(id).orElse(null);
+        if (appointment == null) {
+            return "redirect:/doctor/appointment?error=true";
+        }
+
+        try {
+            ConclusionEntity conclusionEntity = appointment.getConclusionEntity() != null ?
+                    appointment.getConclusionEntity() :
+                    new ConclusionEntity();
+
+            conclusionEntity.setContent(content);
+            conclusionEntity.setPrescription(prescription);
+            conclusionEntity.setAppointment(appointment);
+
+            conclusionRepository.save(conclusionEntity);
+
+            appointment.setStatus(1);
+            appointmentRepository.save(appointment);
+
+            return "redirect:/doctor/appointment?save=true";
+        } catch (ObjectOptimisticLockingFailureException ex) {
+            return "redirect:/doctor/appointment?conflict=true";
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "redirect:/doctor/appointment?error=true";
+        }
+    }
+
 
 }

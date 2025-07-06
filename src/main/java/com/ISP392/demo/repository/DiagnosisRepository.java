@@ -18,6 +18,5 @@ import java.util.List;
 @Repository
 @SpringBootApplication
 public interface DiagnosisRepository extends JpaRepository<DiagnosisEntity, Long> {
-
-
+    List<DiagnosisEntity> findByAppointment(AppointmentEntity appointment);
 }
