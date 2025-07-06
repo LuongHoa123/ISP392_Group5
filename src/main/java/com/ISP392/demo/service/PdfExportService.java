@@ -1,7 +1,9 @@
 package com.ISP392.demo.service;
 
 import com.ISP392.demo.entity.AppointmentEntity;
+import com.ISP392.demo.entity.ConclusionEntity;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -32,7 +34,6 @@ public class PdfExportService {
         float[] columnWidths = {30F, 100F, 80F, 120F, 90F, 100F, 80F, 80F};
         Table table = new Table(columnWidths);
 
-        // Header
         for (String col : columns) {
             table.addHeaderCell(new Cell().add(new Paragraph(col)));
         }
@@ -55,6 +56,76 @@ public class PdfExportService {
         document.close();
         return new ByteArrayInputStream(out.toByteArray());
     }
+
+    private static final String FONT_PATH = "src/main/resources/static/fonts/NotoSans-Regular.ttf";
+
+    public ByteArrayInputStream exportAppointmentToPdf(AppointmentEntity appointment) throws IOException {
+        PdfFont customFont = PdfFontFactory.createFont(FONT_PATH, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(out);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
+
+        document.add(new Paragraph("Phiếu Khám Bệnh")
+                .setFont(customFont)
+                .setFontSize(18)
+                .setBold());
+        document.add(new Paragraph("\n"));
+
+        document.add(new Paragraph("Bệnh nhân: " + appointment.getName())
+                .setFont(customFont)
+                .setFontSize(12));
+        document.add(new Paragraph("Số điện thoại: " + appointment.getPhoneNumber())
+                .setFont(customFont)
+                .setFontSize(12));
+        document.add(new Paragraph("Email: " + appointment.getEmail())
+                .setFont(customFont)
+                .setFontSize(12));
+        document.add(new Paragraph("Thời gian hẹn: " + appointment.getAppointmentDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")))
+                .setFont(customFont)
+                .setFontSize(12));
+
+        document.add(new Paragraph("\n"));
+
+        if (appointment.getDoctor() != null) {
+            document.add(new Paragraph("Bác sĩ: " + appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName())
+                    .setFont(customFont)
+                    .setFontSize(12));
+        }
+
+        document.add(new Paragraph("\n"));
+
+        ConclusionEntity conclusion = appointment.getConclusionEntity();
+        if (conclusion != null) {
+            document.add(new Paragraph("Kết luận: " + conclusion.getContent())
+                    .setFont(customFont)
+                    .setFontSize(12));
+            document.add(new Paragraph("Đơn thuốc: ")
+                    .setFont(customFont)
+                    .setFontSize(12));
+
+            String[] prescriptions = conclusion.getPrescription().split("\n");
+            for (String prescription : prescriptions) {
+                document.add(new Paragraph(prescription)
+                        .setFont(customFont)
+                        .setFontSize(12));
+            }
+        } else {
+            document.add(new Paragraph("Kết luận và đơn thuốc chưa có.")
+                    .setFont(customFont)
+                    .setFontSize(12));
+        }
+
+        document.add(new Paragraph("\n"));
+        document.add(new Paragraph("Lưu ý: Phiếu khám bệnh này là một tài liệu quan trọng, vui lòng giữ gìn cẩn thận.")
+                .setFont(customFont)
+                .setFontSize(10));
+
+        document.close();
+        return new ByteArrayInputStream(out.toByteArray());
+    }
+
 
     private String getStatusText(Integer status) {
         if (status == null) return "Không xác định";

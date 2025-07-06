@@ -4,18 +4,23 @@ import com.ISP392.demo.entity.*;
 import com.ISP392.demo.enums.GenderEnum;
 import com.ISP392.demo.repository.*;
 import com.ISP392.demo.service.EmailSenderService;
+import com.ISP392.demo.service.PdfExportService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -191,6 +196,29 @@ public class RecepAppointmentController {
         }
 
         return "redirect:/recep/appointment";
+    }
+
+    @Autowired
+    private PdfExportService pdfExportService;
+
+    @GetMapping("/generatePdf/{appointmentId}")
+    public ResponseEntity<InputStreamResource> generatePdf(@PathVariable Long appointmentId) {
+        try {
+            AppointmentEntity appointment = appointmentRepository.findById(appointmentId).get();
+
+            ByteArrayInputStream pdfFile = pdfExportService.exportAppointmentToPdf(appointment);
+
+            String filename = "phieu_kham_benh_" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".pdf";
+
+            InputStreamResource file = new InputStreamResource(pdfFile);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
 }
