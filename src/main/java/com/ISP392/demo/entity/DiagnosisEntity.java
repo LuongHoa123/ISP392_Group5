@@ -8,12 +8,15 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "Diagnosis")
 @Data
 public class DiagnosisEntity extends AbstractEntity {
     private String content;
     private Integer level;
+    private BigDecimal price;
 
 	@ManyToOne
 	@JoinColumn(name = "appointmentId")
