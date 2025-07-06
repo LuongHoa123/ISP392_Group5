@@ -2,6 +2,7 @@ package com.ISP392.demo.service;
 
 import com.ISP392.demo.entity.AppointmentEntity;
 import com.ISP392.demo.entity.ConclusionEntity;
+import com.ISP392.demo.entity.DiagnosisEntity;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -16,8 +17,10 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class PdfExportService {
@@ -96,6 +99,39 @@ public class PdfExportService {
 
         document.add(new Paragraph("\n"));
 
+        Set<DiagnosisEntity> diagnoses = appointment.getDiagnosisEntities();
+        BigDecimal totalPrice = BigDecimal.ZERO;
+
+        if (diagnoses != null && !diagnoses.isEmpty()) {
+            document.add(new Paragraph("Dịch vụ/Chẩn đoán:")
+                    .setFont(customFont)
+                    .setFontSize(12)
+                    .setBold());
+
+            for (DiagnosisEntity diagnosis : diagnoses) {
+                document.add(new Paragraph("Chẩn đoán: " + diagnosis.getContent())
+                        .setFont(customFont)
+                        .setFontSize(12));
+                document.add(new Paragraph("Mức độ: " + (diagnosis.getLevel() != null ? diagnosis.getLevel() : "N/A"))
+                        .setFont(customFont)
+                        .setFontSize(12));
+                document.add(new Paragraph("Giá: " + (diagnosis.getPrice() != null ? diagnosis.getPrice() + " VND" : "N/A"))
+                        .setFont(customFont)
+                        .setFontSize(12));
+                document.add(new Paragraph("\n"));
+
+                if (diagnosis.getPrice() != null) {
+                    totalPrice = totalPrice.add(diagnosis.getPrice());
+                }
+            }
+        } else {
+            document.add(new Paragraph("Không có dịch vụ/Chẩn đoán nào.")
+                    .setFont(customFont)
+                    .setFontSize(12));
+        }
+
+        document.add(new Paragraph("\n"));
+
         ConclusionEntity conclusion = appointment.getConclusionEntity();
         if (conclusion != null) {
             document.add(new Paragraph("Kết luận: " + conclusion.getContent())
@@ -116,6 +152,12 @@ public class PdfExportService {
                     .setFont(customFont)
                     .setFontSize(12));
         }
+
+        document.add(new Paragraph("\n"));
+        document.add(new Paragraph("Tổng tiền: " + totalPrice + " VND")
+                .setFont(customFont)
+                .setFontSize(12)
+                .setBold());
 
         document.add(new Paragraph("\n"));
         document.add(new Paragraph("Lưu ý: Phiếu khám bệnh này là một tài liệu quan trọng, vui lòng giữ gìn cẩn thận.")
