@@ -139,6 +139,7 @@
                             <th>Phòng</th>
                             <th>Chi tiết</th>
                             <th>Trạng thái</th>
+                            <th>Thanh toán</th>
                             <th></th>
                         </tr>
                         </thead>
@@ -195,6 +196,12 @@
                                 </div>
                             </td>
                             <td>
+                                <a th:href="@{'/recep/invoice/' + ${appt.id}}"
+                                   class="btn btn-sm btn-primary" target="_blank">
+                                    Thanh toán
+                                </a>
+                            </td>
+                            <td>
                                 <div class="d-flex flex-column gap-2">
                                     <form th:if="${appt.status == -1}"
                                           th:action="@{/recep/appointment/delete}" method="post"
@@ -204,9 +211,7 @@
                                     </form>
                                 </div>
                             </td>
-                            <td>
 
-                            </td>
                         </tr>
                         </tbody>
                     </table>

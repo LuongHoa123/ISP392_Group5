@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            font-weight: 500;
+            padding: 15px;
+            font-size: 16px;
+            box-shadow: 0 2px 6px rgba(0, 128, 0, 0.1);
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            font-weight: 500;
+            padding: 15px;
+            font-size: 16px;
+            box-shadow: 0 2px 6px rgba(255, 0, 0, 0.1);
+        }
+
+        .alert {
+            background-color: transparent;
+            width: 60%;
+            margin: 0 auto;
+            margin-top: 0;
+            text-align: center;
+            position: relative;
+            top: 85px;
+        }
+
+
+    </style>
+</head>
+<body>
+<div th:if="${successMessage}" class="alert alert-success text-center mt-3" role="alert" th:text="${successMessage}">
+</div>
+
+<div th:if="${errorMessage}" class="alert alert-danger text-center mt-3" role="alert" th:text="${errorMessage}">
+</div>
+
+<th:block th:replace="layout/recep-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container mt-4">
+            <h3 class="mb-3">Lần thanh toán</h3>
+
+            <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addAppointmentModal">
+                + Thêm thanh toán mới
+            </button>
+
+            <!-- Modal thêm mới -->
+            <div class="modal fade" id="addAppointmentModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" th:if="${appointment.paymentStatus != 1}"
+                 aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <form th:action="@{/recep/invoice/add}" method="post" class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Tạo lần thanh toán mới</h5>
+                            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                        </div>
+                        <div class="modal-body">
+
+                            <div th:if="${addError}" class="alert alert-danger" th:text="${addErrorMsg}"></div>
+
+                            <div class="form-group">
+                                <label>Người thanh toán</label>
+                                <input type="text" name="fullName" class="form-control" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Số điện thoại</label>
+                                <input type="text" name="phone" class="form-control" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Số tiền thanh toán</label>
+                                <input type="number" name="cost" id="paymentAmount" class="form-control" min="1" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Số tiền còn lại cần thanh toán</label>
+                                <input type="number" id="remainingAmount" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">Xác nhận</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div th:if="${appointment.paymentStatus == 1}" class="alert alert-success mt-3">
+                Đã thanh toán đầy đủ.
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Mã</th>
+                            <th>Người thanh toán</th>
+                            <th>SDT</th>
+                            <th>Thời gian</th>
+                            <th>Lễ tân</th>
+                            <th>Số tiền</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="appt, iterStat : ${invoices}">
+                            <td th:text="${iterStat.index + 1}"></td>
+                            <td th:text="${appt.vnpTxtRef}"></td>
+                            <td th:text="${appt.fullName}"></td>
+                            <td th:text="${appt.phone}"></td>
+                            <td th:text="${#temporals.format(appt.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+
+                            <td th:text="${appt.recep != null ? (appt.recep.firstName + ' '  + appt.recep.lastName) : '---'}"></td>
+                            <td th:text="${appt.totalCost}"></td>
+
+                            <td>
+                                <a th:href="@{/recep/invoice/detail/{id}(id=${appt.id})}" class="btn btn-sm btn-info mb-1">Chi tiết</a>
+                            </td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    let totalCost = /*[[${appointment.totalCost}]]*/ 0;
+    let paid = /*[[${appointment.payCost}]]*/ 0;
+    let remaining = totalCost - paid;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const paymentInput = document.getElementById('paymentAmount');
+        const remainingInput = document.getElementById('remainingAmount');
+
+        remainingInput.value = remaining;
+        paymentInput.max = remaining;
+
+        paymentInput.addEventListener('input', function () {
+            const entered = parseFloat(this.value) || 0;
+            if (entered > remaining) {
+                this.value = remaining;
+            }
+        });
+    });
+</script>
+
+<script>
+    setTimeout(function () {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => alert.style.display = 'none');
+    }, 4000);
+</script>
+
+</body>
+</html>

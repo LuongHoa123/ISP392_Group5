@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -30,17 +31,23 @@ public class AppointmentEntity extends AbstractEntity {
 
     private String email;
 
+    private BigDecimal totalCost;
+
+    private BigDecimal payCost;
+    private Integer paymentStatus;
+
+
     private String noteCancel;
 
     private String conclusion;
 
     private String prescription;
 
-	@ManyToOne
-	@JoinColumn(name = "patientId")
-	@EqualsAndHashCode.Exclude
-	@JsonBackReference
-	private PatientEntity patient;
+    @ManyToOne
+    @JoinColumn(name = "patientId")
+    @EqualsAndHashCode.Exclude
+    @JsonBackReference
+    private PatientEntity patient;
 
     @ManyToOne
     @JoinColumn(name = "doctorId")
@@ -65,6 +72,71 @@ public class AppointmentEntity extends AbstractEntity {
     @ToString.Exclude
     @JsonManagedReference
     private ConclusionEntity conclusionEntity;
+
+
+    public BigDecimal getPayCost() {
+        return payCost;
+    }
+
+    public void setPayCost(BigDecimal payCost) {
+        this.payCost = payCost;
+    }
+
+    public Integer getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(Integer paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public BigDecimal getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(BigDecimal totalCost) {
+        this.totalCost = totalCost;
+    }
+
+    public String getNoteCancel() {
+        return noteCancel;
+    }
+
+    public void setNoteCancel(String noteCancel) {
+        this.noteCancel = noteCancel;
+    }
+
+    public String getConclusion() {
+        return conclusion;
+    }
+
+    public void setConclusion(String conclusion) {
+        this.conclusion = conclusion;
+    }
+
+    public String getPrescription() {
+        return prescription;
+    }
+
+    public void setPrescription(String prescription) {
+        this.prescription = prescription;
+    }
+
+    public Set<DiagnosisEntity> getDiagnosisEntities() {
+        return diagnosisEntities;
+    }
+
+    public void setDiagnosisEntities(Set<DiagnosisEntity> diagnosisEntities) {
+        this.diagnosisEntities = diagnosisEntities;
+    }
+
+    public ConclusionEntity getConclusionEntity() {
+        return conclusionEntity;
+    }
+
+    public void setConclusionEntity(ConclusionEntity conclusionEntity) {
+        this.conclusionEntity = conclusionEntity;
+    }
 
     public RoomEntity getRoom() {
         return room;
