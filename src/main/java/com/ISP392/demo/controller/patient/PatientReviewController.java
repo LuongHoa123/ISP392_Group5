@@ -75,6 +75,7 @@ public class PatientReviewController {
         ReviewEntity review = new ReviewEntity();
         review.setContent(content);
         review.setStar(star);
+        review.setCreatedAt(LocalDateTime.now());
 
         AppointmentEntity appointmentEntity = appointmentRepository.findById(this.id).get();
 

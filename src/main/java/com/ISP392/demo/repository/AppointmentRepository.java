@@ -71,4 +71,11 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
             Pageable pageable);
 
 
+    @Query("SELECT FUNCTION('DAY', a.appointmentDateTime), SUM(a.totalCost) " +
+            "FROM AppointmentEntity a " +
+            "WHERE FUNCTION('MONTH', a.appointmentDateTime) = :month " +
+            "AND FUNCTION('YEAR', a.appointmentDateTime) = :year " +
+            "GROUP BY FUNCTION('DAY', a.appointmentDateTime) " +
+            "ORDER BY FUNCTION('DAY', a.appointmentDateTime)")
+    List<Object[]> getDailyRevenueByMonth(@Param("month") int month, @Param("year") int year);
 }

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Management</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+</head>
+<body>
+<th:block th:replace="layout/admin-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container mt-4">
+            <h3 class="mb-3">Quản lý đánh giá</h3>
+
+            <div th:if="${successMessage}" class="alert alert-success" role="alert">
+                [[${successMessage}]]
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                [[${errorMessage}]]
+            </div>
+
+            <form class="form-inline mb-3" method="get" th:action="@{/admin/review}">
+                <div class="form-group mr-2">
+                    <input type="text" class="form-control" name="search" placeholder="Tìm kiếm..."
+                           th:value="${search}">
+                </div>
+                <button type="submit" class="btn btn-primary mr-2">Tìm kiếm</button>
+            </form>
+
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Bệnh nhân</th>
+                            <th>Ngày tạo</th>
+                            <th>Đánh giá</th>
+                            <th>Số sao</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="review, iterStat : ${reviews}">
+                            <td th:text="${iterStat.index + 1}"></td>
+                            <td th:text="${review.patient.firstName + ' ' + review.patient.lastName}"></td>
+                            <td th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td th:text="${review.content}"></td>
+                            <td th:text="${review.star}"></td>
+                            <td>
+                                <a class="btn btn-danger btn-sm"
+                                   th:href="@{'/admin/review/delete/' + ${review.id}}"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa đánh giá này không?');">Xoá</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <nav th:if="${totalPages > 1}">
+                        <ul class="pagination justify-content-center mt-3">
+                            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/admin/review(page=${currentPage - 1}, search=${search})}">Trước</a>
+                            </li>
+                            <li class="page-item"
+                                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                th:classappend="${i == currentPage} ? 'active'">
+                                <a class="page-link"
+                                   th:href="@{/admin/review(page=${i}, search=${search})}"
+                                   th:text="${i + 1}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/admin/review(page=${currentPage + 1}, search=${search})}">Sau</a>
+                            </li>
+                        </ul>
+                    </nav>
+
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+
+<script th:src="@{/assets_admin/vendors/js/vendor.bundle.base.js}"></script>
+<script th:src="@{/assets_admin/js/off-canvas.js}"></script>
+<script th:src="@{/assets_admin/js/misc.js}"></script>
+</body>
+</html>
