@@ -50,8 +50,6 @@ public class RecepAppointmentController {
     private RecepRepository recepRepository;
 
 
-
-
     @GetMapping("")
     public String appointmentSchedulePage(Model model,
                                           @RequestParam(value = "searchKeyword", required = false) String searchKeyword,
@@ -124,8 +122,6 @@ public class RecepAppointmentController {
         appointment.setStatus(-1);
 
         appointmentRepository.save(appointment);
-
-
 
         if (appointment.getEmail() != null) {
             String confirmLink = "http://localhost:8080/appointment/confirm?id=" + appointment.getId();

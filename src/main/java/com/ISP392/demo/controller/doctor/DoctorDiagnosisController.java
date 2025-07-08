@@ -9,7 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/doctor/appointment/diagnosis")
@@ -39,21 +41,27 @@ public class DoctorDiagnosisController {
     }
 
     @PostMapping("/update")
-    public String updateDiagnosis(
-                                  @RequestParam("diagnosisId") Long diagnosisId,
+    public String updateDiagnosis(@RequestParam("diagnosisId") Long diagnosisId,
                                   @RequestParam("content") String content,
-                                  @RequestParam("level") Integer level) {
+                                  @RequestParam("level") Integer level,
+                                  @RequestParam("price") BigDecimal price) {
 
         DiagnosisEntity diagnosis = diagnosisRepository.findById(diagnosisId).orElse(null);
 
         if (diagnosis != null) {
             diagnosis.setContent(content);
             diagnosis.setLevel(level);
+            diagnosis.setPrice(price);
             diagnosisRepository.save(diagnosis);
+
+            AppointmentEntity appointment = diagnosis.getAppointment();
+            updateTotalCost(appointment);
+            return "redirect:/doctor/appointment/diagnosis/" + appointment.getId() + "?update=true";
         }
 
-        return "redirect:/doctor/appointment/diagnosis/" + diagnosis.getAppointment().getId() + "?update=true";
+        return "redirect:/doctor/appointment/diagnosis/?update=false";
     }
+
 
     @PostMapping("/{appointmentId}/add")
     public String addDiagnosis(@PathVariable("appointmentId") Long appointmentId,
@@ -69,8 +77,12 @@ public class DoctorDiagnosisController {
         diagnosis.setAppointment(appointment);
         diagnosisRepository.save(diagnosis);
 
+        appointment = appointmentRepository.findById(appointmentId).orElseThrow();
+        updateTotalCost(appointment);
+
         return "redirect:/doctor/appointment/diagnosis/" + appointmentId + "?save=true";
     }
+
 
     @GetMapping("/{appointmentId}/delete/{diagnosisId}")
     public String deleteDiagnosis(@PathVariable("appointmentId") Long appointmentId,
@@ -78,9 +90,25 @@ public class DoctorDiagnosisController {
         DiagnosisEntity diagnosis = diagnosisRepository.findById(diagnosisId).orElse(null);
 
         if (diagnosis != null) {
+            AppointmentEntity appointment = diagnosis.getAppointment();
             diagnosisRepository.delete(diagnosis);
+
+            appointment = appointmentRepository.findById(appointment.getId()).orElseThrow();
+            updateTotalCost(appointment);
         }
 
         return "redirect:/doctor/appointment/diagnosis/" + appointmentId + "?delete=true";
     }
+
+
+    private void updateTotalCost(AppointmentEntity appointment) {
+        BigDecimal total = appointment.getDiagnosisEntities()
+                .stream()
+                .map(DiagnosisEntity::getPrice)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        appointment.setTotalCost(total);
+        appointmentRepository.save(appointment);
+    }
+
 }

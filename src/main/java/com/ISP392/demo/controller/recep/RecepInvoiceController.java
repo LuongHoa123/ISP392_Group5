@@ -29,13 +29,7 @@ public class RecepInvoiceController {
     private AppointmentRepository appointmentRepository;
 
     @Autowired
-    private DoctorRepository doctorRepository;
-
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private PatientRepository patientRepository;
 
     @Autowired
     private RecepRepository recepRepository;
@@ -77,20 +71,8 @@ public class RecepInvoiceController {
         this.phone = phone;
         this.cost = cost;
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
         this.vnpTxtRef = vnp_TxnRef;
-
-        UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
-        if (userEntity == null) {
-            return "redirect:/recep/dashboard";
-        }
-
-        RecepEntity recep = recepRepository.findByUser(userEntity);
-        if (recep != null) {
-            model.addAttribute("recep", recep);
-            return "recep/profile";
-        }
 
         String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
         String vnp_Version = "2.1.0";
@@ -204,18 +186,12 @@ public class RecepInvoiceController {
 
     @GetMapping("/after-checkout")
     public String afterCheckout() {
-        return "invoice-detail";
+        return "recep/appointment/invoice-detail";
     }
 
     @GetMapping("/detail/{id}")
     public String invoiceDetailPage(@PathVariable("id") Long id, Model model) {
         InvoiceEntity invoice = invoiceRepository.findById(id).orElse(null);
-
-        if (invoice == null) {
-            model.addAttribute("errorMessage", "Không tìm thấy đơn thanh toán.");
-            return "redirect:/recep/dashboard";
-        }
-
         model.addAttribute("invoice", invoice);
         return "recep/appointment/invoice-detail";
     }

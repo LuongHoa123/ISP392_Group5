@@ -55,9 +55,14 @@
 <th:block th:replace="layout/recep-layout :: layout">
     <th:block th:fragment="pageContent">
         <div class="container mt-4">
-            <h3 class="mb-3">Lần thanh toán</h3>
+            <h3 class="mb-3">
+                Lần thanh toán cho lịch hẹn có mã APP
+                <span th:text="${appointment.id}"></span>
+                ngày
+                <span th:text="${#temporals.format(appointment.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></span>
+            </h3>
 
-            <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addAppointmentModal">
+            <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addAppointmentModal" th:if="${appointment.paymentStatus != 1}">
                 + Thêm thanh toán mới
             </button>
 
@@ -102,9 +107,6 @@
                 </div>
             </div>
 
-            <div th:if="${appointment.paymentStatus == 1}" class="alert alert-success mt-3">
-                Đã thanh toán đầy đủ.
-            </div>
 
             <div class="card">
                 <div class="card-body">

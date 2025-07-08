@@ -145,7 +145,7 @@
                         </thead>
                         <tbody>
                         <tr th:each="appt, iterStat : ${appointments}">
-                            <td th:text="${iterStat.index + 1}"></td>
+                            <td th:text="'APP' + ${appt.id}"></td>
                             <td th:text="${appt.name}"></td>
                             <td th:text="${#temporals.format(appt.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></td>
                             <td>
@@ -197,7 +197,7 @@
                             </td>
                             <td>
                                 <a th:href="@{'/recep/invoice/' + ${appt.id}}"
-                                   class="btn btn-sm btn-primary" target="_blank">
+                                   class="btn btn-sm btn-primary">
                                     Thanh toán
                                 </a>
                             </td>

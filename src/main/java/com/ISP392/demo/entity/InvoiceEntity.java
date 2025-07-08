@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "Appointments")
+@Table(name = "Invoices")
 @Data
 public class InvoiceEntity extends AbstractEntity {
 
