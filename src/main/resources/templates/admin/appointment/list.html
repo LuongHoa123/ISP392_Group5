@@ -42,7 +42,6 @@
                             <th>Phòng</th>
                             <th>Chi tiết</th>
                             <th>Trạng thái</th>
-                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -77,16 +76,6 @@
         <span th:case="2" class="badge badge-info">Đang chờ khám</span>
         <span th:case="*">Không xác định</span>
     </span>
-                            </td>
-                            <td>
-                                <div class="d-flex flex-column gap-2">
-                                    <form th:if="${appt.status == -1}"
-                                          th:action="@{/admin/appointment/delete}" method="post"
-                                          onsubmit="return confirm('Bạn có chắc chắn muốn xoá lịch hẹn này?')">
-                                        <input type="hidden" name="appointmentId" th:value="${appt.id}"/>
-                                        <button type="submit" class="btn btn-sm btn-danger">Xoá</button>
-                                    </form>
-                                </div>
                             </td>
                         </tr>
                         </tbody>

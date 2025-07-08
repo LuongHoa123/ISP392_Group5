@@ -131,7 +131,6 @@ public class RecepInvoiceController {
         String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + query;
         return "redirect:" + paymentUrl;
 
-
     }
 
     @GetMapping("/getPaymentInfo")

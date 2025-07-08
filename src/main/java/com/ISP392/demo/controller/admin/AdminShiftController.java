@@ -21,9 +21,12 @@ import java.time.LocalDateTime;
 @RequestMapping("/admin/shift")
 public class AdminShiftController {
 
-    @Autowired private ShiftRepository shiftRepository;
-    @Autowired private DoctorRepository doctorRepository;
-    @Autowired private NurseRepository nurseRepository;
+    @Autowired
+    private ShiftRepository shiftRepository;
+    @Autowired
+    private DoctorRepository doctorRepository;
+    @Autowired
+    private NurseRepository nurseRepository;
 
     @GetMapping
     public String listShifts(Model model,

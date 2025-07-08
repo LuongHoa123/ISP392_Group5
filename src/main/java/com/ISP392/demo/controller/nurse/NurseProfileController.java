@@ -75,10 +75,12 @@ public class NurseProfileController {
         }
 
         nurse.setPhoneNumber(formNurse.getPhoneNumber());
+
         if(!avatarFile.isEmpty() && avatarFile != null) {
             String img = cloudinaryService.uploadFile(avatarFile);
             nurse.setAvatar(img);
         }
+
         session.setAttribute("avatar", nurse.getAvatar());
 
         nurseRepository.save(nurse);

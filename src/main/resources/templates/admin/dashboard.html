@@ -90,69 +90,6 @@
             </div>
         </div>
 
-
-        <div class="row">
-            <div class="col-12 grid-margin">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">5 Lịch hẹn chờ khám mới nhất</h4>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Họ tên</th>
-                                    <th>Ngày giờ</th>
-                                    <th>Lý do</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="a, stat : ${appointmentsWaiting}">
-                                    <td th:text="${stat.index + 1}"></td>
-                                    <td th:text="${a.name}"></td>
-                                    <td th:text="${#temporals.format(a.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></td>
-                                    <td th:text="${a.reason}"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="row">
-            <div class="col-12 grid-margin">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Lịch hẹn chờ xác nhận</h4>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Họ tên</th>
-                                    <th>Ngày giờ</th>
-                                    <th>Lý do</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="a, stat : ${appointmentsPending}">
-                                    <td th:text="${stat.index + 1}"></td>
-                                    <td th:text="${a.name}"></td>
-                                    <td th:text="${#temporals.format(a.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></td>
-                                    <td th:text="${a.reason}"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
         <div class="row">
             <div class="col-md-12 grid-margin stretch-card">
                 <div class="card">
