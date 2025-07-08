@@ -73,6 +73,18 @@ public class AppointmentEntity extends AbstractEntity {
     @JsonManagedReference
     private ConclusionEntity conclusionEntity;
 
+    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonManagedReference
+    private ReviewEntity reviewEntity;
+
+    @OneToMany(mappedBy = "appointmentEntity", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonManagedReference
+    private Set<InvoiceEntity> invoiceEntities;
+
 
     public BigDecimal getPayCost() {
         return payCost;

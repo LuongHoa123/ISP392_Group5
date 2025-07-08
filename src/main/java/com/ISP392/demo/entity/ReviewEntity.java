@@ -29,4 +29,10 @@ public class ReviewEntity extends AbstractEntity {
 	@EqualsAndHashCode.Exclude
 	@JsonBackReference
 	private PatientEntity patient;
+
+	@OneToOne
+	@JoinColumn(name = "appointmentId")
+	@EqualsAndHashCode.Exclude
+	@JsonBackReference
+	private AppointmentEntity appointment;
 }

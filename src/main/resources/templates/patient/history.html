@@ -87,7 +87,6 @@
     </style>
 
 
-
 </head>
 <body>
 <th:block th:replace="layout/user-layout :: layout">
@@ -249,6 +248,13 @@
                         const now = new Date();
 
                         let actionButtons = "";
+
+                        if (props.status === 1) {
+                            actionButtons += `
+        <a href="/patient/appointment/detail?id=${props.id}" class="btn btn-info btn-sm mr-2">Xem chi tiết</a>
+        <a href="/patient/review/${props.id}" class="btn btn-success btn-sm">Đánh giá</a>
+    `;
+                        }
 
                         if (props.status === 2 && startDate > now) {
                             actionButtons += `<button class="btn btn-warning btn-sm" onclick="cancelAppointment(${props.id})">Hủy lịch</button>`;

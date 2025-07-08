@@ -113,6 +113,8 @@ public class PatientAppointmentController {
         return "patient/history";
     }
 
+
+
     @GetMapping("/calendar/data")
     @ResponseBody
     public List<AppointmentDto> getAppointmentsJson() {
@@ -192,5 +194,10 @@ public class PatientAppointmentController {
         return ResponseEntity.ok().build();
     }
 
-
+    @GetMapping("/detail")
+    public String detail(Model model, @RequestParam(name = "id") Long id) {
+        AppointmentEntity appointment = appointmentRepository.findById(id).get();
+        model.addAttribute("appointment", appointment);
+        return "patient/history-detail";
+    }
 }

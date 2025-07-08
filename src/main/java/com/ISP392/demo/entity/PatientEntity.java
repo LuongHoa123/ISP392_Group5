@@ -54,6 +54,12 @@ public class PatientEntity extends AbstractEntity {
     @JsonManagedReference
     private Set<AppointmentEntity> appointments;
 
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonManagedReference
+    private Set<ReviewEntity> reviews;
+
     public String getFirstName() {
         return firstName;
     }
