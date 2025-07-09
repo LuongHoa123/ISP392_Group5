@@ -190,7 +190,7 @@
                         <span class="specialization" th:text="${doctor.specialization}">Chuyên khoa</span>
                         <p th:text="'Email: ' + ${doctor.email}"></p>
                         <p th:text="'SĐT: ' + ${doctor.phoneNumber}"></p>
-                        <p th:text="${T(java.time.Period).between(doctor.createdAt.toLocalDate(), T(java.time.LocalDate).now()).getYears() + 1} + ' năm kinh nghiệm'"></p>
+                        <p th:text="${doctor.yoe != null ? doctor.yoe + ' năm kinh nghiệm' : 'Chưa cập nhật'}"></p>
                     </a>
                     <div class="share">
                     </div>

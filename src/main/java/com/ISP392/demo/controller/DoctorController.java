@@ -9,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping("/doctors")
@@ -46,18 +45,17 @@ public class DoctorController {
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("firstName").ascending());
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime minCreatedAt = null;
-        LocalDateTime maxCreatedAt = null;
+        Integer minExperience = null;
+        Integer maxExperience = null;
 
         if ("1-5".equals(experienceRange)) {
-            minCreatedAt = now.minusYears(1).plusDays(1);
-            maxCreatedAt = now.minusYears(5);
+            minExperience = 1;
+            maxExperience = 5;
         } else if ("5-10".equals(experienceRange)) {
-            minCreatedAt = now.minusYears(5).plusDays(1);
-            maxCreatedAt = now.minusYears(10);
+            minExperience = 5;
+            maxExperience = 10;
         } else if ("10+".equals(experienceRange)) {
-            minCreatedAt = now.minusYears(10);
+            minExperience = 10;
         }
 
         if (keyword != null && !keyword.isBlank()) {
@@ -65,7 +63,7 @@ public class DoctorController {
         }
 
         Page<DoctorEntity> doctorPage = doctorRepository.searchByMultipleFilters(
-                keyword, specialization, minCreatedAt, maxCreatedAt, pageable);
+                keyword, specialization, minExperience, maxExperience, pageable);
 
         model.addAttribute("doctors", doctorPage.getContent());
         model.addAttribute("currentPage", page);

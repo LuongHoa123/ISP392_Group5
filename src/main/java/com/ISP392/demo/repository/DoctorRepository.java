@@ -28,13 +28,13 @@ public interface DoctorRepository extends JpaRepository<DoctorEntity, Long> {
             "   OR LOWER(d.specialization) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "   OR LOWER(d.email) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
             "AND (:specialization IS NULL OR LOWER(d.specialization) LIKE LOWER(CONCAT('%', :specialization, '%'))) " +
-            "AND (:minCreatedAt IS NULL OR d.createdAt <= :minCreatedAt) " +
-            "AND (:maxCreatedAt IS NULL OR d.createdAt >= :maxCreatedAt)")
+            "AND (:minExperience IS NULL OR d.yoe >= :minExperience) " +
+            "AND (:maxExperience IS NULL OR d.yoe <= :maxExperience)")
     Page<DoctorEntity> searchByMultipleFilters(
             @Param("keyword") String keyword,
             @Param("specialization") String specialization,
-            @Param("minCreatedAt") LocalDateTime minCreatedAt,
-            @Param("maxCreatedAt") LocalDateTime maxCreatedAt,
+            @Param("minExperience") Integer minExperience,
+            @Param("maxExperience") Integer maxExperience,
             Pageable pageable
     );
 

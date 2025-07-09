@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Danh sách bác sĩ</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+</head>
+
+<body>
+<th:block th:replace="layout/admin-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="page-header">
+            <h3 class="page-title">Danh sách bác sĩ</h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Danh sách bác sĩ</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="row">
+            <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Danh sách bác sĩ</h4>
+                        
+                        <!-- Search and Filter Form -->
+                        <form th:action="@{/admin/doctor}" method="get" class="row mb-3">
+                            <div class="col-md-4">
+                                <input type="text" name="search" th:value="${search}" class="form-control" 
+                                       placeholder="Tìm kiếm theo tên, email...">
+                            </div>
+                            <div class="col-md-3">
+                                <select name="specialization" class="form-control">
+                                    <option value="" th:selected="${specialization == null or specialization == ''}">
+                                        Tất cả chuyên khoa
+                                    </option>
+                                    <option value="Tai" th:selected="${specialization == 'Tai'}">Chuyên khoa Tai</option>
+                                    <option value="Mũi" th:selected="${specialization == 'Mũi'}">Chuyên khoa Mũi</option>
+                                    <option value="Họng" th:selected="${specialization == 'Họng'}">Chuyên khoa Họng</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="experienceRange" class="form-control">
+                                    <option value="" th:selected="${experienceRange == null or experienceRange == ''}">
+                                        Tất cả kinh nghiệm
+                                    </option>
+                                    <option value="under5" th:selected="${experienceRange == 'under5'}">
+                                        Dưới 5 năm
+                                    </option>
+                                    <option value="5-10" th:selected="${experienceRange == '5-10'}">
+                                        5-10 năm
+                                    </option>
+                                    <option value="over10" th:selected="${experienceRange == 'over10'}">
+                                        Trên 10 năm
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="mdi mdi-magnify"></i> Tìm kiếm
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Table -->
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Họ và tên</th>
+                                        <th>Email</th>
+                                        <th>Số điện thoại</th>
+                                        <th>Chuyên khoa</th>
+                                        <th>Kinh nghiệm</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="doctor, iterStat : ${doctors}">
+                                        <td th:text="${iterStat.count + (currentPage * 5)}"></td>
+                                        <td th:text="${doctor.firstName + ' ' + doctor.lastName}"></td>
+                                        <td th:text="${doctor.email}"></td>
+                                        <td th:text="${doctor.phoneNumber}"></td>
+                                        <td>
+                                            <span class="badge badge-primary" th:text="${doctor.specialization}"></span>
+                                        </td>
+                                        <td th:text="${doctor.yoe != null ? doctor.yoe + ' năm' : 'Chưa cập nhật'}"></td>
+                                        <td>
+                                            <a th:href="@{/doctors/{id}(id=${doctor.id})}" 
+                                               class="btn btn-info btn-sm" target="_blank">
+                                                <i class="mdi mdi-eye"></i> Xem chi tiết
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Empty state -->
+                            <div th:if="${#lists.isEmpty(doctors)}" class="text-center py-4">
+                                <p class="text-muted">Không tìm thấy bác sĩ nào phù hợp với tiêu chí tìm kiếm.</p>
+                            </div>
+
+                            <!-- Pagination -->
+                            <nav th:if="${totalPages > 1}" aria-label="Page navigation" class="mt-4">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                        <a class="page-link" 
+                                           th:href="@{/admin/doctor(page=${currentPage - 1}, search=${search}, specialization=${specialization}, experienceRange=${experienceRange})}">
+                                            Trước
+                                        </a>
+                                    </li>
+                                    <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                        th:classappend="${i == currentPage} ? 'active'">
+                                        <a class="page-link" 
+                                           th:href="@{/admin/doctor(page=${i}, search=${search}, specialization=${specialization}, experienceRange=${experienceRange})}" 
+                                           th:text="${i + 1}"></a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                        <a class="page-link" 
+                                           th:href="@{/admin/doctor(page=${currentPage + 1}, search=${search}, specialization=${specialization}, experienceRange=${experienceRange})}">
+                                            Sau
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+
+<!-- Scripts -->
+<script th:src="@{/assets_admin/vendors/js/vendor.bundle.base.js}"></script>
+<script th:src="@{/assets_admin/js/off-canvas.js}"></script>
+<script th:src="@{/assets_admin/js/hoverable-collapse.js}"></script>
+<script th:src="@{/assets_admin/js/misc.js}"></script>
+</body>
+</html> 

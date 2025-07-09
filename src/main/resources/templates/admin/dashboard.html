@@ -54,7 +54,9 @@
                         <h4 class="font-weight-normal mb-3">Số bác sĩ <i
                                 class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
                         </h4>
-                        <h2 class="mb-5"><span th:text="${countDoctor}"></span></h2>
+                        <a th:href="@{/admin/doctor}" style="text-decoration: none; color: white;">
+                            <h2 class="mb-5"><span th:text="${countDoctor}"></span></h2>
+                        </a>
                     </div>
                 </div>
             </div>

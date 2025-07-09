@@ -29,6 +29,9 @@ public class DoctorEntity extends AbstractEntity {
 
     private String specialization;
 
+    @Column(name = "yoe")
+    private Integer yoe;
+
     @Basic
     @Column(name = "phoneNumber", nullable = true, length = 20)
     private String phoneNumber;
@@ -93,6 +96,14 @@ public class DoctorEntity extends AbstractEntity {
 
     public void setSpecialization(String specialization) {
         this.specialization = specialization;
+    }
+
+    public Integer getYoe() {
+        return yoe;
+    }
+
+    public void setYoe(Integer yoe) {
+        this.yoe = yoe;
     }
 
     public String getPhoneNumber() {
