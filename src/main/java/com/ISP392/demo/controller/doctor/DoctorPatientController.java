@@ -1,23 +1,27 @@
 package com.ISP392.demo.controller.doctor;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.ISP392.demo.entity.AppointmentEntity;
 import com.ISP392.demo.entity.DoctorEntity;
 import com.ISP392.demo.entity.PatientEntity;
 import com.ISP392.demo.entity.UserEntity;
-import com.ISP392.demo.enums.GenderEnum;
+import com.ISP392.demo.repository.AppointmentRepository;
 import com.ISP392.demo.repository.DoctorRepository;
 import com.ISP392.demo.repository.PatientRepository;
 import com.ISP392.demo.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/doctor/patient")
@@ -31,6 +35,9 @@ public class DoctorPatientController {
 
     @Autowired
     private DoctorRepository doctorRepository;
+
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
     @GetMapping("")
     public String patientListPage(Model model,
@@ -106,4 +113,17 @@ public class DoctorPatientController {
         return "doctor/patient/detail";
     }
 
+    @PostMapping("/delete/{id}")
+    @Transactional
+    public String deletePatientFromDoctor(@PathVariable Long id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
+        if (userEntity == null) return "redirect:/doctor/patient?deleteError=true";
+        DoctorEntity doctor = doctorRepository.findByUser(userEntity);
+        PatientEntity patient = patientRepository.findById(id).orElse(null);
+        if (doctor == null || patient == null) return "redirect:/doctor/patient?deleteError=true";
+        // Xóa tất cả các lịch hẹn giữa bác sĩ này và bệnh nhân này
+        appointmentRepository.deleteByDoctorAndPatient(doctor, patient);
+        return "redirect:/doctor/patient?deleted=true";
+    }
 }

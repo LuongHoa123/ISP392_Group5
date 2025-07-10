@@ -73,7 +73,7 @@
                             <td>
         <span th:switch="${appt.status}">
             <span th:case="-1" class="badge badge-warning">Đang chờ xác nhận</span>
-            <span th:case="0" class="badge badge-danger">Đã huỷ</span>
+            <span th:case="0" class="badge badge-danger text-danger" style="font-weight:bold;">Đã huỷ</span>
             <span th:case="1" class="badge badge-success">Đã khám</span>
             <span th:case="2" class="badge badge-info">Đang chờ khám</span>
             <span th:case="*">Không xác định</span>
@@ -88,6 +88,13 @@
                                 <a th:href="@{/doctor/appointment/conclusion/{id}(id=${appt.id})}" class="btn btn-danger btn-sm">
                                     <i class="mdi mdi-file-document"></i> Kết luận
                                 </a>
+
+                                <!-- Nút xóa -->
+                                <form th:action="@{/doctor/appointment/delete/{id}(id=${appt.id})}" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa lịch hẹn này?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="mdi mdi-delete"></i> Xóa
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         </tbody>
@@ -128,7 +135,7 @@
                                         <p class="mt-3"><strong>Trạng thái:</strong>
                                             <span th:switch="${appt.status}">
                                                 <span th:case="-1" class="badge badge-warning">Đang chờ xác nhận</span>
-                                                <span th:case="0" class="badge badge-danger">Đã huỷ</span>
+                                                <span th:case="0" class="badge badge-danger text-danger" style="font-weight:bold;">Đã huỷ</span>
                                                 <span th:case="1" class="badge badge-success">Đã khám</span>
                                                 <span th:case="2" class="badge badge-info">Đang chờ khám</span>
                                                 <span th:case="*">Không xác định</span>

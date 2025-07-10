@@ -1,14 +1,12 @@
 package com.ISP392.demo.controller.doctor;
 
-import com.ISP392.demo.dto.UserDto;
-import com.ISP392.demo.entity.*;
-import com.ISP392.demo.enums.RoleEnum;
-import com.ISP392.demo.repository.*;
-import com.ISP392.demo.service.ExcelExportService;
-import com.ISP392.demo.service.PdfExportService;
-import com.ISP392.demo.service.WordExportService;
-import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -18,19 +16,28 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.ISP392.demo.entity.AppointmentEntity;
+import com.ISP392.demo.entity.ConclusionEntity;
+import com.ISP392.demo.entity.DoctorEntity;
+import com.ISP392.demo.entity.UserEntity;
+import com.ISP392.demo.repository.AppointmentRepository;
+import com.ISP392.demo.repository.ConclusionRepository;
+import com.ISP392.demo.repository.DoctorRepository;
+import com.ISP392.demo.repository.UserRepository;
+import com.ISP392.demo.service.ExcelExportService;
+import com.ISP392.demo.service.PdfExportService;
+import com.ISP392.demo.service.WordExportService;
+
+import jakarta.transaction.Transactional;
 
 @Controller
 @RequestMapping("/doctor/appointment")
@@ -251,6 +258,22 @@ public class DoctorAppointmentController {
         } catch (Exception ex) {
             ex.printStackTrace();
             return "redirect:/doctor/appointment?error=true";
+        }
+    }
+
+    @PostMapping("/delete/{id}")
+    @Transactional
+    public String deleteAppointment(@PathVariable Long id) {
+        AppointmentEntity appointment = appointmentRepository.findById(id).orElse(null);
+        if (appointment == null) {
+            return "redirect:/doctor/appointment?deleteError=true";
+        }
+        try {
+            appointmentRepository.delete(appointment);
+            return "redirect:/doctor/appointment?deleted=true";
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "redirect:/doctor/appointment?deleteError=true";
         }
     }
 

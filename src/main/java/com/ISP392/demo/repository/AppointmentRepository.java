@@ -1,8 +1,8 @@
 package com.ISP392.demo.repository;
 
-import com.ISP392.demo.entity.AppointmentEntity;
-import com.ISP392.demo.entity.DoctorEntity;
-import com.ISP392.demo.entity.PatientEntity;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,9 +11,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import com.ISP392.demo.entity.AppointmentEntity;
+import com.ISP392.demo.entity.DoctorEntity;
+import com.ISP392.demo.entity.PatientEntity;
 
 @Repository
 @SpringBootApplication
@@ -78,4 +78,6 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
             "GROUP BY FUNCTION('DAY', a.appointmentDateTime) " +
             "ORDER BY FUNCTION('DAY', a.appointmentDateTime)")
     List<Object[]> getDailyRevenueByMonth(@Param("month") int month, @Param("year") int year);
+
+    void deleteByDoctorAndPatient(DoctorEntity doctor, PatientEntity patient);
 }

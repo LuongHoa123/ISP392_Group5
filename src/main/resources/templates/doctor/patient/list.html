@@ -54,6 +54,12 @@
                             <td th:text="${patient.phone}"></td>
                             <td>
                                 <a th:href="@{/doctor/patient/detail(id=${patient.id})}" class="btn btn-sm btn-info">Xem</a>
+                                <!-- Nút xóa -->
+                                <form th:action="@{/doctor/patient/delete/{id}(id=${patient.id})}" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bệnh nhân này khỏi danh sách của bạn?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="mdi mdi-delete"></i> Xóa
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         </tbody>
