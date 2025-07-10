@@ -42,7 +42,6 @@
             top: 85px;
         }
 
-
     </style>
 </head>
 <body>
@@ -66,11 +65,10 @@
                 + Thêm thanh toán mới
             </button>
 
-            <!-- Modal thêm mới -->
             <div class="modal fade" id="addAppointmentModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" th:if="${appointment.paymentStatus != 1}"
                  aria-hidden="true">
                 <div class="modal-dialog" role="document">
-                    <form th:action="@{/recep/invoice/add}" method="post" class="modal-content">
+                    <form th:action="@{/recep/invoice/add}" method="post" class="modal-content needs-validation" id="addPaymentForm" novalidate>
                         <div class="modal-header">
                             <h5 class="modal-title">Tạo lần thanh toán mới</h5>
                             <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
@@ -80,22 +78,32 @@
                             <div th:if="${addError}" class="alert alert-danger" th:text="${addErrorMsg}"></div>
 
                             <div class="form-group">
-                                <label>Người thanh toán</label>
-                                <input type="text" name="fullName" class="form-control" required>
+                                <label for="fullName">Người thanh toán</label>
+                                <input type="text" name="fullName" id="fullName" class="form-control" required>
+                                <div class="invalid-feedback">
+                                    Vui lòng nhập tên người thanh toán.
+                                </div>
                             </div>
 
                             <div class="form-group">
-                                <label>Số điện thoại</label>
-                                <input type="text" name="phone" class="form-control" required>
+                                <label for="phone">Số điện thoại</label>
+                                <input type="tel" name="phone" id="phone" class="form-control" required
+                                       pattern="^((0[35789]\d{8})|(02\d{8}))$">
+                                <div class="invalid-feedback">
+                                    Số điện thoại không hợp lệ.
+                                </div>
                             </div>
 
                             <div class="form-group">
-                                <label>Số tiền thanh toán</label>
+                                <label for="paymentAmount">Số tiền thanh toán</label>
                                 <input type="number" name="cost" id="paymentAmount" class="form-control" min="1" required>
+                                <div class="invalid-feedback">
+                                    Vui lòng nhập số tiền hợp lệ.
+                                </div>
                             </div>
 
                             <div class="form-group">
-                                <label>Số tiền còn lại cần thanh toán</label>
+                                <label for="remainingAmount">Số tiền còn lại cần thanh toán</label>
                                 <input type="number" id="remainingAmount" class="form-control" readonly>
                             </div>
                         </div>
@@ -146,34 +154,48 @@
         </div>
     </th:block>
 </th:block>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script th:inline="javascript">
-    let totalCost = /*[[${appointment.totalCost}]]*/ 0;
-    let paid = /*[[${appointment.payCost}]]*/ 0;
-    let remaining = totalCost - paid;
 
+<script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function () {
+        // Bootstrap validation script
+        const form = document.getElementById('addPaymentForm');
+        if(form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        }
+
+        // Payment calculation script
+        let totalCost = /*[[${appointment.totalCost}]]*/ 0;
+        let paid = /*[[${appointment.payCost}]]*/ 0;
+        let remaining = totalCost - paid;
+
         const paymentInput = document.getElementById('paymentAmount');
         const remainingInput = document.getElementById('remainingAmount');
 
-        remainingInput.value = remaining;
-        paymentInput.max = remaining;
+        if(paymentInput && remainingInput) {
+            remainingInput.value = remaining;
+            paymentInput.max = remaining;
 
-        paymentInput.addEventListener('input', function () {
-            const entered = parseFloat(this.value) || 0;
-            if (entered > remaining) {
-                this.value = remaining;
-            }
-        });
+            paymentInput.addEventListener('input', function () {
+                const entered = parseFloat(this.value) || 0;
+                if (entered > remaining) {
+                    this.value = remaining;
+                }
+            });
+        }
+
+        // Alert timeout script
+        setTimeout(function () {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => alert.style.display = 'none');
+        }, 4000);
     });
-</script>
-
-<script>
-    setTimeout(function () {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(alert => alert.style.display = 'none');
-    }, 4000);
 </script>
 
 </body>
