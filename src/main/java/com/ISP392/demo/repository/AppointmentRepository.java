@@ -80,4 +80,15 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
     List<Object[]> getDailyRevenueByMonth(@Param("month") int month, @Param("year") int year);
 
     void deleteByDoctorAndPatient(DoctorEntity doctor, PatientEntity patient);
+
+    List<AppointmentEntity> findByDoctorAndAppointmentDateTimeBetween(DoctorEntity doctor, LocalDateTime start, LocalDateTime end);
+
+    @Query("SELECT a.status, COUNT(a) FROM AppointmentEntity a WHERE a.doctor = :doctor AND MONTH(a.appointmentDateTime) = :month AND YEAR(a.appointmentDateTime) = :year GROUP BY a.status")
+    List<Object[]> countAppointmentStatusForDoctorByMonth(@Param("doctor") DoctorEntity doctor, @Param("month") int month, @Param("year") int year);
+
+    @Query("SELECT a FROM AppointmentEntity a WHERE a.doctor = :doctor AND a.status = :status AND MONTH(a.appointmentDateTime) = :month AND YEAR(a.appointmentDateTime) = :year")
+    List<AppointmentEntity> findByDoctorAndStatusAndMonthAndYear(@Param("doctor") DoctorEntity doctor, @Param("status") int status, @Param("month") int month, @Param("year") int year);
+
+    @Query("SELECT a FROM AppointmentEntity a WHERE a.doctor = :doctor AND a.status IN :statuses AND MONTH(a.appointmentDateTime) = :month AND YEAR(a.appointmentDateTime) = :year")
+    List<AppointmentEntity> findByDoctorAndStatusInAndMonthAndYear(@Param("doctor") DoctorEntity doctor, @Param("statuses") List<Integer> statuses, @Param("month") int month, @Param("year") int year);
 }
