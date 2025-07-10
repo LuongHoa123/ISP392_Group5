@@ -3,6 +3,7 @@ package com.ISP392.demo.controller.doctor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -65,6 +66,29 @@ public class DoctorShiftController {
         } else {
             shifts = shiftRepository.findByDoctorId(doctor.getId(), pageable);
         }
+
+        // Tổng hợp số ca trực theo ngày trong tháng hiện tại
+        LocalDate now = LocalDate.now();
+        LocalDate firstDay = now.withDayOfMonth(1);
+        LocalDate lastDay = now.withDayOfMonth(now.lengthOfMonth());
+        // Lấy tất cả ca trực trong tháng (không phân trang)
+        List<ShiftEntity> allShiftsInMonth = shiftRepository.findAll().stream()
+                .filter(s -> s.getDoctor() != null && s.getDoctor().getId().equals(doctor.getId()))
+                .filter(s -> !s.getStartTime().isBefore(firstDay.atStartOfDay()) && !s.getStartTime().isAfter(lastDay.atTime(23, 59, 59)))
+                .toList();
+        Map<Integer, Long> shiftCountByDay = new java.util.TreeMap<>();
+        for (ShiftEntity shift : allShiftsInMonth) {
+            int day = shift.getStartTime().getDayOfMonth();
+            shiftCountByDay.put(day, shiftCountByDay.getOrDefault(day, 0L) + 1);
+        }
+        List<Map<String, Object>> shiftSummaryByDay = new java.util.ArrayList<>();
+        for (int d = 1; d <= now.lengthOfMonth(); d++) {
+            Map<String, Object> row = new java.util.HashMap<>();
+            row.put("day", String.format("%02d/%02d/%d", d, now.getMonthValue(), now.getYear()));
+            row.put("count", shiftCountByDay.getOrDefault(d, 0L));
+            shiftSummaryByDay.add(row);
+        }
+        model.addAttribute("shiftSummaryByDay", shiftSummaryByDay);
 
         model.addAttribute("shifts", shifts.getContent());
         model.addAttribute("currentPage", page);
