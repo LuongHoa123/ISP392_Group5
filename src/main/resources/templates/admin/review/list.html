@@ -14,7 +14,7 @@
 <th:block th:replace="layout/admin-layout :: layout">
     <th:block th:fragment="pageContent">
         <div class="container mt-4">
-            <h3 class="mb-3">Quản lý đánh giá</h3>
+            <h3 class="mb-3">Danh sách đánh giá</h3>
 
             <div th:if="${successMessage}" class="alert alert-success" role="alert">
                 [[${successMessage}]]
@@ -24,12 +24,73 @@
                 [[${errorMessage}]]
             </div>
 
+            <!-- Thống kê tổng quan -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card bg-danger text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">Đánh giá tiêu cực</h4>
+                                    <h2 class="mb-0" th:text="${totalNegativeReviews}">0</h2>
+                                    <small>≤ 2 sao</small>
+                                </div>
+                                <div>
+                                    <i class="mdi mdi-emoticon-sad mdi-36px"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">Đánh giá tích cực</h4>
+                                    <h2 class="mb-0" th:text="${totalPositiveReviews}">0</h2>
+                                    <small>≥ 3 sao</small>
+                                </div>
+                                <div>
+                                    <i class="mdi mdi-emoticon-happy mdi-36px"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">Tổng cộng</h4>
+                                    <h2 class="mb-0" th:text="${totalNegativeReviews + totalPositiveReviews}">0</h2>
+                                    <small>Tất cả đánh giá</small>
+                                </div>
+                                <div>
+                                    <i class="mdi mdi-star-circle mdi-36px"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form tìm kiếm và lọc -->
             <form class="form-inline mb-3" method="get" th:action="@{/admin/review}">
                 <div class="form-group mr-2">
                     <input type="text" class="form-control" name="search" placeholder="Tìm kiếm..."
                            th:value="${search}">
                 </div>
+                <div class="form-group mr-2">
+                    <select name="filterType" class="form-control">
+                        <option value="">Tất cả đánh giá</option>
+                        <option value="negative" th:selected="${filterType == 'negative'}">Đánh giá tiêu cực (≤ 2 sao)</option>
+                        <option value="positive" th:selected="${filterType == 'positive'}">Đánh giá tích cực (≥ 3 sao)</option>
+                    </select>
+                </div>
                 <button type="submit" class="btn btn-primary mr-2">Tìm kiếm</button>
+                <a href="/admin/review" class="btn btn-secondary">Đặt lại</a>
             </form>
 
             <div class="card">
@@ -40,23 +101,49 @@
                             <th>#</th>
                             <th>Bệnh nhân</th>
                             <th>Ngày tạo</th>
-                            <th>Đánh giá</th>
+                            <th>Ca khám</th>
+                            <th>Lời nhận xét</th>
                             <th>Số sao</th>
+                            <th>Loại</th>
                             <th>Hành động</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="review, iterStat : ${reviews}">
-                            <td th:text="${iterStat.index + 1}"></td>
+                            <td th:text="${iterStat.index + 1 + (currentPage * 5)}"></td>
                             <td th:text="${review.patient.firstName + ' ' + review.patient.lastName}"></td>
                             <td th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td>
+                                <div th:if="${review.appointment != null}">
+                                    <strong>BS:</strong> <span th:text="${review.appointment.doctor.firstName + ' ' + review.appointment.doctor.lastName}"></span><br/>
+                                    <small class="text-muted">
+                                        <i class="mdi mdi-calendar"></i> 
+                                        <span th:text="${#temporals.format(review.appointment.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></span>
+                                    </small>
+                                </div>
+                                <span th:unless="${review.appointment != null}" 
+                                      class="text-muted">N/A</span>
+                            </td>
                             <td th:text="${review.content}"></td>
-                            <td th:text="${review.star}"></td>
+                            <td>
+                                <span th:text="${review.star}"></span>
+                                <div class="text-warning">
+                                    <span th:each="i : ${#numbers.sequence(1, review.star)}">★</span>
+                                    <span th:each="i : ${#numbers.sequence(review.star + 1, 5)}" style="color: #ddd;">★</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span th:if="${review.star <= 2}" class="badge badge-danger">Tiêu cực</span>
+                                <span th:if="${review.star >= 3}" class="badge badge-success">Tích cực</span>
+                            </td>
                             <td>
                                 <a class="btn btn-danger btn-sm"
                                    th:href="@{'/admin/review/delete/' + ${review.id}}"
                                    onclick="return confirm('Bạn có chắc chắn muốn xóa đánh giá này không?');">Xoá</a>
                             </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(reviews)}">
+                            <td colspan="8" class="text-center">Không có đánh giá nào</td>
                         </tr>
                         </tbody>
                     </table>
@@ -64,18 +151,18 @@
                         <ul class="pagination justify-content-center mt-3">
                             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/admin/review(page=${currentPage - 1}, search=${search})}">Trước</a>
+                                   th:href="@{/admin/review(page=${currentPage - 1}, search=${search}, filterType=${filterType})}">Trước</a>
                             </li>
                             <li class="page-item"
                                 th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                                 th:classappend="${i == currentPage} ? 'active'">
                                 <a class="page-link"
-                                   th:href="@{/admin/review(page=${i}, search=${search})}"
+                                   th:href="@{/admin/review(page=${i}, search=${search}, filterType=${filterType})}"
                                    th:text="${i + 1}"></a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/admin/review(page=${currentPage + 1}, search=${search})}">Sau</a>
+                                   th:href="@{/admin/review(page=${currentPage + 1}, search=${search}, filterType=${filterType})}">Sau</a>
                             </li>
                         </ul>
                     </nav>

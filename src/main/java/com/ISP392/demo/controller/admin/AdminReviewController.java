@@ -44,11 +44,37 @@ public class AdminReviewController {
     @GetMapping("")
     public String listRooms(Model model,
                             @RequestParam(value = "search", required = false) String keyword,
+                            @RequestParam(value = "filterType", required = false) String filterType,
                             @RequestParam(value = "page", defaultValue = "0") int page,
                             @RequestParam(value = "size", defaultValue = "5") int size) {
 
-        List<ReviewEntity> list = reviewRepository.findAll();
+        List<ReviewEntity> allReviews = reviewRepository.findAll();
+        
+        // Tính tổng số đánh giá theo loại
+        long totalNegativeReviews = allReviews.stream()
+                .filter(review -> review.getStar() != null && review.getStar() <= 2)
+                .count();
+        
+        long totalPositiveReviews = allReviews.stream()
+                .filter(review -> review.getStar() != null && review.getStar() >= 3)
+                .count();
+        
+        List<ReviewEntity> list = allReviews;
 
+        // Lọc theo loại đánh giá
+        if (filterType != null && !filterType.trim().isEmpty()) {
+            if ("negative".equals(filterType)) {
+                list = list.stream()
+                        .filter(review -> review.getStar() != null && review.getStar() <= 2)
+                        .collect(Collectors.toList());
+            } else if ("positive".equals(filterType)) {
+                list = list.stream()
+                        .filter(review -> review.getStar() != null && review.getStar() >= 3)
+                        .collect(Collectors.toList());
+            }
+        }
+
+        // Tìm kiếm theo từ khóa
         if (keyword != null && !keyword.trim().isEmpty()) {
             String lowerKeyword = keyword.toLowerCase();
             list = list.stream()
@@ -80,7 +106,6 @@ public class AdminReviewController {
                     .collect(Collectors.toList());
         }
 
-
         int totalItems = list.size();
         int totalPages = (int) Math.ceil((double) totalItems / size);
 
@@ -91,8 +116,11 @@ public class AdminReviewController {
 
         model.addAttribute("reviews", reviews);
         model.addAttribute("search", keyword);
+        model.addAttribute("filterType", filterType);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalNegativeReviews", totalNegativeReviews);
+        model.addAttribute("totalPositiveReviews", totalPositiveReviews);
 
         return "admin/review/list";
     }
