@@ -62,14 +62,40 @@ public class AdminAppointmentController {
         if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
             String keyword = searchKeyword.trim().toLowerCase();
             allAppointments = allAppointments.stream()
-                    .filter(app ->
-                            (app.getName() != null && app.getName().toLowerCase().contains(keyword)) ||
-                                    (app.getPhoneNumber() != null && app.getPhoneNumber().contains(keyword)) ||
-                                    (app.getPatient() != null && (
-                                            (app.getPatient().getFirstName() != null && app.getPatient().getFirstName().toLowerCase().contains(keyword)) ||
-                                                    (app.getPatient().getLastName() != null && app.getPatient().getLastName().toLowerCase().contains(keyword))
-                                    ))
-                    )
+                    .filter(app -> {
+    if (keyword == null || keyword.trim().isEmpty()) {
+        return true; // Nếu không có keyword thì trả về tất cả
+    }
+    
+    String lowerKeyword = keyword.toLowerCase().trim();
+    
+    // Tìm trong tên appointment
+    if (app.getName() != null && app.getName().toLowerCase().contains(lowerKeyword)) {
+        return true;
+    }
+    
+    // Tìm trong thông tin patient
+    if (app.getPatient() != null) {
+        if ((app.getPatient().getFirstName() != null && 
+             app.getPatient().getFirstName().toLowerCase().contains(lowerKeyword)) ||
+            (app.getPatient().getLastName() != null && 
+             app.getPatient().getLastName().toLowerCase().contains(lowerKeyword))) {
+            return true;
+        }
+    }
+    
+    // Tìm trong thông tin doctor
+    if (app.getDoctor() != null) {
+        if ((app.getDoctor().getFirstName() != null && 
+             app.getDoctor().getFirstName().toLowerCase().contains(lowerKeyword)) ||
+            (app.getDoctor().getLastName() != null && 
+             app.getDoctor().getLastName().toLowerCase().contains(lowerKeyword))) {
+            return true;
+        }
+    }
+    
+    return false;
+})
                     .collect(Collectors.toList());
         }
 
