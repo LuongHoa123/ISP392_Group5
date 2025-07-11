@@ -1,14 +1,11 @@
 package com.ISP392.demo.controller.doctor;
 
 
-import com.ISP392.demo.entity.DoctorEntity;
-import com.ISP392.demo.entity.UserEntity;
-import com.ISP392.demo.repository.DoctorRepository;
-import com.ISP392.demo.repository.PatientRepository;
-import com.ISP392.demo.repository.UserRepository;
-import com.ISP392.demo.repository.AppointmentRepository;
-import com.ISP392.demo.entity.AppointmentEntity;
-import jakarta.servlet.http.HttpSession;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -16,10 +13,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
+
+import com.ISP392.demo.entity.AppointmentEntity;
+import com.ISP392.demo.entity.DoctorEntity;
+import com.ISP392.demo.entity.UserEntity;
+import com.ISP392.demo.repository.AppointmentRepository;
+import com.ISP392.demo.repository.DoctorRepository;
+import com.ISP392.demo.repository.PatientRepository;
+import com.ISP392.demo.repository.UserRepository;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/doctor")
@@ -64,6 +67,15 @@ public class DoctorHomeController {
         model.addAttribute("daKham", daKham);
         model.addAttribute("chuaKham", chuaKham);
 
+        // Thống kê số ca trực trong tháng hiện tại
+        java.time.LocalDate now = java.time.LocalDate.now();
+        java.time.LocalDateTime startOfMonth = now.withDayOfMonth(1).atStartOfDay();
+        java.time.LocalDateTime endOfMonth = now.withDayOfMonth(now.lengthOfMonth()).atTime(23,59,59);
+        long soCaTrucThang = doctor.getShifts().stream()
+            .filter(s -> !s.getStartTime().isBefore(startOfMonth) && !s.getStartTime().isAfter(endOfMonth))
+            .count();
+        model.addAttribute("soCaTrucThang", soCaTrucThang);
+
         return "doctor/dashboard";
     }
 
@@ -90,5 +102,27 @@ public class DoctorHomeController {
         }
         model.addAttribute("appointments", appointments);
         return "doctor/dashboard-patient-list";
+    }
+
+    @GetMapping("/dashboard/shifts")
+    public String listShiftsInMonth(Model model) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
+        if (userEntity == null) {
+            return "redirect:/doctor/dashboard";
+        }
+        DoctorEntity doctor = doctorRepository.findByUser(userEntity);
+        if (doctor == null) {
+            return "redirect:/doctor/dashboard";
+        }
+        java.time.LocalDate now = java.time.LocalDate.now();
+        java.time.LocalDateTime startOfMonth = now.withDayOfMonth(1).atStartOfDay();
+        java.time.LocalDateTime endOfMonth = now.withDayOfMonth(now.lengthOfMonth()).atTime(23,59,59);
+        var caTrucThang = doctor.getShifts().stream()
+            .filter(s -> !s.getStartTime().isBefore(startOfMonth) && !s.getStartTime().isAfter(endOfMonth))
+            .sorted(java.util.Comparator.comparing(s -> s.getStartTime()))
+            .toList();
+        model.addAttribute("caTrucThang", caTrucThang);
+        return "doctor/dashboard-shift-list";
     }
 }

@@ -31,34 +31,114 @@
                 </ul>
             </nav>
         </div>
-        <div class="row mt-4">
-    <div class="col-md-6">
-        <a th:href="@{/doctor/dashboard/patients(status=1)}" style="text-decoration:none;">
-            <div class="card bg-info text-dark mb-3">
-                <div class="card-body d-flex align-items-center">
-                    <i class="mdi mdi-account-check mdi-48px me-3"></i>
-                    <div>
-                        <h5 class="card-title mb-1">Bệnh nhân đã khám trong tháng</h5>
-                        <p class="card-text mb-0" style="font-size:2rem; font-weight:bold;" th:text="${daKham}">0</p>
+        <div class="row mt-4 justify-content-center align-items-center" style="min-height: 40vh;">
+            <div class="col-12 mb-4">
+                <h4 class="text-center font-weight-bold">Thống kê bệnh nhân trong tháng</h4>
+            </div>
+            <div class="col-lg-4 col-md-6 col-12 mb-4 d-flex align-items-stretch justify-content-center">
+                <div class="card bg-info text-dark w-100 h-100 shadow rounded-4" style="min-height: 160px;">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <i class="mdi mdi-account-check mdi-48px mb-2"></i>
+                        <h5 class="card-title mb-1 text-center">Bệnh nhân đã khám trong tháng</h5>
+                        <p class="card-text mb-0 text-center" style="font-size:2rem; font-weight:bold;" th:text="${daKham}">0</p>
                     </div>
                 </div>
             </div>
-        </a>
-    </div>
-    <div class="col-md-6">
-        <a th:href="@{/doctor/dashboard/patients(status=notdone)}" style="text-decoration:none;">
-            <div class="card bg-light text-danger mb-3" style="border:1px solid #f5c6cb;">
-                <div class="card-body d-flex align-items-center">
-                    <i class="mdi mdi-account-alert mdi-48px me-3"></i>
-                    <div>
-                        <h5 class="card-title mb-1">Bệnh nhân chưa khám trong tháng</h5>
-                        <p class="card-text mb-0" style="font-size:2rem; font-weight:bold;" th:text="${chuaKham}">0</p>
+            <div class="col-lg-4 col-md-6 col-12 mb-4 d-flex align-items-stretch justify-content-center">
+                <div class="card bg-light text-danger w-100 h-100 shadow rounded-4" style="border:1px solid #f5c6cb; min-height: 160px;">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <i class="mdi mdi-account-alert mdi-48px mb-2"></i>
+                        <h5 class="card-title mb-1 text-center">Bệnh nhân chưa khám trong tháng</h5>
+                        <p class="card-text mb-0 text-center" style="font-size:2rem; font-weight:bold;" th:text="${chuaKham}">0</p>
                     </div>
                 </div>
             </div>
-        </a>
-    </div>
-</div>
+            <div class="col-lg-4 col-md-6 col-12 mb-4 d-flex align-items-stretch justify-content-center">
+                <a th:href="@{/doctor/dashboard/shifts}" style="text-decoration:none; width:100%;">
+                    <div class="card bg-secondary text-white w-100 h-100 shadow rounded-4" style="min-height: 160px;">
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                            <i class="mdi mdi-calendar-clock mdi-48px mb-2"></i>
+                            <h5 class="card-title mb-1 text-center">Ca trực trong tháng</h5>
+                            <p class="card-text mb-0 text-center" style="font-size:2rem; font-weight:bold;" th:text="${soCaTrucThang}">0</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div> <!-- Kết thúc row các card thống kê -->
+        <div class="row mt-5 justify-content-center">
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Biểu đồ cột: Đã khám vs Chưa khám</h5>
+                        <canvas id="barChartPatients" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Biểu đồ tròn: Tỉ lệ đã khám / chưa khám</h5>
+                        <canvas id="pieChartPatients" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+        <script>
+            // Lấy số liệu trực tiếp từ Thymeleaf
+            var daKham = [[${daKham}]];
+            var chuaKham = [[${chuaKham}]];
+            // Bar chart
+            new Chart(document.getElementById('barChartPatients'), {
+                type: 'bar',
+                data: {
+                    labels: ['Đã khám', 'Chưa khám'],
+                    datasets: [{
+                        label: 'Số bệnh nhân',
+                        data: [daKham, chuaKham],
+                        backgroundColor: ['#4CAF50', '#FF9800']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {display: false},
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            font: {weight: 'bold', size: 18},
+                            color: '#333',
+                            formatter: function(value) { return value; }
+                        }
+                    },
+                    scales: {y: {beginAtZero: true}}
+                },
+                plugins: [ChartDataLabels]
+            });
+            // Pie chart
+            new Chart(document.getElementById('pieChartPatients'), {
+                type: 'pie',
+                data: {
+                    labels: ['Đã khám', 'Chưa khám'],
+                    datasets: [{
+                        data: [daKham, chuaKham],
+                        backgroundColor: ['#4CAF50', '#FF9800']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        datalabels: {
+                            color: '#fff',
+                            font: {weight: 'bold', size: 18},
+                            formatter: function(value) { return value; }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+        </script>
     </th:block>
 </th:block>
 
@@ -71,4 +151,5 @@
 <script th:src="@{/assets_admin/js/dashboard.js}"></script>
 <script th:src="@{/assets_admin/js/todolist.js}"></script>
 </body>
+</html>
 </html>

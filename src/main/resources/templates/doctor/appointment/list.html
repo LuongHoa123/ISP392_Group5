@@ -42,20 +42,22 @@
 
             <div class="card">
                 <div class="card-body">
-                    <table class="table table-bordered">
-                        <thead class="thead-dark">
-                        <tr>
-                            <th>#</th>
-                            <th>Họ tên</th>
-                            <th>SĐT</th>
-                            <th>Email</th>
-                            <th>Thời gian hẹn</th>
-                            <th>Phòng</th>
-                            <th>Chi tiết</th>
-                            <th>Trạng thái</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="thead-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Họ tên</th>
+                                <th>SĐT</th>
+                                <th>Email</th>
+                                <th>Thời gian hẹn</th>
+                                <th>Phòng</th>
+                                <th>Chi tiết</th>
+                                <th>Trạng thái</th>
+                                <th style="min-width: 220px;">Hành động</th>
+                            </tr>
+                            </thead>
+                            <tbody>
                         <tr th:each="appt, iterStat : ${appointments}">
                             <td th:text="${iterStat.index + 1}"></td>
                             <td th:text="${appt.name}"></td>
@@ -79,7 +81,7 @@
             <span th:case="*">Không xác định</span>
         </span>
                             </td>
-                            <td>
+                            <td style="padding-right: 12px;">
                                 <a th:href="@{/doctor/appointment/diagnosis/{id}(id=${appt.id})}"
                                    class="btn btn-primary btn-sm">
                                     <i class="mdi mdi-stethoscope"></i> Chuẩn đoán
@@ -99,6 +101,7 @@
                         </tr>
                         </tbody>
                     </table>
+                    </div>
 
                     <div th:each="appt : ${appointments}">
                         <div class="modal fade" th:id="'detailModal_' + ${appt.id}" tabindex="-1" role="dialog"
