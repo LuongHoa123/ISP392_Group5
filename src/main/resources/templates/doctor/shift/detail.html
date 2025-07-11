@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết ca trực</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+</head>
+<body>
+<th:block th:replace="layout/doctor-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container mt-4">
+            <h3 class="mb-3">Chi tiết ca trực</h3>
+            <div class="card">
+                <div class="card-body">
+                    <p><strong>Thời gian bắt đầu:</strong> <span th:text="${#temporals.format(shift.startTime, 'dd/MM/yyyy HH:mm')}"></span></p>
+                    <p><strong>Thời gian kết thúc:</strong> <span th:text="${#temporals.format(shift.endTime, 'dd/MM/yyyy HH:mm')}"></span></p>
+                    <p><strong>Người trực:</strong>
+                        <span th:if="${shift.doctor != null}" th:text="${shift.doctor.firstName + ' ' + shift.doctor.lastName + ' (Bác sĩ)'}"></span>
+                        <span th:if="${shift.nurse != null}" th:text="${shift.nurse.firstName + ' ' + shift.nurse.lastName + ' (Y tá)'}"></span>
+                        <span th:if="${shift.doctor == null and shift.nurse == null}">---</span>
+                    </p>
+                    <p><strong>Ghi chú:</strong> <span th:text="${shift.description != null ? shift.description : '---'}"></span></p>
+
+                    <h4 class="mt-4">Danh sách người khám trong ca trực</h4>
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Họ tên bệnh nhân</th>
+                            <th>Thời gian hẹn</th>
+                            <th>Lý do khám</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="appt, iterStat : ${appointments}">
+                            <td th:text="${iterStat.index + 1}"></td>
+                            <td th:text="${appt.name}"></td>
+                            <td th:text="${#temporals.format(appt.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td th:text="${appt.reason}"></td>
+                        </tr>
+                        <tr th:if="${appointments.size() == 0}">
+                            <td colspan="4" class="text-center">Không có người khám trong ca trực này.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <a th:href="@{/doctor/shift}" class="btn btn-danger mt-3">Quay lại</a>
+        </div>
+    </th:block>
+</th:block>
+</body>
+</html> 

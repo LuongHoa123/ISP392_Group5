@@ -31,6 +31,34 @@
                 </ul>
             </nav>
         </div>
+        <div class="row mt-4">
+    <div class="col-md-6">
+        <a th:href="@{/doctor/dashboard/patients(status=1)}" style="text-decoration:none;">
+            <div class="card bg-info text-dark mb-3">
+                <div class="card-body d-flex align-items-center">
+                    <i class="mdi mdi-account-check mdi-48px me-3"></i>
+                    <div>
+                        <h5 class="card-title mb-1">Bệnh nhân đã khám trong tháng</h5>
+                        <p class="card-text mb-0" style="font-size:2rem; font-weight:bold;" th:text="${daKham}">0</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6">
+        <a th:href="@{/doctor/dashboard/patients(status=notdone)}" style="text-decoration:none;">
+            <div class="card bg-light text-danger mb-3" style="border:1px solid #f5c6cb;">
+                <div class="card-body d-flex align-items-center">
+                    <i class="mdi mdi-account-alert mdi-48px me-3"></i>
+                    <div>
+                        <h5 class="card-title mb-1">Bệnh nhân chưa khám trong tháng</h5>
+                        <p class="card-text mb-0" style="font-size:2rem; font-weight:bold;" th:text="${chuaKham}">0</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
     </th:block>
 </th:block>
 

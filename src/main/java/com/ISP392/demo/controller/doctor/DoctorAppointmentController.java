@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ISP392.demo.dto.AppointmentDto;
 import com.ISP392.demo.entity.AppointmentEntity;
 import com.ISP392.demo.entity.ConclusionEntity;
 import com.ISP392.demo.entity.DoctorEntity;
@@ -208,6 +209,40 @@ public class DoctorAppointmentController {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @GetMapping("/calendar/data")
+    @ResponseBody
+    public List<AppointmentDto> getAppointmentsJson() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByEmail(username).orElse(null);
+        if (user == null) return List.of();
+
+        DoctorEntity doctor = doctorRepository.findByUser(user);
+        if (doctor == null) return List.of();
+
+        List<AppointmentEntity> appointments = appointmentRepository.findByDoctor(doctor);
+
+        return appointments.stream().map(appt -> {
+            AppointmentDto dto = new AppointmentDto();
+            dto.setAppointmentDateTime(appt.getAppointmentDateTime());
+            dto.setReason(appt.getReason());
+            dto.setName(appt.getName());
+            dto.setPhoneNumber(appt.getPhoneNumber());
+            dto.setEmail(appt.getEmail());
+            dto.setAge(appt.getAge());
+            dto.setStatus(appt.getStatus());
+            dto.setId(appt.getId());
+
+            if (appt.getRoom() != null) {
+                dto.setRoomName(appt.getRoom().getRoomName());
+            }
+            if (appt.getDoctor() != null) {
+                dto.setDoctorName(appt.getDoctor().getFirstName() + " " + appt.getDoctor().getLastName());
+                dto.setDoctorSpecialization(appt.getDoctor().getSpecialization());
+            }
+            return dto;
+        }).toList();
     }
 
     @Autowired
