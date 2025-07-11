@@ -28,15 +28,22 @@
                     </form>
                 </div>
                 <div class="col-auto">
-                    <a th:href="@{/doctor/appointment/export-excel}" class="btn btn-success">
-                        <i class="mdi mdi-file-excel"></i> Xuất Excel
-                    </a>
-                    <a th:href="@{/doctor/appointment/export-pdf}" class="btn btn-danger">
-                        <i class="mdi mdi-file-pdf"></i> Xuất PDF
-                    </a>
-                    <a th:href="@{/doctor/appointment/export-word}" class="btn btn-primary">
-                        <i class="mdi mdi-file-word"></i> Xuất Word
-                    </a>
+                    <form id="exportForm" class="d-flex align-items-center gap-2" style="gap: 12px;">
+                        <select class="form-control" id="exportPatient" name="patientName" style="height: 44px; min-width: 180px; border-radius: 8px;">
+                            <option value="">-- Chọn bệnh nhân --</option>
+                            <option th:each="appt : ${appointments}" th:value="${appt.name}" th:text="${appt.name}"></option>
+                        </select>
+                        <input type="date" class="form-control" id="exportDate" name="date" style="height: 44px; min-width: 180px; border-radius: 8px;">
+                        <a href="#" onclick="exportFile('excel')" class="btn btn-success d-flex align-items-center justify-content-center" style="height: 44px; min-width: 120px; border-radius: 8px; font-weight: bold;">
+                            <i class="mdi mdi-file-excel mr-1"></i> Xuất Excel
+                        </a>
+                        <a href="#" onclick="exportFile('pdf')" class="btn btn-danger d-flex align-items-center justify-content-center" style="height: 44px; min-width: 120px; border-radius: 8px; font-weight: bold;">
+                            <i class="mdi mdi-file-pdf mr-1"></i> Xuất PDF
+                        </a>
+                        <a href="#" onclick="exportFile('word')" class="btn btn-primary d-flex align-items-center justify-content-center" style="height: 44px; min-width: 120px; border-radius: 8px; font-weight: bold; background: #b266ff; border: none;">
+                            <i class="mdi mdi-file-word mr-1"></i> Xuất Word
+                        </a>
+                    </form>
                 </div>
             </div>
 
@@ -205,4 +212,16 @@
             toast.show()
         })
     });
+</script>
+<script>
+function exportFile(type) {
+    var patient = document.getElementById('exportPatient').value;
+    var date = document.getElementById('exportDate').value;
+    var url = '/doctor/appointment/export-' + type;
+    var params = [];
+    if (patient) params.push('patientName=' + encodeURIComponent(patient));
+    if (date) params.push('date=' + encodeURIComponent(date));
+    if (params.length > 0) url += '?' + params.join('&');
+    window.location.href = url;
+}
 </script>
