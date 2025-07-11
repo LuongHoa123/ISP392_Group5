@@ -75,6 +75,7 @@
                                     <th style="width: 22%;">Kết thúc</th>
                                     <th style="width: 32%;">Người trực</th>
                                     <th style="width: 20%;">Thao tác</th>
+                                    <th style="width: 10%;">Trạng thái</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -92,23 +93,34 @@
                                     <td>
                                         <a th:href="@{/doctor/shift/detail/{id}(id=${shift.id})}" class="btn btn-info btn-sm">Chi tiết</a>
                                     </td>
+                                    <td>
+                                        <span th:if="${shift.endTime.isAfter(T(java.time.LocalDateTime).now())}" class="badge badge-danger">Chưa</span>
+                                        <span th:if="${shift.endTime.isBefore(T(java.time.LocalDateTime).now())}" class="badge badge-success">Xong</span>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
                             <nav th:if="${totalPages > 1}">
                                 <ul class="pagination justify-content-center pagination-sm">
                                     <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                                        <a class="page-link" th:href="@{/doctor/shift(page=${currentPage - 1})}">Trước</a>
+                                        <a class="page-link"
+                                           th:href="@{/doctor/shift(page=${currentPage - 1}, date=${selectedDate})}" th:if="${selectedDate != null}"></a>
+                                        <a class="page-link" th:href="@{/doctor/shift(page=${currentPage - 1})}" th:if="${selectedDate == null}">Trước</a>
                                     </li>
                                     <li class="page-item"
                                         th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                                         th:classappend="${i == currentPage} ? 'active'">
                                         <a class="page-link"
-                                           th:href="@{/doctor/shift(page=${i})}"
+                                           th:href="@{/doctor/shift(page=${i}, date=${selectedDate})}" th:if="${selectedDate != null}"
+                                           th:text="${i + 1}"></a>
+                                        <a class="page-link"
+                                           th:href="@{/doctor/shift(page=${i})}" th:if="${selectedDate == null}"
                                            th:text="${i + 1}"></a>
                                     </li>
                                     <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                                        <a class="page-link" th:href="@{/doctor/shift(page=${currentPage + 1})}">Sau</a>
+                                        <a class="page-link"
+                                           th:href="@{/doctor/shift(page=${currentPage + 1}, date=${selectedDate})}" th:if="${selectedDate != null}"></a>
+                                        <a class="page-link" th:href="@{/doctor/shift(page=${currentPage + 1})}" th:if="${selectedDate == null}">Sau</a>
                                     </li>
                                 </ul>
                             </nav>

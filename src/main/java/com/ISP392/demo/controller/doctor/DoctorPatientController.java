@@ -74,10 +74,13 @@ public class DoctorPatientController {
                     })
                     .collect(Collectors.toList());
         }
-        // Lọc theo ngày sinh nếu có
+        // Lọc theo ngày khám (lịch sử khám bệnh) nếu có
         if (searchDate != null && !searchDate.isEmpty()) {
             allPatients = allPatients.stream()
-                .filter(p -> p.getDateOfBirth() != null && p.getDateOfBirth().toString().equals(searchDate))
+                .filter(p -> p.getAppointments().stream()
+                    .anyMatch(a -> a.getDoctor() != null && a.getDoctor().getId().equals(doctor.getId()) &&
+                        a.getAppointmentDateTime() != null &&
+                        a.getAppointmentDateTime().toLocalDate().toString().equals(searchDate)))
                 .collect(Collectors.toList());
         }
 

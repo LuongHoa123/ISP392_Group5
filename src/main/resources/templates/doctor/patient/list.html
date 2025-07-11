@@ -48,6 +48,12 @@
                         </tr>
                         </thead>
                         <tbody>
+                        <tr th:if="${patients.size() == 0}">
+                            <td colspan="7" class="text-center">
+                                Không có bệnh nhân nào phù hợp.<br>
+                                <a th:href="@{/doctor/patient}" class="btn btn-danger mt-3">Quay lại</a>
+                            </td>
+                        </tr>
                         <tr th:each="patient, iterStat : ${patients}">
                             <td th:text="${iterStat.index + 1}"></td>
                             <td th:text="${patient.firstName}"></td>

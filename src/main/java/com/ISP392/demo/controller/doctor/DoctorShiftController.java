@@ -54,7 +54,7 @@ public class DoctorShiftController {
         }
 
         DoctorEntity doctor = doctorRepository.findByUser(userEntity);
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("startTime").descending());
+        Pageable pageable = PageRequest.of(page, 5, Sort.by("startTime").descending());
 
         Page<ShiftEntity> shifts;
 
