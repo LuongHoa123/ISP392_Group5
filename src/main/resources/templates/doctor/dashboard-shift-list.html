@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách ca trực trong tháng</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+</head>
+<body>
+<th:block th:replace="layout/doctor-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container mt-4">
+            <h3 class="mb-3">Danh sách ca trực trong tháng</h3>
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ngày trực</th>
+                            <th>Giờ bắt đầu</th>
+                            <th>Giờ kết thúc</th>
+                            <th>Mô tả</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="shift, iterStat : ${caTrucThang}">
+                            <td th:text="${iterStat.index + 1}"></td>
+                            <td th:text="${#temporals.format(shift.startTime, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${#temporals.format(shift.startTime, 'HH:mm')}"></td>
+                            <td th:text="${#temporals.format(shift.endTime, 'HH:mm')}"></td>
+                            <td th:text="${shift.description}"></td>
+                        </tr>
+                        <tr th:if="${caTrucThang.size() == 0}">
+                            <td colspan="5" class="text-center">Không có ca trực nào trong tháng này.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <a th:href="@{/doctor/dashboard}" class="btn btn-danger mt-3">Quay lại</a>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+</body>
+</html> 

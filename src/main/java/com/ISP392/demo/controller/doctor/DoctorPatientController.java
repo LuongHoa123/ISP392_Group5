@@ -42,6 +42,7 @@ public class DoctorPatientController {
     @GetMapping("")
     public String patientListPage(Model model,
                                   @RequestParam(value = "searchKeyword", required = false) String searchKeyword,
+                                  @RequestParam(value = "searchDate", required = false) String searchDate,
                                   @RequestParam(value = "page", defaultValue = "0") int page,
                                   @RequestParam(value = "size", defaultValue = "5") int size) {
 
@@ -73,6 +74,15 @@ public class DoctorPatientController {
                     })
                     .collect(Collectors.toList());
         }
+        // Lọc theo ngày khám (lịch sử khám bệnh) nếu có
+        if (searchDate != null && !searchDate.isEmpty()) {
+            allPatients = allPatients.stream()
+                .filter(p -> p.getAppointments().stream()
+                    .anyMatch(a -> a.getDoctor() != null && a.getDoctor().getId().equals(doctor.getId()) &&
+                        a.getAppointmentDateTime() != null &&
+                        a.getAppointmentDateTime().toLocalDate().toString().equals(searchDate)))
+                .collect(Collectors.toList());
+        }
 
         int totalItems = allPatients.size();
         int totalPages = (int) Math.ceil((double) totalItems / size);
@@ -86,6 +96,7 @@ public class DoctorPatientController {
         model.addAttribute("searchKeyword", searchKeyword);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
+        model.addAttribute("searchDate", searchDate);
 
         return "doctor/patient/list";
     }
