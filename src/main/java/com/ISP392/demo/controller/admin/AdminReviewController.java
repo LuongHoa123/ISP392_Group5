@@ -1,20 +1,28 @@
 package com.ISP392.demo.controller.admin;
 
-import com.ISP392.demo.entity.*;
-import com.ISP392.demo.repository.*;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.ISP392.demo.entity.AppointmentEntity;
+import com.ISP392.demo.entity.LogsEntity;
+import com.ISP392.demo.entity.ReviewEntity;
+import com.ISP392.demo.entity.UserEntity;
+import com.ISP392.demo.repository.AppointmentRepository;
+import com.ISP392.demo.repository.LogsRepository;
+import com.ISP392.demo.repository.ReviewRepository;
+import com.ISP392.demo.repository.UserRepository;
 
 @Controller
 @RequestMapping("/admin/review")
@@ -30,17 +38,21 @@ public class AdminReviewController {
     private LogsRepository logsRepository;
 
     private void saveLog(String content) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserEntity user = userRepository.findByEmail(email).orElse(null);
-        if (user != null) {
-            LogsEntity log = new LogsEntity();
-            log.setContent(content);
-            log.setUser(user);
-            log.setCreatedAt(LocalDateTime.now());
-            logsRepository.save(log);
-        }
+    // Lấy email user đang đăng nhập
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    
+    // Tìm user entity từ email
+    UserEntity user = userRepository.findByEmail(email).orElse(null);
+    
+    if (user != null) {
+        // Tạo log entry mới
+        LogsEntity log = new LogsEntity();
+        log.setContent(content);           // Nội dung hành động
+        log.setUser(user);                 // User thực hiện
+        log.setCreatedAt(LocalDateTime.now());  // Timestamp
+        logsRepository.save(log);          // Lưu vào database
     }
-
+}
     @GetMapping("")
     public String listRooms(Model model,
                             @RequestParam(value = "search", required = false) String keyword,

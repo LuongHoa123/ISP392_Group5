@@ -1,27 +1,33 @@
 package com.ISP392.demo.controller.admin;
 
-import com.ISP392.demo.entity.LogsEntity;
-import com.ISP392.demo.entity.RoomEntity;
-import com.ISP392.demo.entity.UserEntity;
-import com.ISP392.demo.repository.LogsRepository;
-import com.ISP392.demo.repository.RoomRepository;
-import com.ISP392.demo.repository.UserRepository;
-import com.ISP392.demo.repository.DoctorRepository;
-import com.ISP392.demo.repository.NurseRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.ISP392.demo.entity.LogsEntity;
+import com.ISP392.demo.entity.RoomEntity;
+import com.ISP392.demo.entity.UserEntity;
+import com.ISP392.demo.repository.DoctorRepository;
+import com.ISP392.demo.repository.LogsRepository;
+import com.ISP392.demo.repository.NurseRepository;
+import com.ISP392.demo.repository.RoomRepository;
+import com.ISP392.demo.repository.UserRepository;
+
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/admin/room")
@@ -74,30 +80,30 @@ public class AdminRoomController {
                     )
                     .collect(Collectors.toList());
         }
-
+        // Tính toán phân trang
         int totalItems = allRooms.size();
         int totalPages = (int) Math.ceil((double) totalItems / size);
-
+        // Cắt dữ liệu theo trang
         int start = Math.min(page * size, totalItems);
         int end = Math.min(start + size, totalItems);
 
         List<RoomEntity> rooms = allRooms.subList(start, end);
-
-        model.addAttribute("rooms", rooms);
-        model.addAttribute("search", keyword);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", totalPages);
+        //Truyền dữ liệu cho View
+        model.addAttribute("rooms", rooms);           // Danh sách phòng hiện tại
+        model.addAttribute("search", keyword);        // Từ khóa tìm kiếm
+        model.addAttribute("currentPage", page);      // Trang hiện tại
+        model.addAttribute("totalPages", totalPages); // Tổng số trang
 
         return "admin/room/list";
     }
 
     @GetMapping("/add")
     public String addRoomForm(Model model) {
-        model.addAttribute("room", new RoomEntity());
-        model.addAttribute("doctors", doctorRepository.findAll());
-        model.addAttribute("nurses", nurseRepository.findAll());
-        return "admin/room/add";
-    }
+    model.addAttribute("room", new RoomEntity());              // Object rỗng cho form
+    model.addAttribute("doctors", doctorRepository.findAll()); // Danh sách bác sĩ
+    model.addAttribute("nurses", nurseRepository.findAll());   // Danh sách y tá
+    return "admin/room/add";
+}
 
     @PostMapping("/save")
     public String saveRoom(@ModelAttribute("room") @Valid RoomEntity room,
