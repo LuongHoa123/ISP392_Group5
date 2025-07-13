@@ -217,48 +217,48 @@
 
             </div>
         </section>
+        <a href="#" class="back-to-top" id="backToTop" title="Lên đầu trang">
+            <i class="fas fa-chevron-up"></i>
+        </a>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const dateInput = document.getElementById('appointmentDate');
+                const today = new Date();
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
 
+                const yyyy = tomorrow.getFullYear();
+                const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+                const dd = String(tomorrow.getDate()).padStart(2, '0');
+                const minDateStr = `${yyyy}-${mm}-${dd}`;
+
+                dateInput.min = minDateStr;
+            });
+        </script>
+
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const backToTopBtn = document.getElementById("backToTop");
+
+                window.addEventListener("scroll", function () {
+                    if (window.scrollY > 300) {
+                        backToTopBtn.style.display = "block";
+                    } else {
+                        backToTopBtn.style.display = "none";
+                    }
+                });
+
+                backToTopBtn.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    window.scrollTo({top: 0, behavior: "smooth"});
+                });
+            });
+        </script>
     </th:block>
 </th:block>
 
-<a href="#" class="back-to-top" id="backToTop" title="Lên đầu trang">
-    <i class="fas fa-chevron-up"></i>
-</a>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const dateInput = document.getElementById('appointmentDate');
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
 
-        const yyyy = tomorrow.getFullYear();
-        const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
-        const dd = String(tomorrow.getDate()).padStart(2, '0');
-        const minDateStr = `${yyyy}-${mm}-${dd}`;
-
-        dateInput.min = minDateStr;
-    });
-</script>
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const backToTopBtn = document.getElementById("backToTop");
-
-        window.addEventListener("scroll", function () {
-            if (window.scrollY > 300) {
-                backToTopBtn.style.display = "block";
-            } else {
-                backToTopBtn.style.display = "none";
-            }
-        });
-
-        backToTopBtn.addEventListener("click", function (e) {
-            e.preventDefault();
-            window.scrollTo({top: 0, behavior: "smooth"});
-        });
-    });
-</script>
 
 <style>
     .italic-placeholder::placeholder {
