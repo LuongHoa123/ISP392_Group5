@@ -16,6 +16,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin/shift")
@@ -27,6 +32,61 @@ public class AdminShiftController {
     private DoctorRepository doctorRepository;
     @Autowired
     private NurseRepository nurseRepository;
+    @GetMapping("/api")
+    @ResponseBody
+    public List<Map<String, Object>> getShifts() {
+        return shiftRepository.findAll().stream().map(s -> {
+            Map<String, Object> ev = new HashMap<>();
+            ev.put("id", s.getId());
+            ev.put("title", s.getDoctor() != null ? s.getDoctor().getFirstName() + " " +  s.getDoctor().getLastName() : s.getNurse().getFirstName() + " " +  s.getNurse().getLastName());
+            ev.put("start", s.getStartTime().toString());
+            ev.put("end", s.getEndTime().toString());
+            ev.put("fixedTime", getFixedTimeFromStartTime(s.getStartTime()));
+            ev.put("doctorId", s.getDoctor() != null ? s.getDoctor().getId() : null);
+            ev.put("nurseId", s.getNurse() != null ? s.getNurse().getId() : null);
+            return ev;
+        }).collect(Collectors.toList());
+    }
+
+    @PostMapping("/api/save")
+    public String saveShift(@RequestParam Map<String, String> formData) {
+        Long id = formData.get("id") != null && !formData.get("id").isEmpty()
+                ? Long.valueOf(formData.get("id")) : null;
+
+        String rawDate = formData.get("date");
+        String onlyDate = rawDate.split("T")[0];
+
+        LocalDate date = LocalDate.parse(onlyDate);
+
+        String fixedTime = formData.get("fixedTime");
+
+        LocalTime startTime = fixedTime.equals("MORNING") ? LocalTime.of(7, 0) : LocalTime.of(13, 0);
+        LocalTime endTime = fixedTime.equals("MORNING") ? LocalTime.of(11, 0) : LocalTime.of(17, 0);
+
+        ShiftEntity shift = id != null ? shiftRepository.findById(id).orElse(new ShiftEntity()) : new ShiftEntity();
+        shift.setStartTime(LocalDateTime.of(date, startTime));
+        shift.setEndTime(LocalDateTime.of(date, endTime));
+
+        if (formData.get("doctorId") != null && !formData.get("doctorId").isEmpty()) {
+            shift.setDoctor(doctorRepository.findById(Long.valueOf(formData.get("doctorId"))).orElse(null));
+            shift.setNurse(null);
+        } else if (formData.get("nurseId") != null && !formData.get("nurseId").isEmpty()) {
+            shift.setNurse(nurseRepository.findById(Long.valueOf(formData.get("nurseId"))).orElse(null));
+            shift.setDoctor(null);
+        } else {
+            shift.setDoctor(null);
+            shift.setNurse(null);
+        }
+
+        shiftRepository.save(shift);
+        return "redirect:/admin/shift";
+    }
+
+    @PostMapping("/api/delete/{id}")
+    @ResponseBody
+    public void deleteShift(@PathVariable Long id) {
+        shiftRepository.deleteById(id);
+    }
 
     @GetMapping
     public String listShifts(Model model,
@@ -179,4 +239,15 @@ public class AdminShiftController {
         shiftRepository.deleteById(id);
         return "redirect:/admin/shift?delete";
     }
+
+    private String getFixedTimeFromStartTime(LocalDateTime startTime) {
+        if (startTime.toLocalTime().equals(LocalTime.of(7, 0))) {
+            return "MORNING";
+        } else if (startTime.toLocalTime().equals(LocalTime.of(13, 0))) {
+            return "AFTERNOON";
+        }
+        return "UNKNOWN";
+    }
+
+
 }
