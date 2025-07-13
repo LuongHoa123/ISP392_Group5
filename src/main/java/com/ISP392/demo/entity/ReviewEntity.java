@@ -35,4 +35,36 @@ public class ReviewEntity extends AbstractEntity {
 	@EqualsAndHashCode.Exclude
 	@JsonBackReference
 	private AppointmentEntity appointment;
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public Integer getStar() {
+		return star;
+	}
+
+	public void setStar(Integer star) {
+		this.star = star;
+	}
+
+	public PatientEntity getPatient() {
+		return patient;
+	}
+
+	public void setPatient(PatientEntity patient) {
+		this.patient = patient;
+	}
+
+	public AppointmentEntity getAppointment() {
+		return appointment;
+	}
+
+	public void setAppointment(AppointmentEntity appointment) {
+		this.appointment = appointment;
+	}
 }

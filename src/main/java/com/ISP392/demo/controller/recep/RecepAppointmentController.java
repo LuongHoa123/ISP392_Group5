@@ -197,24 +197,24 @@ public class RecepAppointmentController {
     @Autowired
     private PdfExportService pdfExportService;
 
-    @GetMapping("/generatePdf/{appointmentId}")
-    public ResponseEntity<InputStreamResource> generatePdf(@PathVariable Long appointmentId) {
-        try {
-            AppointmentEntity appointment = appointmentRepository.findById(appointmentId).get();
-
-            ByteArrayInputStream pdfFile = pdfExportService.exportAppointmentToPdf(appointment);
-
-            String filename = "phieu_kham_benh_" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".pdf";
-
-            InputStreamResource file = new InputStreamResource(pdfFile);
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .body(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
-    }
+//    @GetMapping("/generatePdf/{appointmentId}")
+//    public ResponseEntity<InputStreamResource> generatePdf(@PathVariable Long appointmentId) {
+//        try {
+//            AppointmentEntity appointment = appointmentRepository.findById(appointmentId).get();
+//
+//            ByteArrayInputStream pdfFile = pdfExportService.exportAppointmentToPdf(appointment);
+//
+//            String filename = "phieu_kham_benh_" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".pdf";
+//
+//            InputStreamResource file = new InputStreamResource(pdfFile);
+//            return ResponseEntity.ok()
+//                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+//                    .contentType(MediaType.APPLICATION_PDF)
+//                    .body(file);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return ResponseEntity.internalServerError().build();
+//        }
+//    }
 
 }

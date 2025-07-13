@@ -172,6 +172,28 @@
         .registration-modal .close:hover {
             opacity: 1;
         }
+        .faq-questions {
+            padding: 10px;
+            background-color: #f2f2f2;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .faq-btn {
+            display: inline-block;
+            margin: 5px 5px 0 0;
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .faq-btn:hover {
+            background-color: #0056b3;
+        }
+
     </style>
 
 </head>
@@ -320,44 +342,14 @@
         <section class="review">
             <h1 class="heading"><span>Đánh Giá</span> Của Khách Hàng</h1>
             <div class="box-container">
-                <div class="box">
-                    <img th:src="@{/assets/Man.jpg}" alt="">
-                    <h3>Xavier</h3>
+                <div class="box" th:each="review : ${reviews}">
+                    <img th:src="${review.patient.avatar != null ? review.patient.avatar : '/assets/Man.jpg'}" alt="Avatar">
+                    <h3 th:text="${review.patient.firstName + ' ' + review.patient.lastName}">Tên người dùng</h3>
                     <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
+                        <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, review.star)}"></i>
+                        <i class="fas fa-star-half-alt" th:if="${review.star % 1 != 0}"></i>
                     </div>
-                    <p class="text">Phòng khám tuyệt vời, cơ sở vật chất tuyệt vời, nhân viên tuyệt vời và môi trường
-                        rất
-                        tốt!</p>
-                </div>
-                <div class="box">
-                    <img th:src="@{/assets/Man2.jpg}" alt="">
-                    <h3>Francis</h3>
-                    <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                    </div>
-                    <p class="text">Môi trường rất đẹp và dễ chịu! Tôi thực sự đã có một trải nghiệm rất tốt tại phòng
-                        khám này. Nơi này rộng rãi và rất tốt!</p>
-                </div>
-                <div class="box">
-                    <img th:src="@{/assets/Man3.jpg}" alt="">
-                    <h3>John</h3>
-                    <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                    </div>
-                    <p class="text">Rất tốt! Ở đây, có một phòng chờ rất rộng rãi và các bác sĩ thì tuyệt vời.</p>
+                    <p class="text" th:text="${review.content}">Nội dung đánh giá</p>
                 </div>
             </div>
         </section>
@@ -385,6 +377,13 @@
         <button class="close-chat" onclick="closeChat()">×</button>
     </div>
     <div class="chat-body" id="chats">
+        <div class="faq-questions">
+            <p><strong>Câu hỏi thường gặp:</strong></p>
+            <button class="faq-btn" onclick="sendFAQ('Khung giờ làm việc như nào?')">Khung giờ làm việc như nào?</button>
+            <button class="faq-btn" onclick="sendFAQ('Địa chỉ bệnh viện ở đâu?')">Địa chỉ bệnh viện ở đâu?</button>
+            <button class="faq-btn" onclick="sendFAQ('Có thể đặt hẹn khám trước không?')">Có thể đặt hẹn khám trước không?</button>
+        </div>
+
         <div class="message time">21:29</div>
     </div>
     <div class="chat-input">
@@ -463,6 +462,11 @@
         });
     }
 
+    function sendFAQ(message) {
+        $("#myMessage").val(message);
+        sendMessage();
+    }
+
     function scrollToBottom() {
         const chatBody = document.getElementById('chats');
         chatBody.scrollTop = chatBody.scrollHeight;
@@ -475,36 +479,6 @@
         }
     });
 </script>
-
-<a href="#" class="back-to-top" id="backToTop" title="Lên đầu trang">
-    <i class="fas fa-chevron-up"></i>
-</a>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const backToTopBtn = document.getElementById("backToTop");
-
-        // Ẩn/hiện nút khi scroll
-        window.addEventListener("scroll", function () {
-            if (window.scrollY > 300) {
-                backToTopBtn.style.display = "block";
-            } else {
-                backToTopBtn.style.display = "none";
-            }
-        });
-
-        // Cuộn mượt về đầu trang khi click
-        backToTopBtn.addEventListener("click", function (e) {
-            e.preventDefault();
-            window.scrollTo({top: 0, behavior: "smooth"});
-        });
-
-        // Show registration success modal if registration was successful
-        if (document.getElementById('registrationSuccessModal')) {
-            $('#registrationSuccessModal').modal('show');
-        }
-    });
-</script>
-
 
 </body>
 </html>

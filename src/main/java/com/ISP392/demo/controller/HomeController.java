@@ -1,7 +1,9 @@
 package com.ISP392.demo.controller;
 
 import com.ISP392.demo.entity.AppointmentEntity;
+import com.ISP392.demo.entity.ReviewEntity;
 import com.ISP392.demo.repository.AppointmentRepository;
+import com.ISP392.demo.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Collection;
+import java.util.List;
 
 @Controller
 public class HomeController {
@@ -18,10 +21,16 @@ public class HomeController {
     @Autowired
     private AppointmentRepository appointmentRepository;
 
+    @Autowired
+    private ReviewRepository reviewRepository;
+
     @GetMapping("/")
     private String indexHome(Model model) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+
+        List<ReviewEntity> topReviews = reviewRepository.findTop3ByOrderByStarDesc();
+        model.addAttribute("reviews", topReviews);
 
         if (authorities.stream().anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority()))) {
             model.addAttribute("email", username);

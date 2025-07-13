@@ -29,35 +29,32 @@ public class AdminPatientController {
 
     @GetMapping("")
     public String listPatients(Model model,
-                             @RequestParam(value = "page", defaultValue = "0") int page,
-                             @RequestParam(value = "search", required = false) String search) {
+                               @RequestParam(value = "page", defaultValue = "0") int page,
+                               @RequestParam(value = "search", required = false) String search) {
 
         List<PatientEntity> allPatients = patientRepository.findAll();
 
-        // Apply search filter if search parameter is present
         if (search != null && !search.trim().isEmpty()) {
             String searchLower = search.toLowerCase();
             allPatients = allPatients.stream()
                     .filter(patient ->
                             (patient.getFirstName() != null && patient.getFirstName().toLowerCase().contains(searchLower)) ||
-                            (patient.getLastName() != null && patient.getLastName().toLowerCase().contains(searchLower)) ||
-                            (patient.getPhone() != null && patient.getPhone().contains(searchLower)) ||
-                            (patient.getUser() != null && patient.getUser().getEmail() != null && 
-                             patient.getUser().getEmail().toLowerCase().contains(searchLower)))
+                                    (patient.getLastName() != null && patient.getLastName().toLowerCase().contains(searchLower)) ||
+                                    (patient.getPhone() != null && patient.getPhone().contains(searchLower)) ||
+                                    (patient.getUser() != null && patient.getUser().getEmail() != null &&
+                                            patient.getUser().getEmail().toLowerCase().contains(searchLower)))
                     .collect(Collectors.toList());
         }
 
-        // Calculate pagination
         int totalItems = allPatients.size();
         int totalPages = (int) Math.ceil((double) totalItems / PAGE_SIZE);
-        
-        // Ensure page is within valid range
+
         if (page < 0) {
             page = 0;
         } else if (page >= totalPages && totalPages > 0) {
             page = totalPages - 1;
         }
-        
+
         int start = page * PAGE_SIZE;
         int end = Math.min(start + PAGE_SIZE, totalItems);
 
@@ -87,16 +84,16 @@ public class AdminPatientController {
                     dto.setAppointmentDateTime(appt.getAppointmentDateTime());
                     dto.setReason(appt.getReason());
                     dto.setStatus(appt.getStatus());
-                    
+
                     if (appt.getDoctor() != null) {
                         dto.setDoctorName(appt.getDoctor().getFirstName() + " " + appt.getDoctor().getLastName());
                         dto.setDoctorSpecialization(appt.getDoctor().getSpecialization());
                     }
-                    
+
                     if (appt.getRoom() != null) {
                         dto.setRoomName(appt.getRoom().getRoomName());
                     }
-                    
+
                     return dto;
                 })
                 .collect(Collectors.toList());

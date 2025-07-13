@@ -42,7 +42,6 @@
                     <tr>
                         <th>#</th>
                         <th>Nội dung</th>
-                        <th>Mức độ</th>
                         <th>Giá tiền</th>
                     </tr>
                     </thead>
@@ -50,7 +49,6 @@
                     <tr th:each="diagnosis, iterStat : ${appointment.diagnosisEntities}">
                         <td th:text="${iterStat.index + 1}"></td>
                         <td th:text="${diagnosis.content}"></td>
-                        <td th:text="${diagnosis.level == 1 ? 'Nhẹ' : diagnosis.level == 2 ? 'Trung bình' : 'Nặng'}"></td>
                         <td th:text="${diagnosis.price}" class="vnd-price"></td>
                     </tr>
                     </tbody>

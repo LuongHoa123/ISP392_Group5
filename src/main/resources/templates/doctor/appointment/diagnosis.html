@@ -82,7 +82,6 @@
                 <tr>
                     <th>#</th>
                     <th>Nội dung</th>
-                    <th>Mức độ</th>
                     <th>Giá tiền</th>
                     <th>Thao tác</th>
                 </tr>
@@ -91,14 +90,12 @@
                 <tr th:each="diagnosis, iterStat : ${diagnoses}">
                     <td th:text="${iterStat.index + 1}"></td>
                     <td th:text="${diagnosis.content}"></td>
-                    <td th:text="${diagnosis.level == 1 ? 'Nhẹ' : diagnosis.level == 2 ? 'Trung bình' : 'Nặng'}"></td>
                     <td th:text="${diagnosis.price + ' VND'}"></td>
                     <td>
                         <!-- Nút cập nhật -->
                         <button type="button" class="btn btn-warning btn-sm ml-2"
                                 th:data-id="${diagnosis.id}"
                                 th:data-content="${diagnosis.content}"
-                                th:data-level="${diagnosis.level}"
                                 th:data-price="${diagnosis.price}"
                                 th:onclick="|editDiagnosis(this)|"
                                 th:if="${appointment.status != 1}">

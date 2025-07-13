@@ -81,7 +81,8 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center">
             <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="errorModalLabel" style="font-size: 2.2rem; font-weight: bold;">Thành công</h5>
+                <h5 class="modal-title" id="errorModalLabel" style="font-size: 2.2rem; font-weight: bold;">Thành
+                    công</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
             <div class="modal-body" style="font-size: 2rem; font-weight: green;">
@@ -110,7 +111,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
             <div class="modal-body" style="font-size: 2rem; font-weight: green;">
-                <span th:text="${param.error == 'no_patient' ? 'Không tìm thấy thông tin bệnh nhân.' : 'Email sai!'}"></span>
+    <span th:switch="${param.error}">
+        <span th:case="'no_patient'">Không tìm thấy thông tin bệnh nhân.</span>
+        <span th:case="'duplicate'">Bạn đã đặt lịch trong ngày này rồi. Vui lòng chọn ngày khác.</span>
+        <span th:case="*">Email sai!</span>
+    </span>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
@@ -202,7 +207,8 @@
                     </div>
 
                     <div class="input-wrapper">
-                        <textarea name="problem" placeholder="Mô tả vấn đề sức khỏe của bạn..." class="problem italic-placeholder" rows="4" required></textarea>
+                        <textarea name="problem" placeholder="Mô tả vấn đề sức khỏe của bạn..."
+                                  class="problem italic-placeholder" rows="4" required></textarea>
                         <span class="required-star">*</span>
                     </div>
 

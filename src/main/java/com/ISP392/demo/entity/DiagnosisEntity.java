@@ -15,12 +15,17 @@ import java.math.BigDecimal;
 @Data
 public class DiagnosisEntity extends AbstractEntity {
     private String content;
-    private Integer level;
-    private BigDecimal price;
 
 	@ManyToOne
 	@JoinColumn(name = "appointmentId")
 	@EqualsAndHashCode.Exclude
 	@JsonBackReference
 	private AppointmentEntity appointment;
+
+	@ManyToOne
+	@JoinColumn(name = "serviceId")
+	@EqualsAndHashCode.Exclude
+	@JsonBackReference
+	private ServiceEntity service;
+
 }

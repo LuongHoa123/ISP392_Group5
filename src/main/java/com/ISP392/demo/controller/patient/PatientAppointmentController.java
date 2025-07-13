@@ -74,9 +74,22 @@ public class PatientAppointmentController {
         if (userEntity == null) {
             return "redirect:/patient/appointment?error=no_patient";
         }
+
         PatientEntity patient = userEntity.getPatients().stream().findFirst().orElse(null);
         if (patient == null) {
             return "redirect:/patient/appointment?error=no_patient";
+        }
+
+        LocalDate appointmentDate = LocalDate.parse(date);
+
+        boolean alreadyHasAppointment = appointmentRepository.existsByPatientAndAppointmentDateTimeBetween(
+                patient,
+                appointmentDate.atStartOfDay(),
+                appointmentDate.plusDays(1).atStartOfDay()
+        );
+
+        if (alreadyHasAppointment) {
+            return "redirect:/patient/appointment?error=duplicate";
         }
 
         AppointmentEntity appointment = new AppointmentEntity();
@@ -85,7 +98,6 @@ public class PatientAppointmentController {
         appointment.setName(name);
         appointment.setEmail(email);
         appointment.setPhoneNumber(phone);
-        LocalDate appointmentDate = LocalDate.parse(date);
         appointment.setAppointmentDateTime(appointmentDate.atStartOfDay());
         appointment.setStatus(-1);
         appointment.setReason(problem);
@@ -94,6 +106,7 @@ public class PatientAppointmentController {
 
         return "redirect:/patient/appointment?success=true";
     }
+
 
     @GetMapping("/calendar")
     public String calendar(Model model) {

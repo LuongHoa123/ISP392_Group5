@@ -23,7 +23,34 @@
 
 <div th:replace="fragments/footer-user :: footer"></div>
 
+<a href="#" class="back-to-top" id="backToTop" title="Lên đầu trang">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const backToTopBtn = document.getElementById("backToTop");
 
+        // Ẩn/hiện nút khi scroll
+        window.addEventListener("scroll", function () {
+            if (window.scrollY > 300) {
+                backToTopBtn.style.display = "block";
+            } else {
+                backToTopBtn.style.display = "none";
+            }
+        });
+
+        // Cuộn mượt về đầu trang khi click
+        backToTopBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            window.scrollTo({top: 0, behavior: "smooth"});
+        });
+
+        // Show registration success modal if registration was successful
+        if (document.getElementById('registrationSuccessModal')) {
+            $('#registrationSuccessModal').modal('show');
+        }
+    });
+</script>
 
 </body>
 </html>
