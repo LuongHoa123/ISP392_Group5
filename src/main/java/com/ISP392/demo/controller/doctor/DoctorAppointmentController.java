@@ -7,6 +7,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.ISP392.demo.entity.*;
+import com.ISP392.demo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -26,14 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ISP392.demo.dto.AppointmentDto;
-import com.ISP392.demo.entity.AppointmentEntity;
-import com.ISP392.demo.entity.ConclusionEntity;
-import com.ISP392.demo.entity.DoctorEntity;
-import com.ISP392.demo.entity.UserEntity;
-import com.ISP392.demo.repository.AppointmentRepository;
-import com.ISP392.demo.repository.ConclusionRepository;
-import com.ISP392.demo.repository.DoctorRepository;
-import com.ISP392.demo.repository.UserRepository;
 import com.ISP392.demo.service.ExcelExportService;
 import com.ISP392.demo.service.PdfExportService;
 import com.ISP392.demo.service.WordExportService;
@@ -68,7 +62,8 @@ public class DoctorAppointmentController {
                                             @RequestParam(value = "date", required = false)
                                             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                             @RequestParam(value = "page", defaultValue = "0") int page,
-                                            @RequestParam(value = "size", defaultValue = "5") int size) {
+                                            @RequestParam(value = "size", defaultValue = "5") int size,
+                                            @RequestParam(value = "patientId", required = false) Long patientId) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
@@ -82,6 +77,13 @@ public class DoctorAppointmentController {
         }
 
         List<AppointmentEntity> allAppointments = appointmentRepository.findByDoctor(doctor);
+
+        if (patientId != null) {
+            allAppointments = allAppointments.stream()
+                    .filter(a -> a.getPatient() != null && a.getPatient().getId().equals(patientId))
+                    .collect(Collectors.toList());
+            model.addAttribute("patientId", patientId);
+        }
 
         if (keyword != null && !keyword.trim().isEmpty()) {
             String lowerKeyword = keyword.toLowerCase();
@@ -138,15 +140,15 @@ public class DoctorAppointmentController {
 
         try {
             ByteArrayInputStream excelFile = excelExportService.exportAppointmentsToExcel(appointments);
-            
+
             String filename = "lich_hen_kham_" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".xlsx";
-            
+
             InputStreamResource file = new InputStreamResource(excelFile);
-            
+
             return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                .body(file);
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .body(file);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -173,9 +175,9 @@ public class DoctorAppointmentController {
             String filename = "lich_hen_kham_" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".pdf";
             InputStreamResource file = new InputStreamResource(pdfFile);
             return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(file);
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(file);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -202,9 +204,9 @@ public class DoctorAppointmentController {
             String filename = "lich_hen_kham_" + java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".docx";
             InputStreamResource file = new InputStreamResource(wordFile);
             return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
-                .body(file);
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
+                    .body(file);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -248,6 +250,9 @@ public class DoctorAppointmentController {
     @Autowired
     private ConclusionRepository conclusionRepository;
 
+    @Autowired
+    private AppointmentServiceRepository appointmentServiceRepository;
+
     @GetMapping("/conclusion/{id}")
     public String showConclusionPage(@PathVariable Long id, Model model) {
         AppointmentEntity appointment = appointmentRepository.findById(id).orElse(null);
@@ -260,10 +265,15 @@ public class DoctorAppointmentController {
             conclusion = new ConclusionEntity();
         }
 
+        List<AppointmentServiceEntity> appointmentServices = appointmentServiceRepository.findByAppointmentId(id);
+
         model.addAttribute("appointment", appointment);
         model.addAttribute("conclusion", conclusion);
+        model.addAttribute("appointmentServices", appointmentServices);
+
         return "doctor/appointment/conclusion";
     }
+
 
     @PostMapping("/conclusion/{id}")
     @Transactional

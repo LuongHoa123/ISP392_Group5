@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 <th:block th:fragment="header">
     <header class="header" id="nav">
         <a th:href="@{/}" class="logo d-flex align-items-center">
@@ -8,18 +10,32 @@
             <a th:href="@{/}" class="nav-links">Trang chủ</a>
             <a th:href="@{/doctors}" class="nav-links">Bác sĩ</a>
 
-
             <th:block th:if="${#authorization.expression('isAnonymous()')}">
                 <a th:href="@{/login}" class="nav-links">Đăng nhập</a>
                 <a th:href="@{/register}" class="nav-links">Đăng ký</a>
             </th:block>
 
             <th:block th:unless="${#authorization.expression('isAnonymous()')}">
-                <a th:href="@{/changePass}" class="nav-links">Đổi mật khẩu</a>
-                <a th:href="@{/profile}" class="nav-links">Đổi thông tin cá nhân</a>
-                <a th:href="@{/patient/appointment}" class="nav-links">Đặt lịch</a>
-                <a th:href="@{/patient/appointment/calendar}" class="nav-links">Lịch hẹn của tôi</a>
-                <a th:href="@{/logout}" class="nav-links">Đăng xuất</a>
+
+                <a th:href="@{/patient/appointment}" class="nav-links">
+                    <i class="fas fa-calendar-plus"></i> Đặt lịch
+                </a>
+
+                <a th:href="@{/patient/appointment/calendar}" class="nav-links">
+                    <i class="fas fa-calendar-check"></i> Lịch hẹn của tôi
+                </a>
+
+                <a th:href="@{/changePass}" class="nav-links" title="Đổi mật khẩu">
+                    <i class="fas fa-key"></i>
+                </a>
+
+                <a th:href="@{/profile}" class="nav-links" title="Đổi thông tin cá nhân">
+                    <i class="fas fa-user-edit"></i>
+                </a>
+
+                <a th:href="@{/logout}" class="nav-links">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
             </th:block>
         </nav>
         <div id="menu-btn" class="fas fa-bars"></div>

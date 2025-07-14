@@ -6,10 +6,10 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -61,12 +61,6 @@ public class AppointmentEntity extends AbstractEntity {
     @JsonBackReference
     private RoomEntity room;
 
-    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    private Set<DiagnosisEntity> diagnosisEntities;
-
     @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
@@ -85,6 +79,49 @@ public class AppointmentEntity extends AbstractEntity {
     @JsonManagedReference
     private Set<InvoiceEntity> invoiceEntities;
 
+    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonManagedReference
+    private DiagnosisEntity diagnosis;
+
+    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonManagedReference
+    private Set<AppointmentServiceEntity> appointmentServiceEntities;
+
+    public Set<AppointmentServiceEntity> getAppointmentServiceEntities() {
+        return appointmentServiceEntities;
+    }
+
+    public void setAppointmentServiceEntities(Set<AppointmentServiceEntity> appointmentServiceEntities) {
+        this.appointmentServiceEntities = appointmentServiceEntities;
+    }
+
+    public ReviewEntity getReviewEntity() {
+        return reviewEntity;
+    }
+
+    public void setReviewEntity(ReviewEntity reviewEntity) {
+        this.reviewEntity = reviewEntity;
+    }
+
+    public Set<InvoiceEntity> getInvoiceEntities() {
+        return invoiceEntities;
+    }
+
+    public void setInvoiceEntities(Set<InvoiceEntity> invoiceEntities) {
+        this.invoiceEntities = invoiceEntities;
+    }
+
+    public DiagnosisEntity getDiagnosis() {
+        return diagnosis;
+    }
+
+    public void setDiagnosis(DiagnosisEntity diagnosisEntity) {
+        this.diagnosis = diagnosisEntity;
+    }
 
     public BigDecimal getPayCost() {
         return payCost;
@@ -132,14 +169,6 @@ public class AppointmentEntity extends AbstractEntity {
 
     public void setPrescription(String prescription) {
         this.prescription = prescription;
-    }
-
-    public Set<DiagnosisEntity> getDiagnosisEntities() {
-        return diagnosisEntities;
-    }
-
-    public void setDiagnosisEntities(Set<DiagnosisEntity> diagnosisEntities) {
-        this.diagnosisEntities = diagnosisEntities;
     }
 
     public ConclusionEntity getConclusionEntity() {

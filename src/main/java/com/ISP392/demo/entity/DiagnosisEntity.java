@@ -1,10 +1,7 @@
 package com.ISP392.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -16,7 +13,7 @@ import java.math.BigDecimal;
 public class DiagnosisEntity extends AbstractEntity {
     private String content;
 
-	@ManyToOne
+	@OneToOne
 	@JoinColumn(name = "appointmentId")
 	@EqualsAndHashCode.Exclude
 	@JsonBackReference

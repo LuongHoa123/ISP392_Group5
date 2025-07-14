@@ -1,5 +1,6 @@
 package com.ISP392.demo.entity;
 
+import com.ISP392.demo.App;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -8,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -21,6 +23,29 @@ public class ServiceEntity extends AbstractEntity {
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
 	@JsonManagedReference
-	private Set<DiagnosisEntity> diagnosisEntities;
+	private Set<AppointmentServiceEntity> appointmentServiceEntities;
 
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+
+	public Set<AppointmentServiceEntity> getAppointmentServiceEntities() {
+		return appointmentServiceEntities;
+	}
+
+	public void setAppointmentServiceEntities(Set<AppointmentServiceEntity> appointmentServiceEntities) {
+		this.appointmentServiceEntities = appointmentServiceEntities;
+	}
 }

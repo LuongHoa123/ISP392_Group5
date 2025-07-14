@@ -52,6 +52,29 @@
         <div class="container mt-4">
             <h3 class="mb-3">Kết luận cho lịch khám của <span th:text="${appointment.name}"></span></h3>
 
+            <div th:if="${appointmentServices.size() > 0}">
+                <h4>Danh sách dịch vụ đã sử dụng</h4>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tên dịch vụ</th>
+                        <th>Nội dung dịch vụ</th>
+                        <th>Giá</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="as, iterStat : ${appointmentServices}">
+                        <td th:text="${iterStat.count}"></td>
+                        <td th:text="${as.service.content}"></td>
+                        <td th:text="${as.content}"></td>
+                        <td th:text="${as.service.price} + ' VND'"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
             <div th:if="${conclusion.id != null}">
                 <h4>Kết luận hiện tại:</h4>
                 <p><strong>Nội dung kết luận:</strong> <span th:text="${conclusion.content}"></span></p>
