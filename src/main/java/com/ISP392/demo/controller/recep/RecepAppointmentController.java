@@ -197,24 +197,50 @@ public class RecepAppointmentController {
     @Autowired
     private PdfExportService pdfExportService;
 
-//    @GetMapping("/generatePdf/{appointmentId}")
-//    public ResponseEntity<InputStreamResource> generatePdf(@PathVariable Long appointmentId) {
-//        try {
-//            AppointmentEntity appointment = appointmentRepository.findById(appointmentId).get();
-//
-//            ByteArrayInputStream pdfFile = pdfExportService.exportAppointmentToPdf(appointment);
-//
-//            String filename = "phieu_kham_benh_" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".pdf";
-//
-//            InputStreamResource file = new InputStreamResource(pdfFile);
-//            return ResponseEntity.ok()
-//                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-//                    .contentType(MediaType.APPLICATION_PDF)
-//                    .body(file);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return ResponseEntity.internalServerError().build();
-//        }
-//    }
+    @GetMapping("/generatePdf/{appointmentId}")
+    public ResponseEntity<InputStreamResource> generatePdf(@PathVariable Long appointmentId) {
+        try {
+            AppointmentEntity appointment = appointmentRepository.findById(appointmentId).get();
+
+            ByteArrayInputStream pdfFile = pdfExportService.exportAppointmentToPdf(appointment);
+
+            String filename = "phieu_kham_benh_" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".pdf";
+
+            InputStreamResource file = new InputStreamResource(pdfFile);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @Autowired
+    private ConclusionRepository conclusionRepository;
+
+    @Autowired
+    private AppointmentServiceRepository appointmentServiceRepository;
+
+    @GetMapping("/detail")
+    public String showConclusionPage(@RequestParam Long appointmentId, Model model) {
+        AppointmentEntity appointment = appointmentRepository.findById(appointmentId).orElse(null);
+        if (appointment == null) {
+            return "redirect:/recep/appointment";
+        }
+
+        ConclusionEntity conclusion = appointment.getConclusionEntity();
+        if (conclusion == null) {
+            conclusion = new ConclusionEntity();
+        }
+
+        List<AppointmentServiceEntity> appointmentServices = appointmentServiceRepository.findByAppointmentId(appointmentId);
+
+        model.addAttribute("appointment", appointment);
+        model.addAttribute("conclusion", conclusion);
+        model.addAttribute("appointmentServices", appointmentServices);
+        return "recep/appointment/conclusion";
+    }
 
 }

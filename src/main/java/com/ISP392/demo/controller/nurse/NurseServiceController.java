@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
@@ -65,19 +66,40 @@ public class NurseServiceController {
         appointmentService.setService(service);
         appointmentService.setContent(content != null ? content : service.getContent());
 
-        appointmentServiceRepository.save(appointmentService);
-        redirectAttributes.addAttribute("save", true);
 
+        appointmentServiceRepository.save(appointmentService);
+
+        BigDecimal newTotal = appointmentServiceRepository.findByAppointmentId(id)
+                .stream()
+                .map(a -> a.getService().getPrice())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        appointment.setTotalCost(newTotal);
+        appointment.setPayCost(BigDecimal.ZERO);
+        appointmentRepository.save(appointment);
+
+        redirectAttributes.addAttribute("save", true);
         return "redirect:/nurse/service/" + id;
     }
+
 
     @GetMapping("/{appointmentId}/delete-service/{serviceId}")
     public String removeServiceFromAppointment(@PathVariable Long appointmentId,
                                                @PathVariable Long serviceId,
                                                RedirectAttributes redirectAttributes) {
-
         try {
             appointmentServiceRepository.deleteByAppointmentIdAndServiceId(appointmentId, serviceId);
+
+            AppointmentEntity appointment = appointmentRepository.findById(appointmentId).orElse(null);
+            if (appointment != null) {
+                BigDecimal newTotal = appointmentServiceRepository.findByAppointmentId(appointmentId)
+                        .stream()
+                        .map(a -> a.getService().getPrice())
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                appointment.setTotalCost(newTotal);
+                appointment.setPayCost(BigDecimal.ZERO);
+                appointmentRepository.save(appointment);
+            }
+
             redirectAttributes.addAttribute("delete", true);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Không tìm thấy dịch vụ hoặc lịch hẹn.");
@@ -85,4 +107,5 @@ public class NurseServiceController {
 
         return "redirect:/nurse/service/" + appointmentId;
     }
+
 }

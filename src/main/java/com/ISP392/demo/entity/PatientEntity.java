@@ -60,6 +60,28 @@ public class PatientEntity extends AbstractEntity {
     @JsonManagedReference
     private Set<ReviewEntity> reviews;
 
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonManagedReference
+    private Set<InvoiceEntity> invoiceEntities;
+
+    public Set<ReviewEntity> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Set<ReviewEntity> reviews) {
+        this.reviews = reviews;
+    }
+
+    public Set<InvoiceEntity> getInvoiceEntities() {
+        return invoiceEntities;
+    }
+
+    public void setInvoiceEntities(Set<InvoiceEntity> invoiceEntities) {
+        this.invoiceEntities = invoiceEntities;
+    }
+
     public String getFirstName() {
         return firstName;
     }

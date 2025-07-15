@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kết luận - Lịch khám</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+</head>
+<body>
+
+<th:block th:replace="layout/recep-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container mt-4">
+            <h3 class="mb-3">Chuẩn đoán sơ qua: <span th:text="${appointment.diagnosis.content}"></span></h3>
+
+            <h3 class="mb-3">Kết luận cho lịch khám</h3>
+
+            <div th:if="${appointmentServices.size() > 0}">
+                <h4>Danh sách dịch vụ đã sử dụng</h4>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tên dịch vụ</th>
+                        <th>Nội dung dịch vụ</th>
+                        <th>Giá</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="as, iterStat : ${appointmentServices}">
+                        <td th:text="${iterStat.count}"></td>
+                        <td th:text="${as.service.content}"></td>
+                        <td th:text="${as.content}"></td>
+                        <td th:text="${as.service.price} + ' VND'"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div th:if="${conclusion.id != null}">
+                <h4>Kết luận hiện tại:</h4>
+                <p><strong>Nội dung kết luận:</strong> <span th:text="${conclusion.content}"></span></p>
+                <p><strong>Đơn thuốc:</strong> <span th:text="${conclusion.prescription}"></span></p>
+            </div>
+
+            <a href="#" class="btn btn-secondary mt-3" th:href="@{/recep/appointment}">Quay lại</a>
+        </div>
+    </th:block>
+</th:block>
+</body>
+</html>

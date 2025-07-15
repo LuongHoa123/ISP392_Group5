@@ -61,61 +61,6 @@
                 <span th:text="${#temporals.format(appointment.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></span>
             </h3>
 
-            <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addAppointmentModal" th:if="${appointment.paymentStatus != 1}">
-                + Thêm thanh toán mới
-            </button>
-
-            <div class="modal fade" id="addAppointmentModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" th:if="${appointment.paymentStatus != 1}"
-                 aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <form th:action="@{/recep/invoice/add}" method="post" class="modal-content needs-validation" id="addPaymentForm" novalidate>
-                        <div class="modal-header">
-                            <h5 class="modal-title">Tạo lần thanh toán mới</h5>
-                            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                        </div>
-                        <div class="modal-body">
-
-                            <div th:if="${addError}" class="alert alert-danger" th:text="${addErrorMsg}"></div>
-
-                            <div class="form-group">
-                                <label for="fullName">Người thanh toán</label>
-                                <input type="text" name="fullName" id="fullName" class="form-control" required>
-                                <div class="invalid-feedback">
-                                    Vui lòng nhập tên người thanh toán.
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="phone">Số điện thoại</label>
-                                <input type="tel" name="phone" id="phone" class="form-control" required
-                                       pattern="^((0[35789]\d{8})|(02\d{8}))$">
-                                <div class="invalid-feedback">
-                                    Số điện thoại không hợp lệ.
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="paymentAmount">Số tiền thanh toán</label>
-                                <input type="number" name="cost" id="paymentAmount" class="form-control" min="1" required>
-                                <div class="invalid-feedback">
-                                    Vui lòng nhập số tiền hợp lệ.
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="remainingAmount">Số tiền còn lại cần thanh toán</label>
-                                <input type="number" id="remainingAmount" class="form-control" readonly>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-success">Xác nhận</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-
             <div class="card">
                 <div class="card-body">
                     <table class="table table-bordered">
@@ -126,7 +71,6 @@
                             <th>Người thanh toán</th>
                             <th>SDT</th>
                             <th>Thời gian</th>
-                            <th>Lễ tân</th>
                             <th>Số tiền</th>
                             <th></th>
                         </tr>
@@ -139,7 +83,6 @@
                             <td th:text="${appt.phone}"></td>
                             <td th:text="${#temporals.format(appt.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
 
-                            <td th:text="${appt.recep != null ? (appt.recep.firstName + ' '  + appt.recep.lastName) : '---'}"></td>
                             <td th:text="${appt.totalCost}"></td>
 
                             <td>

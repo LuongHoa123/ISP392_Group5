@@ -1,6 +1,7 @@
 package com.ISP392.demo.service;
 
 import com.ISP392.demo.entity.AppointmentEntity;
+import com.ISP392.demo.entity.AppointmentServiceEntity;
 import com.ISP392.demo.entity.ConclusionEntity;
 import com.ISP392.demo.entity.DiagnosisEntity;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -62,111 +63,109 @@ public class PdfExportService {
 
     private static final String FONT_PATH = "src/main/resources/static/fonts/NotoSans-Regular.ttf";
 
-//    public ByteArrayInputStream exportAppointmentToPdf(AppointmentEntity appointment) throws IOException {
-//        PdfFont customFont = PdfFontFactory.createFont(FONT_PATH, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
-//
-//        ByteArrayOutputStream out = new ByteArrayOutputStream();
-//        PdfWriter writer = new PdfWriter(out);
-//        PdfDocument pdf = new PdfDocument(writer);
-//        Document document = new Document(pdf);
-//
-//        document.add(new Paragraph("Phiếu Khám Bệnh")
-//                .setFont(customFont)
-//                .setFontSize(18)
-//                .setBold());
-//        document.add(new Paragraph("\n"));
-//
-//        document.add(new Paragraph("Bệnh nhân: " + appointment.getName())
-//                .setFont(customFont)
-//                .setFontSize(12));
-//        document.add(new Paragraph("Số điện thoại: " + appointment.getPhoneNumber())
-//                .setFont(customFont)
-//                .setFontSize(12));
-//        document.add(new Paragraph("Email: " + appointment.getEmail())
-//                .setFont(customFont)
-//                .setFontSize(12));
-//        document.add(new Paragraph("Thời gian hẹn: " + appointment.getAppointmentDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")))
-//                .setFont(customFont)
-//                .setFontSize(12));
-//
-//        document.add(new Paragraph("\n"));
-//
-//        if (appointment.getDoctor() != null) {
-//            document.add(new Paragraph("Bác sĩ: " + appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName())
-//                    .setFont(customFont)
-//                    .setFontSize(12));
-//        }
-//
-//        document.add(new Paragraph("\n"));
-//
-//        Set<DiagnosisEntity> diagnoses = appointment.getDiagnosisEntities();
-//        BigDecimal totalPrice = BigDecimal.ZERO;
-//
-//        if (diagnoses != null && !diagnoses.isEmpty()) {
-//            document.add(new Paragraph("Dịch vụ/Chẩn đoán:")
-//                    .setFont(customFont)
-//                    .setFontSize(12)
-//                    .setBold());
-//
-//            for (DiagnosisEntity diagnosis : diagnoses) {
-//                document.add(new Paragraph("Chẩn đoán: " + diagnosis.getContent())
-//                        .setFont(customFont)
-//                        .setFontSize(12));
-//                document.add(new Paragraph("Mức độ: " + (diagnosis.getLevel() != null ? diagnosis.getLevel() : "N/A"))
-//                        .setFont(customFont)
-//                        .setFontSize(12));
-//                document.add(new Paragraph("Giá: " + (diagnosis.getPrice() != null ? diagnosis.getPrice() + " VND" : "N/A"))
-//                        .setFont(customFont)
-//                        .setFontSize(12));
-//                document.add(new Paragraph("\n"));
-//
-//                if (diagnosis.getPrice() != null) {
-//                    totalPrice = totalPrice.add(diagnosis.getPrice());
-//                }
-//            }
-//        } else {
-//            document.add(new Paragraph("Không có dịch vụ/Chẩn đoán nào.")
-//                    .setFont(customFont)
-//                    .setFontSize(12));
-//        }
-//
-//        document.add(new Paragraph("\n"));
-//
-//        ConclusionEntity conclusion = appointment.getConclusionEntity();
-//        if (conclusion != null) {
-//            document.add(new Paragraph("Kết luận: " + conclusion.getContent())
-//                    .setFont(customFont)
-//                    .setFontSize(12));
-//            document.add(new Paragraph("Đơn thuốc: ")
-//                    .setFont(customFont)
-//                    .setFontSize(12));
-//
-//            String[] prescriptions = conclusion.getPrescription().split("\n");
-//            for (String prescription : prescriptions) {
-//                document.add(new Paragraph(prescription)
-//                        .setFont(customFont)
-//                        .setFontSize(12));
-//            }
-//        } else {
-//            document.add(new Paragraph("Kết luận và đơn thuốc chưa có.")
-//                    .setFont(customFont)
-//                    .setFontSize(12));
-//        }
-//
-//        document.add(new Paragraph("\n"));
-//        document.add(new Paragraph("Tổng tiền: " + totalPrice + " VND")
-//                .setFont(customFont)
-//                .setFontSize(12)
-//                .setBold());
-//
-//        document.add(new Paragraph("\n"));
-//        document.add(new Paragraph("Lưu ý: Phiếu khám bệnh này là một tài liệu quan trọng, vui lòng giữ gìn cẩn thận.")
-//                .setFont(customFont)
-//                .setFontSize(10));
-//
-//        document.close();
-//        return new ByteArrayInputStream(out.toByteArray());
-//    }
+    public ByteArrayInputStream exportAppointmentToPdf(AppointmentEntity appointment) throws IOException {
+        PdfFont customFont = PdfFontFactory.createFont(FONT_PATH, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(out);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
+
+        document.add(new Paragraph("Phiếu Khám Bệnh")
+                .setFont(customFont)
+                .setFontSize(18)
+                .setBold());
+        document.add(new Paragraph("\n"));
+
+        document.add(new Paragraph("Bệnh nhân: " + appointment.getName())
+                .setFont(customFont)
+                .setFontSize(12));
+        document.add(new Paragraph("Số điện thoại: " + appointment.getPhoneNumber())
+                .setFont(customFont)
+                .setFontSize(12));
+        document.add(new Paragraph("Email: " + appointment.getEmail())
+                .setFont(customFont)
+                .setFontSize(12));
+        document.add(new Paragraph("Thời gian hẹn: " + appointment.getAppointmentDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")))
+                .setFont(customFont)
+                .setFontSize(12));
+
+        document.add(new Paragraph("\n"));
+
+        if (appointment.getDoctor() != null) {
+            document.add(new Paragraph("Bác sĩ: " + appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName())
+                    .setFont(customFont)
+                    .setFontSize(12));
+        }
+
+        document.add(new Paragraph("\n"));
+
+        Set<AppointmentServiceEntity> entities = appointment.getAppointmentServiceEntities();
+        BigDecimal totalPrice = BigDecimal.ZERO;
+
+        if (entities != null && !entities.isEmpty()) {
+            document.add(new Paragraph("Dịch vụ/Chẩn đoán:")
+                    .setFont(customFont)
+                    .setFontSize(12)
+                    .setBold());
+
+            for (AppointmentServiceEntity one : entities) {
+                document.add(new Paragraph("Dịch vụ sử dụng: " + one.getService().getContent() + " - Giá: " + one.getService().getPrice())
+                        .setFont(customFont)
+                        .setFontSize(12));
+                document.add(new Paragraph("Đánh giá: " + one.getContent())
+                        .setFont(customFont)
+                        .setFontSize(12));
+
+                document.add(new Paragraph("\n"));
+
+                if (one.getService().getPrice() != null) {
+                    totalPrice = totalPrice.add(one.getService().getPrice());
+                }
+            }
+        } else {
+            document.add(new Paragraph("Không có dịch vụ/Chẩn đoán nào.")
+                    .setFont(customFont)
+                    .setFontSize(12));
+        }
+
+        document.add(new Paragraph("\n"));
+
+        ConclusionEntity conclusion = appointment.getConclusionEntity();
+        if (conclusion != null) {
+            document.add(new Paragraph("Kết luận: " + conclusion.getContent())
+                    .setFont(customFont)
+                    .setFontSize(12));
+            document.add(new Paragraph("Đơn thuốc: ")
+                    .setFont(customFont)
+                    .setFontSize(12));
+
+            String[] prescriptions = conclusion.getPrescription().split("\n");
+            for (String prescription : prescriptions) {
+                document.add(new Paragraph(prescription)
+                        .setFont(customFont)
+                        .setFontSize(12));
+            }
+        } else {
+            document.add(new Paragraph("Kết luận và đơn thuốc chưa có.")
+                    .setFont(customFont)
+                    .setFontSize(12));
+        }
+
+        document.add(new Paragraph("\n"));
+        document.add(new Paragraph("Tổng tiền: " + totalPrice + " VND")
+                .setFont(customFont)
+                .setFontSize(12)
+                .setBold());
+
+        document.add(new Paragraph("\n"));
+        document.add(new Paragraph("Lưu ý: Phiếu khám bệnh này là một tài liệu quan trọng, vui lòng giữ gìn cẩn thận.")
+                .setFont(customFont)
+                .setFontSize(10));
+
+        document.close();
+        return new ByteArrayInputStream(out.toByteArray());
+    }
 
 
     private String getStatusText(Integer status) {

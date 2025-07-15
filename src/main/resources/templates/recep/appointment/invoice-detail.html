@@ -71,9 +71,6 @@
                         <p><strong>Ngày thanh toán:</strong>
                             <span th:text="${#temporals.format(invoice.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
                         </p>
-                        <p><strong>Lễ tân xử lý:</strong>
-                            <span th:text="${invoice.recep.firstName + ' ' + invoice.recep.lastName}"></span>
-                        </p>
                     </div>
                 </div>
             </div>

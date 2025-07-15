@@ -27,10 +27,10 @@ public class InvoiceEntity extends AbstractEntity {
 	private AppointmentEntity appointmentEntity;
 
     @ManyToOne
-    @JoinColumn(name = "recepId")
+    @JoinColumn(name = "patientId")
     @EqualsAndHashCode.Exclude
     @JsonBackReference
-    private RecepEntity recep;
+    private PatientEntity patient;
 
     public BigDecimal getTotalCost() {
         return totalCost;
@@ -72,11 +72,11 @@ public class InvoiceEntity extends AbstractEntity {
         this.appointmentEntity = appointmentEntity;
     }
 
-    public RecepEntity getRecep() {
-        return recep;
+    public PatientEntity getPatient() {
+        return patient;
     }
 
-    public void setRecep(RecepEntity recep) {
-        this.recep = recep;
+    public void setPatient(PatientEntity patient) {
+        this.patient = patient;
     }
 }

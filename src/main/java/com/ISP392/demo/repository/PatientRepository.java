@@ -1,6 +1,7 @@
 package com.ISP392.demo.repository;
 
 import com.ISP392.demo.entity.PatientEntity;
+import com.ISP392.demo.entity.RecepEntity;
 import com.ISP392.demo.entity.UserEntity;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,5 +14,5 @@ import java.util.Optional;
 public interface PatientRepository extends JpaRepository<PatientEntity, Long> {
     int countAllByStatus(Integer status);
     Optional<PatientEntity> findByPhone(String phone);
-
+    PatientEntity findByUser(UserEntity user);
 }

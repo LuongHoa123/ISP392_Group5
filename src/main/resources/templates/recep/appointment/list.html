@@ -203,6 +203,14 @@
                             </td>
                             <td>
                                 <div class="d-flex flex-column gap-2">
+                                    <form th:if="${appt.status == 1}"
+                                          th:action="@{/recep/appointment/detail}" method="get">
+                                        <input type="hidden" name="appointmentId" th:value="${appt.id}"/>
+                                        <button type="submit" class="btn btn-sm btn-danger">Kết luận</button>
+                                    </form>
+                                </div>
+
+                                <div class="d-flex flex-column gap-2">
                                     <form th:if="${appt.status == -1}"
                                           th:action="@{/recep/appointment/delete}" method="post"
                                           onsubmit="return confirm('Bạn có chắc chắn muốn xoá lịch hẹn này?')">

@@ -211,6 +211,13 @@ public class PatientAppointmentController {
     public String detail(Model model, @RequestParam(name = "id") Long id) {
         AppointmentEntity appointment = appointmentRepository.findById(id).get();
         model.addAttribute("appointment", appointment);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByEmail(username).orElse(null);
+
+        PatientEntity patient = user.getPatients().stream().findFirst().orElse(null);
+
+        model.addAttribute("patient", patient);
+
         return "patient/history-detail";
     }
 }

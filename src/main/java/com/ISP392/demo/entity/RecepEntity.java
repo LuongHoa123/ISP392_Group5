@@ -32,5 +32,4 @@ public class RecepEntity extends AbstractEntity {
     @JsonBackReference
     private UserEntity user;
 
-
 }
