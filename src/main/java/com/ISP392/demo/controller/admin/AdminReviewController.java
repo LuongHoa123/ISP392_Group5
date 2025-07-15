@@ -67,8 +67,12 @@ public class AdminReviewController {
                 .filter(review -> review.getStar() != null && review.getStar() <= 2)
                 .count();
         
-        long totalPositiveReviews = allReviews.stream()
-                .filter(review -> review.getStar() != null && review.getStar() >= 3)
+        long totalNormalReviews = allReviews.stream()
+                .filter(review -> review.getStar() != null && review.getStar() == 3)
+                .count();
+        
+        long totalGoodReviews = allReviews.stream()
+                .filter(review -> review.getStar() != null && review.getStar() >= 4)
                 .count();
         
         List<ReviewEntity> list = allReviews;
@@ -79,9 +83,13 @@ public class AdminReviewController {
                 list = list.stream()
                         .filter(review -> review.getStar() != null && review.getStar() <= 2)
                         .collect(Collectors.toList());
-            } else if ("positive".equals(filterType)) {
+            } else if ("normal".equals(filterType)) {
                 list = list.stream()
-                        .filter(review -> review.getStar() != null && review.getStar() >= 3)
+                        .filter(review -> review.getStar() != null && review.getStar() == 3)
+                        .collect(Collectors.toList());
+            } else if ("good".equals(filterType)) {
+                list = list.stream()
+                        .filter(review -> review.getStar() != null && review.getStar() >= 4)
                         .collect(Collectors.toList());
             }
         }
@@ -132,7 +140,8 @@ public class AdminReviewController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("totalNegativeReviews", totalNegativeReviews);
-        model.addAttribute("totalPositiveReviews", totalPositiveReviews);
+        model.addAttribute("totalNormalReviews", totalNormalReviews);
+        model.addAttribute("totalGoodReviews", totalGoodReviews);
 
         return "admin/review/list";
     }

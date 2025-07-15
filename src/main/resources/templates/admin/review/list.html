@@ -26,7 +26,7 @@
 
             <!-- Thống kê tổng quan -->
             <div class="row mb-4">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="card bg-danger text-white">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
@@ -42,14 +42,30 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">Đánh giá bình thường</h4>
+                                    <h2 class="mb-0" th:text="${totalNormalReviews}">0</h2>
+                                    <small>3 sao</small>
+                                </div>
+                                <div>
+                                    <i class="mdi mdi-emoticon-neutral mdi-36px"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
                     <div class="card bg-success text-white">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <h4 class="card-title">Đánh giá tích cực</h4>
-                                    <h2 class="mb-0" th:text="${totalPositiveReviews}">0</h2>
-                                    <small>≥ 3 sao</small>
+                                    <h4 class="card-title">Đánh giá tốt</h4>
+                                    <h2 class="mb-0" th:text="${totalGoodReviews}">0</h2>
+                                    <small>≥ 4 sao</small>
                                 </div>
                                 <div>
                                     <i class="mdi mdi-emoticon-happy mdi-36px"></i>
@@ -58,13 +74,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="card bg-info text-white">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <div>
                                     <h4 class="card-title">Tổng cộng</h4>
-                                    <h2 class="mb-0" th:text="${totalNegativeReviews + totalPositiveReviews}">0</h2>
+                                    <h2 class="mb-0" th:text="${totalNegativeReviews + totalNormalReviews + totalGoodReviews}">0</h2>
                                     <small>Tất cả đánh giá</small>
                                 </div>
                                 <div>
@@ -86,7 +102,8 @@
                     <select name="filterType" class="form-control">
                         <option value="">Tất cả đánh giá</option>
                         <option value="negative" th:selected="${filterType == 'negative'}">Đánh giá tiêu cực (≤ 2 sao)</option>
-                        <option value="positive" th:selected="${filterType == 'positive'}">Đánh giá tích cực (≥ 3 sao)</option>
+                        <option value="normal" th:selected="${filterType == 'normal'}">Đánh giá bình thường (3 sao)</option>
+                        <option value="good" th:selected="${filterType == 'good'}">Đánh giá tốt (≥ 4 sao)</option>
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary mr-2">Tìm kiếm</button>
@@ -134,7 +151,8 @@
                             </td>
                             <td>
                                 <span th:if="${review.star <= 2}" class="badge badge-danger">Tiêu cực</span>
-                                <span th:if="${review.star >= 3}" class="badge badge-success">Tích cực</span>
+                                <span th:if="${review.star == 3}" class="badge badge-warning">Bình thường</span>
+                                <span th:if="${review.star >= 4}" class="badge badge-success">Tốt</span>
                             </td>
                             <td>
                                 <a class="btn btn-danger btn-sm"
