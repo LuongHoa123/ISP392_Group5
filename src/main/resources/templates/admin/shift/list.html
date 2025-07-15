@@ -17,12 +17,18 @@
 
 </head>
 <body>
+
 <th:block th:replace="layout/admin-layout :: layout">
     <th:block th:fragment="pageContent">
+        <div th:if="${error}" class="alert alert-danger" role="alert">
+            <span th:text="${error}"></span>
+        </div>
+
         <div class="container mt-5">
             <h3>Quản lý lịch trực</h3>
             <div id="calendar"></div>
         </div>
+
 
         <!-- Modal Form Ca Trực -->
         <div class="modal fade" id="shiftModal" tabindex="-1" aria-hidden="true">
@@ -90,6 +96,12 @@
             toast.show();
         }
 
+        function showErrorToast(message) {
+            const toastEl = document.getElementById('errorToast');
+            toastEl.querySelector('.toast-body').textContent = message;
+            new bootstrap.Toast(toastEl).show();
+        }
+
         const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
             initialView: 'dayGridMonth',
             locale: 'vi',
@@ -155,12 +167,24 @@
             fetch('/admin/shift/api/save', {
                 method: 'POST',
                 body: formData
-            }).then(() => {
-                bootstrap.Modal.getInstance(document.getElementById('shiftModal')).hide();
-                calendar.refetchEvents();
-                showSuccessToast("Lưu ca trực thành công!");
-            });
+            })
+                .then(async response => {
+                    if (!response.ok) {
+                        const errorMessage = await response.text();
+                        showErrorToast(errorMessage);
+                        return;
+                    }
+
+                    bootstrap.Modal.getInstance(document.getElementById('shiftModal')).hide();
+                    calendar.refetchEvents();
+                    showSuccessToast("Lưu ca trực thành công!");
+                })
+                .catch(error => {
+                    console.error('Lỗi mạng hoặc lỗi khác:', error);
+                    showErrorToast("Đã xảy ra lỗi, vui lòng thử lại.");
+                });
         });
+
     });
 </script>
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
@@ -172,6 +196,15 @@
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
     </div>
+
+    <div id="errorToast" class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-body">Có lỗi!</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+
 </div>
+
+
+
 </body>
 </html>
