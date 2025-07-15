@@ -41,6 +41,8 @@ public class PatientEntity extends AbstractEntity {
     private String phone;
     
     private String avatar;
+    private String identification;
+    private String nation;
 
 	@ManyToOne
 	@JoinColumn(name = "userId")
@@ -80,6 +82,22 @@ public class PatientEntity extends AbstractEntity {
 
     public void setInvoiceEntities(Set<InvoiceEntity> invoiceEntities) {
         this.invoiceEntities = invoiceEntities;
+    }
+
+    public String getIdentification() {
+        return identification;
+    }
+
+    public void setIdentification(String identification) {
+        this.identification = identification;
+    }
+
+    public String getNation() {
+        return nation;
+    }
+
+    public void setNation(String nation) {
+        this.nation = nation;
     }
 
     public String getFirstName() {

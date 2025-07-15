@@ -60,6 +60,12 @@
 <th:block th:replace="layout/user-layout :: layout">
     <th:block th:fragment="pageContent">
         <div class="container mt-5">
+
+            <a th:href="@{'/patient/appointment/generatePdf/' + ${appointment.id}}"
+               class="btn btn-sm btn-primary" target="_blank">
+                In Bệnh án
+            </a>
+
             <!-- Tiêu đề -->
             <h3 class="mb-4">Chuẩn đoán cho bệnh nhân:
                 <span class="text-primary" th:text="${appointment.name}"></span>

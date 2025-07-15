@@ -259,6 +259,18 @@
 
                         <!-- Số điện thoại -->
                         <div class="form-group">
+                            <label for="phone">Căn cước công dân<span class="required-star">*</span></label>
+                            <input type="text" id="identification" name="identification" class="form-control" th:field="*{identification}"
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Dân tộc<span class="required-star">*</span></label>
+                            <input type="text" id="nation" name="nation" class="form-control" th:field="*{nation}"
+                                   required>
+                        </div>
+
+                        <div class="form-group">
                             <label for="phone">Số điện thoại<span class="required-star">*</span></label>
                             <input type="text" id="phone" name="phone" class="form-control" th:field="*{phone}"
                                    required>
