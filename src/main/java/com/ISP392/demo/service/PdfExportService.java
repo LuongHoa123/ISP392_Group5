@@ -1,9 +1,6 @@
 package com.ISP392.demo.service;
 
-import com.ISP392.demo.entity.AppointmentEntity;
-import com.ISP392.demo.entity.AppointmentServiceEntity;
-import com.ISP392.demo.entity.ConclusionEntity;
-import com.ISP392.demo.entity.DiagnosisEntity;
+import com.ISP392.demo.entity.*;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -13,6 +10,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.TextAlignment;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -166,6 +164,76 @@ public class PdfExportService {
         document.close();
         return new ByteArrayInputStream(out.toByteArray());
     }
+
+    public ByteArrayInputStream exportMedicalSummaryPdf(AppointmentEntity appointment) throws IOException {
+        PdfFont customFont = PdfFontFactory.createFont(FONT_PATH, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(out);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document doc = new Document(pdf);
+
+        PatientEntity patient = appointment.getPatient();
+
+        doc.add(new Paragraph("Cơ quan chủ quản. Cơ sở KB, CB.")
+                .setFont(customFont).setBold());
+        doc.add(new Paragraph("CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM")
+                .setFont(customFont).setBold().setTextAlignment(TextAlignment.CENTER));
+        doc.add(new Paragraph("Độc lập - Tự do - Hạnh phúc")
+                .setFont(customFont).setTextAlignment(TextAlignment.CENTER));
+        doc.add(new Paragraph("\nBẢN TÓM TẮT HỒ SƠ BỆNH ÁN")
+                .setFont(customFont).setBold().setTextAlignment(TextAlignment.CENTER));
+        doc.add(new Paragraph("Mẫu số: 52/BV2").setFont(customFont).setItalic());
+
+        doc.add(new Paragraph("\nI. HÀNH CHÍNH").setFont(customFont).setBold());
+        doc.add(new Paragraph("Họ và tên (In hoa): " + (patient.getFirstName() + " " + patient.getLastName()).toUpperCase())
+                .setFont(customFont));
+        doc.add(new Paragraph("Giới tính: " + (patient.getGender() != null ? (patient.getGender().toString().equals("MALE") ? "Nam" : "Nữ") : ""))
+                .setFont(customFont));
+        doc.add(new Paragraph("Địa chỉ cư trú: " + (patient.getAddress() != null ? patient.getAddress() : ""))
+                .setFont(customFont));
+        doc.add(new Paragraph("Số CCCD/Hộ chiếu: " + (patient.getIdentification() != null ? patient.getIdentification() : ""))
+                .setFont(customFont));
+        doc.add(new Paragraph("Ngày sinh: " + (patient.getDateOfBirth() != null ? DateTimeFormatter.ofPattern("dd/MM/yyyy").format(patient.getDateOfBirth()) : ""))
+                .setFont(customFont));
+        doc.add(new Paragraph("Dân tộc: " + (patient.getNation() != null ? patient.getNation() : ""))
+                .setFont(customFont));
+        doc.add(new Paragraph("Ra viện ngày: " + (appointment.getAppointmentDateTime() != null ?
+                DateTimeFormatter.ofPattern("dd/MM/yyyy").format(appointment.getAppointmentDateTime()) : ""))
+                .setFont(customFont));
+
+        doc.add(new Paragraph("\nII. CHẨN ĐOÁN (Tên bệnh và mã ICD đính kèm):").setFont(customFont).setBold());
+        doc.add(new Paragraph("Vào viện ngày: " + (appointment.getAppointmentDateTime() != null ?
+                DateTimeFormatter.ofPattern("dd/MM/yyyy").format(appointment.getAppointmentDateTime()) : ""))
+                .setFont(customFont));
+        doc.add(new Paragraph("Chẩn đoán vào viện: " + (appointment.getDiagnosis() != null ? appointment.getDiagnosis().getContent() : ""))
+                .setFont(customFont));
+        doc.add(new Paragraph("Chẩn đoán ra viện: " + (appointment.getConclusionEntity() != null ? appointment.getConclusionEntity().getContent() : ""))
+                .setFont(customFont));
+
+        doc.add(new Paragraph("\nIII. TÓM TẮT QUÁ TRÌNH ĐIỀU TRỊ").setFont(customFont).setBold());
+        doc.add(new Paragraph("Tuổi: " + (appointment.getAge() != null ? appointment.getAge() : ""))
+                .setFont(customFont));
+        doc.add(new Paragraph("Tóm tắt quá trình bệnh lý và diễn biến lâm sàng:").setFont(customFont));
+
+        doc.add(new Paragraph((appointment.getReason() != null ? appointment.getReason() : "Không có mô tả"))
+                .setFont(customFont));
+
+        // Đơn thuốc nếu có
+        if (appointment.getConclusionEntity() != null && appointment.getConclusionEntity().getPrescription() != null) {
+            doc.add(new Paragraph("\nĐơn thuốc:").setFont(customFont).setBold());
+            String[] meds = appointment.getConclusionEntity().getPrescription().split("\n");
+            for (String med : meds) {
+                doc.add(new Paragraph("- " + med).setFont(customFont));
+            }
+        }
+
+        doc.add(new Paragraph("\n(Ký tên, đóng dấu)").setTextAlignment(TextAlignment.RIGHT)
+                .setFont(customFont).setItalic());
+
+        doc.close();
+        return new ByteArrayInputStream(out.toByteArray());
+    }
+
 
 
     private String getStatusText(Integer status) {

@@ -1,11 +1,18 @@
 package com.ISP392.demo.controller.patient;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
+import com.ISP392.demo.service.PdfExportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -220,4 +227,28 @@ public class PatientAppointmentController {
 
         return "patient/history-detail";
     }
+
+    @Autowired
+    private PdfExportService pdfExportService;
+
+    @GetMapping("/generatePdf/{appointmentId}")
+    public ResponseEntity<InputStreamResource> generatePdf(@PathVariable Long appointmentId) {
+        try {
+            AppointmentEntity appointment = appointmentRepository.findById(appointmentId).get();
+
+            ByteArrayInputStream pdfFile = pdfExportService.exportMedicalSummaryPdf(appointment);
+
+            String filename = "ho_so_benh_an_" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".pdf";
+
+            InputStreamResource file = new InputStreamResource(pdfFile);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
 }

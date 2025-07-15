@@ -73,6 +73,8 @@ public class PatientProfileController {
         existingPatient.setGender(patient.getGender());
         existingPatient.setAddress(patient.getAddress());
         existingPatient.setPhone(patient.getPhone());
+        existingPatient.setIdentification(patient.getIdentification());
+        existingPatient.setNation(patient.getNation());
 
         if(!avatarFile.isEmpty() && avatarFile != null) {
             String img = cloudinaryService.uploadFile(avatarFile);
