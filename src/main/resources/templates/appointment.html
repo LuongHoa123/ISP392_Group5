@@ -173,28 +173,32 @@
                     }
                 </style>
 
-                <form th:action="@{/patient/appointment/save}" method="post">
+                <form id="appForm" th:action="@{/patient/appointment/save}" method="post">
                     <h3>Đặt lịch khám với chúng tôi</h3>
 
                     <div class="input-wrapper">
                         <input type="text" name="name" th:value="${patient.firstName + ' ' + patient.lastName}"
                                placeholder="Họ và tên của bạn" class="box" required>
                         <span class="required-star">*</span>
+                        <div id="nameError" class="text-danger"></div>
                     </div>
 
                     <div class="input-wrapper">
-                        <input type="tel" name="phone" th:value="${patient.phone}" placeholder="Số điện thoại"
+                        <input type="tel" name="phone" th:value="${patient.phone}" placeholder="Số điện thoại" readonly
                                class="box" maxlength="10" required>
                         <span class="required-star">*</span>
+                        <div id="phoneError" class="text-danger"></div>
                     </div>
 
                     <div class="input-wrapper">
-                        <input type="number" name="age" placeholder="Tuổi của bạn" class="box" min="0" required>
+                        <input type="number" name="age" placeholder="Tuổi của bạn" class="box" min="0" max="100"
+                               required>
                         <span class="required-star">*</span>
+                        <div id="ageError" class="text-danger"></div>
                     </div>
 
                     <div class="input-wrapper">
-                        <input type="email" name="email" th:value="${patient.user.email}" placeholder="Địa chỉ email"
+                        <input type="email" name="email" th:value="${patient.user.email}" placeholder="Địa chỉ email" readonly
                                class="box" required>
                         <span class="required-star">*</span>
                     </div>
@@ -207,9 +211,11 @@
                     </div>
 
                     <div class="input-wrapper">
-                        <textarea name="problem" placeholder="Mô tả vấn đề sức khỏe của bạn..."
-                                  class="problem italic-placeholder" rows="4" required></textarea>
+        <textarea name="problem" placeholder="Mô tả vấn đề sức khỏe của bạn..."
+                  class="problem italic-placeholder" rows="4" required></textarea>
+                        <div id="charCount" class="text-muted" style="font-size: 0.85rem;">0 / 250 ký tự</div>
                         <span class="required-star">*</span>
+                        <div id="problemError" class="text-danger"></div>
                     </div>
 
                     <input type="submit" value="Đặt lịch ngay" class="btn">
@@ -222,6 +228,80 @@
         </a>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
+                const form = document.querySelector("#appForm");
+                const problemCharCount = document.getElementById("charCount");
+
+                const problemInput = document.querySelector("[name='problem']");
+
+                problemInput.addEventListener("input", function () {
+                    problemCharCount.textContent = `${problemInput.value.length} / 250 ký tự`;
+                });
+
+                form.addEventListener("submit", function (event) {
+                    let isValid = true;
+
+                    const clearErrors = () => {
+                        document.getElementById('nameError').textContent = '';
+                        document.getElementById('phoneError').textContent = '';
+                        document.getElementById('ageError').textContent = '';
+                        document.getElementById('problemError').textContent = '';
+                    };
+                    clearErrors();
+
+                    const nameInput = document.querySelector("[name='name']");
+                    const name = nameInput.value.trim();
+                    const namePattern = /^[\p{L} .'-]+$/u;
+
+                    if (!name) {
+                        document.getElementById('nameError').textContent = 'Họ tên không được để trống.';
+                        isValid = false;
+                    } else if (!namePattern.test(name)) {
+                        document.getElementById('nameError').textContent = 'Họ tên không hợp lệ. Chỉ cho phép chữ và dấu.';
+                        isValid = false;
+                    }
+
+                    const phoneInput = document.querySelector("[name='phone']");
+                    const phone = phoneInput.value.trim();
+                    const phonePattern = /^0\d{9}$/;
+
+                    if (!phonePattern.test(phone)) {
+                        document.getElementById('phoneError').textContent =
+                            'Số điện thoại phải có 10 chữ số, bắt đầu bằng 0 và không chứa ký tự đặc biệt.';
+                        isValid = false;
+                    }
+
+                    const ageInput = document.querySelector("[name='age']");
+                    const age = parseInt(ageInput.value);
+
+                    if (isNaN(age) || age < 0 || age > 100) {
+                        document.getElementById('ageError').textContent = 'Tuổi phải từ 0 đến 100.';
+                        isValid = false;
+                    }
+
+                    // Mô tả sức khỏe
+                    const problemInput = document.querySelector("[name='problem']");
+                    const problem = problemInput.value.trim();
+                    const problemPattern = /^[\p{L}0-9\s.,!?-]+$/u;
+
+                    if (!problem) {
+                        document.getElementById('problemError').textContent = 'Vui lòng mô tả vấn đề sức khỏe.';
+                        isValid = false;
+                    } else if (!problemPattern.test(problem)) {
+                        document.getElementById('problemError').textContent =
+                            'Mô tả không hợp lệ. Không dùng ký tự đặc biệt lạ.';
+                        isValid = false;
+                    } else if (problem.length > 250) {
+                        document.getElementById('problemError').textContent =
+                            'Mô tả quá dài. Tối đa 250 ký tự.';
+                        isValid = false;
+                    }
+
+
+                    if (!isValid) {
+                        event.preventDefault();
+                    }
+                });
+
                 const dateInput = document.getElementById('appointmentDate');
                 const today = new Date();
                 const tomorrow = new Date(today);
@@ -231,7 +311,6 @@
                 const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
                 const dd = String(tomorrow.getDate()).padStart(2, '0');
                 const minDateStr = `${yyyy}-${mm}-${dd}`;
-
                 dateInput.min = minDateStr;
             });
         </script>
@@ -239,8 +318,10 @@
 
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-                const backToTopBtn = document.getElementById("backToTop");
 
+
+                const backToTopBtn = document.getElementById("backToTop");
+                c
                 window.addEventListener("scroll", function () {
                     if (window.scrollY > 300) {
                         backToTopBtn.style.display = "block";
@@ -257,7 +338,6 @@
         </script>
     </th:block>
 </th:block>
-
 
 
 <style>
