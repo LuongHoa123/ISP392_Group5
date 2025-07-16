@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.ISP392.demo.dto.AppointmentDto;
 import com.ISP392.demo.entity.AppointmentEntity;
+import com.ISP392.demo.entity.ConclusionEntity;
 import com.ISP392.demo.entity.DoctorEntity;
 import com.ISP392.demo.entity.PatientEntity;
 import com.ISP392.demo.entity.UserEntity;
@@ -113,9 +115,31 @@ public class DoctorPatientController {
         UserEntity user = userRepository.findByEmail(username).orElse(null);
         DoctorEntity doctor = doctorRepository.findByUser(user);
 
-        List<AppointmentEntity> history = patient.getAppointments().stream()
+        List<AppointmentDto> history = patient.getAppointments().stream()
                 .filter(a -> a.getDoctor() != null && a.getDoctor().getId().equals(doctor.getId()))
                 .sorted((a1, a2) -> a2.getAppointmentDateTime().compareTo(a1.getAppointmentDateTime()))
+                .map(a -> {
+                    AppointmentDto dto = new AppointmentDto();
+                    dto.setId(a.getId());
+                    dto.setAppointmentDateTime(a.getAppointmentDateTime());
+                    dto.setReason(a.getReason());
+                    dto.setName(a.getName());
+                    dto.setPhoneNumber(a.getPhoneNumber());
+                    dto.setAge(a.getAge());
+                    dto.setEmail(a.getEmail());
+                    dto.setStatus(a.getStatus());
+                    dto.setRoomName(a.getRoom() != null ? a.getRoom().getRoomName() : null);
+                    // prescription: ưu tiên lấy từ conclusionEntity nếu có, nếu không lấy từ trường prescription
+                    ConclusionEntity ce = a.getConclusionEntity();
+                    if (ce != null) {
+                        dto.setPrescription(ce.getPrescription());
+                        dto.setConclusionContent(ce.getContent());
+                    } else {
+                        dto.setPrescription(a.getPrescription());
+                        dto.setConclusionContent(a.getConclusion());
+                    }
+                    return dto;
+                })
                 .collect(Collectors.toList());
 
         model.addAttribute("patient", patient);
