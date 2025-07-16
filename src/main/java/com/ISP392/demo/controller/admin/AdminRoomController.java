@@ -155,8 +155,6 @@ public class AdminRoomController {
             Optional<RoomEntity> roomOptional = roomRepository.findById(id);
             if (roomOptional.isPresent()) {
                 RoomEntity room = roomOptional.get();
-                room.setPrimaryDoctor(null);
-                room.setPrimaryNurse(null);
                 room.setPhoneNumber(null);
                 roomRepository.save(room);
                 roomRepository.delete(room);
