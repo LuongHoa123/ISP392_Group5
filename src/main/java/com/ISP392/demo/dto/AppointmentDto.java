@@ -19,6 +19,10 @@ public class AppointmentDto {
     private String doctorName;
     private String doctorSpecialization;
 
+    // Thêm hai trường mới cho đơn thuốc và nội dung kết luận
+    private String prescription;
+    private String conclusionContent;
+
     public Long getId() {
         return id;
     }
@@ -105,5 +109,21 @@ public class AppointmentDto {
 
     public void setDoctorSpecialization(String doctorSpecialization) {
         this.doctorSpecialization = doctorSpecialization;
+    }
+
+    public String getPrescription() {
+        return prescription;
+    }
+
+    public void setPrescription(String prescription) {
+        this.prescription = prescription;
+    }
+
+    public String getConclusionContent() {
+        return conclusionContent;
+    }
+
+    public void setConclusionContent(String conclusionContent) {
+        this.conclusionContent = conclusionContent;
     }
 }

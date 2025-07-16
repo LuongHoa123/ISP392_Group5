@@ -25,7 +25,8 @@
             </div>
 
             <h4>Lịch sử khám bệnh</h4>
-            <table class="table table-bordered">
+            <div style="overflow-x: auto;">
+            <table class="table table-bordered" style="min-width: 900px;">
                 <thead>
                 <tr>
                     <th>#</th>
@@ -33,6 +34,8 @@
                     <th>Lý do khám</th>
                     <th>Phòng</th>
                     <th>Trạng thái</th>
+                    <th>Đơn thuốc</th>
+                    <th>Nội dung kết luận</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -40,7 +43,7 @@
                     <td th:text="${iterStat.index + 1}"></td>
                     <td th:text="${#temporals.format(appt.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></td>
                     <td th:text="${appt.reason}"></td>
-                    <td th:text="${appt.room != null ? appt.room.roomName : '---'}"></td>
+                    <td th:text="${appt.roomName != null ? appt.roomName : '---'}"></td>
                     <td>
                         <span th:switch="${appt.status}">
                             <span th:case="-1" class="badge badge-warning">Chờ xác nhận</span>
@@ -50,12 +53,19 @@
                             <span th:case="*">Không rõ</span>
                         </span>
                     </td>
+                    <td style="white-space: pre-line; word-break: break-word; max-width: 350px;">
+                        <span th:text="${appt.prescription != null && !#strings.isEmpty(appt.prescription) ? appt.prescription : 'Không có'}"></span>
+                    </td>
+                    <td style="white-space: pre-line; word-break: break-word; max-width: 250px;">
+                        <span th:text="${appt.conclusionContent != null && !#strings.isEmpty(appt.conclusionContent) ? appt.conclusionContent : 'Không có'}"></span>
+                    </td>
                 </tr>
                 <tr th:if="${appointments.size() == 0}">
-                    <td colspan="5" class="text-center">Chưa có lịch sử khám</td>
+                    <td colspan="7" class="text-center">Chưa có lịch sử khám</td>
                 </tr>
                 </tbody>
             </table>
+            </div>
 
             <a th:href="@{/doctor/patient}" class="btn btn-danger mt-3">Quay lại</a>
         </div>
