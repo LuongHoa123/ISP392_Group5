@@ -53,6 +53,15 @@
                             </div>
 
                             <div class="mb-3">
+                                <label>Phòng</label>
+                                <select name="roomId" id="roomSelect" class="form-select">
+                                    <option value="">-- Chọn phòng --</option>
+                                    <option th:each="r : ${rooms}" th:value="${r.id}" th:text="${r.roomName}"></option>
+                                </select>
+                            </div>
+
+
+                            <div class="mb-3">
                                 <label>Bác sĩ</label>
                                 <select name="doctorId" id="doctorSelect" class="form-select">
                                     <option value="">-- Chọn bác sĩ --</option>
@@ -138,6 +147,7 @@
             document.getElementById('fixedTime').value = event.extendedProps.fixedTime;
             document.getElementById('doctorSelect').value = event.extendedProps.doctorId || '';
             document.getElementById('nurseSelect').value = event.extendedProps.nurseId || '';
+            document.getElementById('roomSelect').value = event.extendedProps.roomId || '';
 
             document.getElementById('deleteShiftBtn').style.display = 'inline-block';
             new bootstrap.Modal(document.getElementById('shiftModal')).show();

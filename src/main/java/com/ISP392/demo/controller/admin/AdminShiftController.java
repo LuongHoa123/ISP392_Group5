@@ -3,6 +3,7 @@ package com.ISP392.demo.controller.admin;
 import com.ISP392.demo.entity.ShiftEntity;
 import com.ISP392.demo.repository.DoctorRepository;
 import com.ISP392.demo.repository.NurseRepository;
+import com.ISP392.demo.repository.RoomRepository;
 import com.ISP392.demo.repository.ShiftRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,6 +40,13 @@ public class AdminShiftController {
     public List<Map<String, Object>> getShifts() {
         return shiftRepository.findAll().stream().map(s -> {
             Map<String, Object> ev = new HashMap<>();
+
+            String fullName = s.getDoctor() != null
+                    ? s.getDoctor().getFirstName() + " " + s.getDoctor().getLastName()
+                    : s.getNurse().getFirstName() + " " + s.getNurse().getLastName();
+
+            String roomName = s.getRoom() != null ? s.getRoom().getRoomName() : "Chưa có phòng";
+            String timeLabel = getFixedTimeFromStartTime(s.getStartTime());
             ev.put("id", s.getId());
             ev.put("title", s.getDoctor() != null ? s.getDoctor().getFirstName() + " " +  s.getDoctor().getLastName() : s.getNurse().getFirstName() + " " +  s.getNurse().getLastName());
             ev.put("start", s.getStartTime().toString());
@@ -46,6 +54,9 @@ public class AdminShiftController {
             ev.put("fixedTime", getFixedTimeFromStartTime(s.getStartTime()));
             ev.put("doctorId", s.getDoctor() != null ? s.getDoctor().getId() : null);
             ev.put("nurseId", s.getNurse() != null ? s.getNurse().getId() : null);
+            ev.put("roomId", s.getRoom() != null ? s.getRoom().getId() : null);
+            ev.put("roomName", s.getRoom() != null ? s.getRoom().getRoomName() : null);
+            ev.put("title", timeLabel + " - " + fullName + " - " + roomName);
             return ev;
         }).collect(Collectors.toList());
     }
@@ -82,6 +93,13 @@ public class AdminShiftController {
         shift.setStartTime(shiftStart);
         shift.setEndTime(shiftEnd);
 
+        Long roomId = formData.get("roomId") != null && !formData.get("roomId").isEmpty()
+                ? Long.valueOf(formData.get("roomId")) : null;
+
+        if (roomId != null) {
+            shift.setRoom(roomRepository.findById(roomId).orElse(null));
+        }
+
         if (doctorId != null) {
             shift.setDoctor(doctorRepository.findById(doctorId).orElse(null));
             shift.setNurse(null);
@@ -98,6 +116,8 @@ public class AdminShiftController {
     }
 
 
+    @Autowired
+    private RoomRepository roomRepository;
     @PostMapping("/api/delete/{id}")
     @ResponseBody
     public void deleteShift(@PathVariable Long id) {
@@ -132,6 +152,7 @@ public class AdminShiftController {
         model.addAttribute("totalPages", shifts.getTotalPages());
         model.addAttribute("doctors", doctorRepository.findAll());
         model.addAttribute("nurses", nurseRepository.findAll());
+        model.addAttribute("rooms", roomRepository.findAll());
         model.addAttribute("selectedDoctorId", doctorId);
         model.addAttribute("selectedNurseId", nurseId);
         model.addAttribute("selectedDate", date);
