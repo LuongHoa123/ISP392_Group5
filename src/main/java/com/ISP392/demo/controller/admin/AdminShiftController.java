@@ -3,6 +3,7 @@ package com.ISP392.demo.controller.admin;
 import com.ISP392.demo.entity.ShiftEntity;
 import com.ISP392.demo.repository.DoctorRepository;
 import com.ISP392.demo.repository.NurseRepository;
+import com.ISP392.demo.repository.RoomRepository;
 import com.ISP392.demo.repository.ShiftRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,18 +35,33 @@ public class AdminShiftController {
     private DoctorRepository doctorRepository;
     @Autowired
     private NurseRepository nurseRepository;
+    @Autowired
+    private RoomRepository roomRepository;
+    
     @GetMapping("/api")
     @ResponseBody
     public List<Map<String, Object>> getShifts() {
         return shiftRepository.findAll().stream().map(s -> {
             Map<String, Object> ev = new HashMap<>();
             ev.put("id", s.getId());
-            ev.put("title", s.getDoctor() != null ? s.getDoctor().getFirstName() + " " +  s.getDoctor().getLastName() : s.getNurse().getFirstName() + " " +  s.getNurse().getLastName());
+            
+            // Create title with person and room info
+            String personInfo = "";
+            if (s.getDoctor() != null) {
+                personInfo = s.getDoctor().getFirstName() + " " + s.getDoctor().getLastName() + " (BS)";
+            } else if (s.getNurse() != null) {
+                personInfo = s.getNurse().getFirstName() + " " + s.getNurse().getLastName() + " (YT)";
+            }
+            
+            String roomInfo = s.getRoom() != null ? " - " + s.getRoom().getRoomName() : "";
+            ev.put("title", personInfo + roomInfo);
+            
             ev.put("start", s.getStartTime().toString());
             ev.put("end", s.getEndTime().toString());
             ev.put("fixedTime", getFixedTimeFromStartTime(s.getStartTime()));
             ev.put("doctorId", s.getDoctor() != null ? s.getDoctor().getId() : null);
             ev.put("nurseId", s.getNurse() != null ? s.getNurse().getId() : null);
+            ev.put("roomId", s.getRoom() != null ? s.getRoom().getId() : null);
             return ev;
         }).collect(Collectors.toList());
     }
@@ -72,16 +88,28 @@ public class AdminShiftController {
                 ? Long.valueOf(formData.get("doctorId")) : null;
         Long nurseId = formData.get("nurseId") != null && !formData.get("nurseId").isEmpty()
                 ? Long.valueOf(formData.get("nurseId")) : null;
+        Long roomId = formData.get("roomId") != null && !formData.get("roomId").isEmpty()
+                ? Long.valueOf(formData.get("roomId")) : null;
 
+        // Check for conflicts
         List<ShiftEntity> conflicts = shiftRepository.findConflictingShifts(doctorId, nurseId, shiftStart, shiftEnd, id);
         if (!conflicts.isEmpty()) {
             return ResponseEntity.badRequest().body("Đã tồn tại ca làm trùng thời gian cho bác sĩ hoặc y tá.");
+        }
+
+        // Check room conflicts
+        if (roomId != null) {
+            List<ShiftEntity> roomConflicts = shiftRepository.findRoomConflictingShifts(roomId, shiftStart, shiftEnd, id);
+            if (!roomConflicts.isEmpty()) {
+                return ResponseEntity.badRequest().body("Phòng đã được sử dụng trong thời gian này.");
+            }
         }
 
         ShiftEntity shift = id != null ? shiftRepository.findById(id).orElse(new ShiftEntity()) : new ShiftEntity();
         shift.setStartTime(shiftStart);
         shift.setEndTime(shiftEnd);
 
+        // Set person
         if (doctorId != null) {
             shift.setDoctor(doctorRepository.findById(doctorId).orElse(null));
             shift.setNurse(null);
@@ -91,6 +119,13 @@ public class AdminShiftController {
         } else {
             shift.setDoctor(null);
             shift.setNurse(null);
+        }
+
+        // Set room
+        if (roomId != null) {
+            shift.setRoom(roomRepository.findById(roomId).orElse(null));
+        } else {
+            shift.setRoom(null);
         }
 
         shiftRepository.save(shift);
@@ -132,6 +167,7 @@ public class AdminShiftController {
         model.addAttribute("totalPages", shifts.getTotalPages());
         model.addAttribute("doctors", doctorRepository.findAll());
         model.addAttribute("nurses", nurseRepository.findAll());
+        model.addAttribute("rooms", roomRepository.findAll());
         model.addAttribute("selectedDoctorId", doctorId);
         model.addAttribute("selectedNurseId", nurseId);
         model.addAttribute("selectedDate", date);
@@ -149,6 +185,4 @@ public class AdminShiftController {
         }
         return "UNKNOWN";
     }
-
-
 }

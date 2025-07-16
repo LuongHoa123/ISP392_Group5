@@ -24,19 +24,51 @@
                 </ol>
             </nav>
         </div>
+        
         <div class="row">
             <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Thông tin phòng</h4>
 
+                        <!-- Debug information -->
+                        <div class="alert alert-info" style="font-size: 12px;">
+                            <strong>Debug:</strong> 
+                            Room Name: <span th:text="${room.roomName}">N/A</span> | 
+                            Floor: <span th:text="${room.floor}">N/A</span> | 
+                            Room Type: <span th:text="${room.roomType}">N/A</span>
+                        </div>
+
+                        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                            [[${errorMessage}]]
+                        </div>
+                        
+                        <div th:if="${successMessage}" class="alert alert-success" role="alert">
+                            [[${successMessage}]]
+                        </div>
+
                         <form class="forms-sample"
                               th:action="@{'/admin/room/update/' + ${room.id}}"
                               th:object="${room}" method="post">
 
                             <div class="form-group">
-                                <label for="roomName">Tên phòng <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" th:field="*{roomName}" placeholder="Tên phòng" required>
+                                <label for="floor">Tầng <span class="text-danger">*</span></label>
+                                <select class="form-control" id="floorSelect" th:field="*{floor}" onchange="updateRoomOptions()" required>
+                                    <option value="">Chọn tầng</option>
+                                    <option value="1">Tầng 1</option>
+                                    <option value="2">Tầng 2</option>
+                                    <option value="3">Tầng 3</option>
+                                    <option value="4">Tầng 4</option>
+                                    <option value="5">Tầng 5</option>
+                                </select>
+                                <div class="text-danger" th:if="${#fields.hasErrors('floor')}" th:errors="*{floor}"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="roomName">Số phòng <span class="text-danger">*</span></label>
+                                <select class="form-control" id="roomNameSelect" th:field="*{roomName}" required>
+                                    <option value="">Chọn số phòng</option>
+                                </select>
                                 <div class="text-danger" th:if="${#fields.hasErrors('roomName')}" th:errors="*{roomName}"></div>
                             </div>
 
@@ -55,85 +87,81 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="location">Vị trí <span class="text-danger">*</span></label>
-                                <select class="form-control" th:field="*{location}" required>
-                                    <option value="">Chọn tầng</option>
-                                    <option value="Tầng 1">Tầng 1</option>
-                                    <option value="Tầng 2">Tầng 2</option>
-                                    <option value="Tầng 3">Tầng 3</option>
-                                </select>
-                                <div class="text-danger" th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="doctor">Bác sĩ phụ trách <span class="text-danger">*</span></label>
-                                <select class="form-control" id="doctorSelect" th:field="*{primaryDoctor}" onchange="updateDoctorPhone()" required>
-                                    <option value="">Chọn bác sĩ</option>
-                                    <option th:each="doc : ${doctors}" 
-                                            th:value="${doc.id}"
-                                            th:text="${doc.firstName + ' ' + doc.lastName + ' - ' + doc.specialization}"
-                                            th:attr="data-phone=${doc.phoneNumber}">
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Số điện thoại bác sĩ</label>
-                                <input type="text" class="form-control" th:field="*{phoneNumber}" readonly>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="primaryNurse">Y tá phụ trách</label>
-                                <select class="form-control" id="nurseSelect" th:field="*{primaryNurse}" onchange="updateNursePhone()">
-                                    <option value="">Chọn y tá</option>
-                                    <option th:each="nurse : ${nurses}" 
-                                            th:value="${nurse.id}"
-                                            th:text="${nurse.firstName + ' ' + nurse.lastName}"
-                                            th:attr="data-phone=${nurse.phoneNumber}">
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Số điện thoại y tá</label>
-                                <input type="text" class="form-control" id="nursePhoneNumber" readonly>
-                            </div>
-
-                            <div class="form-group">
                                 <label for="description">Mô tả</label>
-                                <textarea class="form-control" th:field="*{description}" rows="3" placeholder="Mô tả chi tiết"></textarea>
+                                <textarea class="form-control" th:field="*{description}" rows="3" placeholder="Mô tả chi tiết về phòng khám"></textarea>
                                 <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
                             </div>
 
                             <button type="submit" class="btn btn-gradient-primary">Cập nhật</button>
                             <a th:href="@{/admin/room}" class="btn btn-light">Hủy</a>
-
-                            <script>
-                            function updateDoctorPhone() {
-                                var select = document.getElementById('doctorSelect');
-                                var selectedOption = select.options[select.selectedIndex];
-                                var phone = selectedOption.getAttribute('data-phone') || '';
-                                document.getElementsByName('phoneNumber')[0].value = phone;
-                            }
-
-                            function updateNursePhone() {
-                                var select = document.getElementById('nurseSelect');
-                                var selectedOption = select.options[select.selectedIndex];
-                                var phone = selectedOption.getAttribute('data-phone') || '';
-                                document.getElementById('nursePhoneNumber').value = phone;
-                            }
-
-                            // Tự động điền số điện thoại khi trang load
-                            window.onload = function() {
-                                updateDoctorPhone();
-                                updateNursePhone();
-                            }
-                            </script>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+
+        <script>
+        function updateRoomOptions() {
+            var floorSelect = document.getElementById('floorSelect');
+            var roomSelect = document.getElementById('roomNameSelect');
+            var selectedFloor = floorSelect.value;
+            var currentRoomName = roomSelect.getAttribute('data-current-value') || '';
+            
+            if (selectedFloor) {
+                // Generate room options for selected floor
+                var roomOptions = '<option value="">Chọn số phòng</option>';
+                for (var i = 1; i <= 5; i++) {
+                    var roomNumber = 'P' + selectedFloor + (i < 10 ? '0' + i : i);
+                    var selected = (roomNumber === currentRoomName) ? 'selected' : '';
+                    roomOptions += '<option value="' + roomNumber + '" ' + selected + '>' + roomNumber + '</option>';
+                }
+                
+                // Update room select options
+                roomSelect.innerHTML = roomOptions;
+                
+                // Set the current value back if it matches the floor
+                if (currentRoomName && currentRoomName.startsWith('P' + selectedFloor)) {
+                    roomSelect.value = currentRoomName;
+                }
+            } else {
+                roomSelect.innerHTML = '<option value="">Vui lòng chọn tầng trước</option>';
+            }
+        }
+
+        // Initialize room options when page loads
+        window.onload = function() {
+            var roomSelect = document.getElementById('roomNameSelect');
+            var floorSelect = document.getElementById('floorSelect');
+            var roomTypeSelect = document.querySelector('select[name="roomType"]');
+            
+            var currentRoomValue = roomSelect.value;
+            var currentFloorValue = floorSelect.value;
+            
+            console.log('=== EDIT FORM DEBUG ===');
+            console.log('Current room value:', currentRoomValue);
+            console.log('Current floor value:', currentFloorValue);
+            console.log('Current room type:', roomTypeSelect ? roomTypeSelect.value : 'not found');
+            
+            // Store current room name for later use
+            roomSelect.setAttribute('data-current-value', currentRoomValue);
+            
+            // If we have a current room value but no floor, extract floor from room name
+            if (currentRoomValue && currentRoomValue.startsWith('P') && !currentFloorValue) {
+                // Extract floor from room name: P101->1, P201->2, P301->3, etc.
+                var floorNumber = currentRoomValue.substring(1, 2);
+                
+                console.log('Extracted floor from room name:', floorNumber);
+                
+                // Set floor value and trigger update
+                floorSelect.value = floorNumber;
+                updateRoomOptions();
+            } else if (currentFloorValue) {
+                // If floor is already set, just update room options
+                console.log('Floor already set, updating room options');
+                updateRoomOptions();
+            }
+        }
+        </script>
     </th:block>
 </th:block>
 

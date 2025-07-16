@@ -1,9 +1,11 @@
 package com.ISP392.demo.controller.admin;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,9 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.ISP392.demo.entity.LogsEntity;
 import com.ISP392.demo.entity.RoomEntity;
 import com.ISP392.demo.entity.UserEntity;
-import com.ISP392.demo.repository.DoctorRepository;
 import com.ISP392.demo.repository.LogsRepository;
-import com.ISP392.demo.repository.NurseRepository;
 import com.ISP392.demo.repository.RoomRepository;
 import com.ISP392.demo.repository.UserRepository;
 
@@ -40,14 +40,7 @@ public class AdminRoomController {
     private UserRepository userRepository;
 
     @Autowired
-    private DoctorRepository doctorRepository;
-
-    @Autowired
-    private NurseRepository nurseRepository;
-
-    @Autowired
     private LogsRepository logsRepository;
-
 
     private void saveLog(String content) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -75,47 +68,77 @@ public class AdminRoomController {
                     .filter(room ->
                             (room.getRoomName() != null && room.getRoomName().toLowerCase().contains(lowerKeyword)) ||
                                     (room.getRoomType() != null && room.getRoomType().toLowerCase().contains(lowerKeyword)) ||
-                                    (room.getLocation() != null && room.getLocation().toLowerCase().contains(lowerKeyword)) ||
+                                    (room.getFloor() != null && room.getFloor().toString().contains(lowerKeyword)) ||
                                     (room.getDescription() != null && room.getDescription().toLowerCase().contains(lowerKeyword))
                     )
                     .collect(Collectors.toList());
         }
+        
         // Tính toán phân trang
         int totalItems = allRooms.size();
         int totalPages = (int) Math.ceil((double) totalItems / size);
+        
         // Cắt dữ liệu theo trang
         int start = Math.min(page * size, totalItems);
         int end = Math.min(start + size, totalItems);
 
         List<RoomEntity> rooms = allRooms.subList(start, end);
-        //Truyền dữ liệu cho View
-        model.addAttribute("rooms", rooms);           // Danh sách phòng hiện tại
-        model.addAttribute("search", keyword);        // Từ khóa tìm kiếm
-        model.addAttribute("currentPage", page);      // Trang hiện tại
-        model.addAttribute("totalPages", totalPages); // Tổng số trang
+        
+        // Truyền dữ liệu cho View
+        model.addAttribute("rooms", rooms);           
+        model.addAttribute("search", keyword);        
+        model.addAttribute("currentPage", page);      
+        model.addAttribute("totalPages", totalPages); 
 
         return "admin/room/list";
     }
 
     @GetMapping("/add")
     public String addRoomForm(Model model) {
-    model.addAttribute("room", new RoomEntity());              // Object rỗng cho form
-    model.addAttribute("doctors", doctorRepository.findAll()); // Danh sách bác sĩ
-    model.addAttribute("nurses", nurseRepository.findAll());   // Danh sách y tá
-    return "admin/room/add";
-}
+        model.addAttribute("room", new RoomEntity());
+        return "admin/room/add";
+    }
+
+    // API endpoint to get available room numbers for a specific floor
+    @GetMapping("/api/available-rooms")
+    public String getAvailableRooms(@RequestParam Integer floor, Model model) {
+        List<String> occupiedRooms = roomRepository.findAll().stream()
+                .filter(room -> room.getFloor().equals(floor))
+                .map(RoomEntity::getRoomName)
+                .collect(Collectors.toList());
+
+        List<String> availableRooms = IntStream.rangeClosed(1, 5)
+                .mapToObj(i -> "P" + floor + String.format("%02d", i))
+                .filter(roomName -> !occupiedRooms.contains(roomName))
+                .collect(Collectors.toList());
+
+        model.addAttribute("availableRooms", availableRooms);
+        return "fragments/room-options :: roomOptions";
+    }
 
     @PostMapping("/save")
     public String saveRoom(@ModelAttribute("room") @Valid RoomEntity room,
                            BindingResult result,
-                           Model model) {
+                           Model model,
+                           RedirectAttributes redirectAttributes) {
+        
+        // Check if room name already exists
+        Optional<RoomEntity> existingRoom = roomRepository.findAll().stream()
+                .filter(r -> r.getRoomName().equals(room.getRoomName()))
+                .findFirst();
+        
+        if (existingRoom.isPresent()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Tên phòng đã tồn tại!");
+            return "redirect:/admin/room/add";
+        }
+
         if (result.hasErrors()) {
-            model.addAttribute("doctors", doctorRepository.findAll());
-            model.addAttribute("nurses", nurseRepository.findAll());
             return "admin/room/add";
         }
-        saveLog("Thêm phòng " + room.getRoomName() + " ở vị trí " + room.getLocation());
+        
+        saveLog("Thêm phòng " + room.getRoomName() + " ở tầng " + room.getFloor());
         roomRepository.save(room);
+        redirectAttributes.addFlashAttribute("successMessage", "Thêm phòng thành công!");
         return "redirect:/admin/room?add=true";
     }
 
@@ -124,8 +147,6 @@ public class AdminRoomController {
         Optional<RoomEntity> optional = roomRepository.findById(id);
         if (optional.isPresent()) {
             model.addAttribute("room", optional.get());
-            model.addAttribute("doctors", doctorRepository.findAll());
-            model.addAttribute("nurses", nurseRepository.findAll());
             return "admin/room/edit";
         }
         return "redirect:/admin/room";
@@ -135,17 +156,27 @@ public class AdminRoomController {
     public String updateRoom(@PathVariable("id") Long id,
                              @ModelAttribute("room") @Valid RoomEntity room,
                              BindingResult result,
-                             Model model) {
+                             Model model,
+                             RedirectAttributes redirectAttributes) {
+        
+        // Check if room name already exists for other rooms
+        Optional<RoomEntity> existingRoom = roomRepository.findAll().stream()
+                .filter(r -> r.getRoomName().equals(room.getRoomName()) && !r.getId().equals(id))
+                .findFirst();
+        
+        if (existingRoom.isPresent()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Tên phòng đã tồn tại!");
+            return "redirect:/admin/room/edit/" + id;
+        }
+
         if (result.hasErrors()) {
-            model.addAttribute("doctors", doctorRepository.findAll());
-            model.addAttribute("nurses", nurseRepository.findAll());
             return "admin/room/edit";
         }
 
         room.setId(id);
         roomRepository.save(room);
-        saveLog("Cập nhật thông tin phòng có id " + room.getId());
-
+        saveLog("Cập nhật thông tin phòng " + room.getRoomName());
+        redirectAttributes.addFlashAttribute("successMessage", "Cập nhật phòng thành công!");
         return "redirect:/admin/room?edit=true";
     }
 
@@ -155,13 +186,8 @@ public class AdminRoomController {
             Optional<RoomEntity> roomOptional = roomRepository.findById(id);
             if (roomOptional.isPresent()) {
                 RoomEntity room = roomOptional.get();
-                room.setPrimaryDoctor(null);
-                room.setPrimaryNurse(null);
-                room.setPhoneNumber(null);
-                roomRepository.save(room);
                 roomRepository.delete(room);
-                saveLog("Xoá phòng có id " + room.getId());
-
+                saveLog("Xoá phòng " + room.getRoomName());
                 redirectAttributes.addFlashAttribute("successMessage", "Xóa phòng thành công!");
                 return "redirect:/admin/room?delete=true";
             }

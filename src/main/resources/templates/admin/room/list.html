@@ -53,34 +53,49 @@
                         <thead class="thead-dark">
                         <tr>
                             <th>#</th>
-                            <th>Tên phòng</th>
-                            <th>Loại phòng</th>
+                            <th>Số phòng</th>
                             <th>Tầng</th>
-                            <th>Bác sĩ phụ trách</th>
-                            <th>Y tá phụ trách</th>
-                            <th>Số điện thoại</th>
+                            <th>Loại phòng</th>
+                            <th>Mô tả</th>
                             <th>Hành động</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="room, iterStat : ${rooms}">
-                            <td th:text="${iterStat.index + 1}"></td>
-                            <td th:text="${room.roomName}"></td>
+                            <td th:text="${iterStat.index + 1 + (currentPage * 5)}"></td>
+                            <td>
+                                <span class="badge badge-primary" th:text="${room.roomName}"></span>
+                            </td>
+                            <td>
+                                <span class="badge badge-info">Tầng [[${room.floor}]]</span>
+                            </td>
                             <td th:text="${room.roomType}"></td>
-                            <td th:text="${room.location}"></td>
-                            <td th:text="${room.primaryDoctor != null ? room.primaryDoctor.firstName + ' ' + room.primaryDoctor.lastName : '---'}"></td>
-                            <td th:text="${room.primaryNurse != null ? room.primaryNurse.firstName + ' ' + room.primaryNurse.lastName : '---'}"></td>
-                            <td th:text="${room.phoneNumber != null ? room.phoneNumber : '---'}"></td>
+                            <td>
+                                <span th:text="${room.description != null and !#strings.isEmpty(room.description) ? room.description : 'Chưa có mô tả'}"
+                                      th:class="${room.description != null and !#strings.isEmpty(room.description) ? '' : 'text-muted'}"></span>
+                            </td>
                             <td>
                                 <a class="btn btn-warning btn-sm"
-                                   th:href="@{'/admin/room/edit/' + ${room.id}}">Sửa</a>
+                                   th:href="@{'/admin/room/edit/' + ${room.id}}">
+                                   <i class="mdi mdi-pencil"></i> Sửa
+                                </a>
                                 <a class="btn btn-danger btn-sm"
                                    th:href="@{'/admin/room/delete/' + ${room.id}}"
-                                   onclick="return confirm('Bạn có chắc chắn muốn xóa phòng này không?');">Xoá</a>
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa phòng này không?');">
+                                   <i class="mdi mdi-delete"></i> Xoá
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(rooms)}">
+                            <td colspan="6" class="text-center text-muted">
+                                <i class="mdi mdi-information-outline"></i>
+                                Không có phòng nào được tìm thấy
                             </td>
                         </tr>
                         </tbody>
                     </table>
+
+                    <!-- Phân trang -->
                     <nav th:if="${totalPages > 1}">
                         <ul class="pagination justify-content-center mt-3">
                             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">

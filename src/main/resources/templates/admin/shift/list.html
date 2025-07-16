@@ -2,7 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Quản lý lịch trực</title>
+    <title>Quản lý lịch làm việc</title>
 
     <!-- FullCalendar -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet"/>
@@ -53,6 +53,15 @@
                             </div>
 
                             <div class="mb-3">
+                                <label>Số phòng</label>
+                                <select name="roomId" id="roomSelect" class="form-select">
+                                    <option value="">-- Chọn phòng --</option>
+                                    <option th:each="r : ${rooms}" th:value="${r.id}"
+                                            th:text="${r.roomName + ' - ' + r.roomType + ' (Tầng ' + r.floor + ')'}"></option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
                                 <label>Bác sĩ</label>
                                 <select name="doctorId" id="doctorSelect" class="form-select">
                                     <option value="">-- Chọn bác sĩ --</option>
@@ -72,137 +81,120 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Lưu</button>
-                            <button type="button" class="btn btn-danger" id="deleteShiftBtn" style="display:none;">Xoá
+                            <button type="button" class="btn btn-danger" id="deleteBtn" style="display: none;">
+                                <i class="mdi mdi-delete"></i> Xóa
                             </button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            <button type="submit" class="btn btn-primary">Lưu</button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
-    </th:block>
-</th:block>
-<!-- JS Calendar -->
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        function showSuccessToast(message = "Thao tác thành công!") {
-            const toastEl = document.getElementById('successToast');
-            toastEl.querySelector('.toast-body').textContent = message;
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const calendarEl = document.getElementById('calendar');
+                const modal = new bootstrap.Modal(document.getElementById('shiftModal'));
+                const deleteBtn = document.getElementById('deleteBtn');
 
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
-        }
+                const calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    events: '/admin/shift/api',
+                    selectable: true,
+                    select: function(info) {
+                        openModal(null, info.startStr);
+                    },
+                    eventClick: function(info) {
+                        // Khi click vào event thì mở modal chỉnh sửa
+                        openModal(info.event);
+                    }
+                });
 
-        function showErrorToast(message) {
-            const toastEl = document.getElementById('errorToast');
-            toastEl.querySelector('.toast-body').textContent = message;
-            new bootstrap.Toast(toastEl).show();
-        }
+                calendar.render();
 
-        const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-            initialView: 'dayGridMonth',
-            locale: 'vi',
-            selectable: true,
+                function openModal(event, selectedDate = null) {
+                    const form = document.getElementById('shiftForm');
+                    form.reset();
 
-            dateClick: function (info) {
-                openModalForAdd(info.dateStr);
-            },
-
-            eventClick: function (info) {
-                openModalForEdit(info.event);
-            },
-
-            events: '/admin/shift/api'
-        });
-
-        calendar.render();
-
-        function openModalForAdd(dateStr) {
-            resetModal();
-            document.getElementById('shiftDate').value = dateStr;
-            document.getElementById('modalTitle').textContent = 'Thêm ca trực';
-            document.getElementById('deleteShiftBtn').style.display = 'none';
-            new bootstrap.Modal(document.getElementById('shiftModal')).show();
-        }
-
-        function openModalForEdit(event) {
-            resetModal();
-            document.getElementById('modalTitle').textContent = 'Sửa ca trực';
-
-            document.getElementById('shiftId').value = event.id;
-
-            document.getElementById('shiftDate').value = event.startStr;
-            document.getElementById('fixedTime').value = event.extendedProps.fixedTime;
-            document.getElementById('doctorSelect').value = event.extendedProps.doctorId || '';
-            document.getElementById('nurseSelect').value = event.extendedProps.nurseId || '';
-
-            document.getElementById('deleteShiftBtn').style.display = 'inline-block';
-            new bootstrap.Modal(document.getElementById('shiftModal')).show();
-        }
-
-
-        function resetModal() {
-            document.getElementById('shiftForm').reset();
-            document.getElementById('shiftId').value = '';
-        }
-
-        document.getElementById('deleteShiftBtn').addEventListener('click', function () {
-            const id = document.getElementById('shiftId').value;
-            if (confirm('Bạn có chắc muốn xoá ca trực này?')) {
-                fetch('/admin/shift/api/delete/' + id, {method: 'POST'})
-                    .then(() => {
-                        bootstrap.Modal.getInstance(document.getElementById('shiftModal')).hide();
-                        calendar.refetchEvents();
-                        showSuccessToast("Xoá ca trực thành công!");
-                    });
-            }
-        });
-        document.getElementById('shiftForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-
-            fetch('/admin/shift/api/save', {
-                method: 'POST',
-                body: formData
-            })
-                .then(async response => {
-                    if (!response.ok) {
-                        const errorMessage = await response.text();
-                        showErrorToast(errorMessage);
-                        return;
+                    if (event) {
+                        // Edit mode - hiện nút xóa
+                        document.getElementById('modalTitle').textContent = 'Chỉnh sửa ca trực';
+                        document.getElementById('shiftId').value = event.id;
+                        document.getElementById('shiftDate').value = event.start.toISOString();
+                        document.getElementById('fixedTime').value = event.extendedProps.fixedTime;
+                        document.getElementById('doctorSelect').value = event.extendedProps.doctorId || '';
+                        document.getElementById('nurseSelect').value = event.extendedProps.nurseId || '';
+                        document.getElementById('roomSelect').value = event.extendedProps.roomId || '';
+                        deleteBtn.style.display = 'inline-block';
+                        
+                        // Gán sự kiện xóa cho nút delete
+                        deleteBtn.onclick = function() {
+                            if (confirm('Bạn có muốn xóa ca trực này không?')) {
+                                deleteShift(event.id);
+                            }
+                        };
+                    } else {
+                        // Add mode - ẩn nút xóa
+                        document.getElementById('modalTitle').textContent = 'Thêm ca trực';
+                        document.getElementById('shiftId').value = '';
+                        document.getElementById('shiftDate').value = selectedDate;
+                        deleteBtn.style.display = 'none';
+                        deleteBtn.onclick = null;
                     }
 
-                    bootstrap.Modal.getInstance(document.getElementById('shiftModal')).hide();
-                    calendar.refetchEvents();
-                    showSuccessToast("Lưu ca trực thành công!");
-                })
-                .catch(error => {
-                    console.error('Lỗi mạng hoặc lỗi khác:', error);
-                    showErrorToast("Đã xảy ra lỗi, vui lòng thử lại.");
+                    modal.show();
+                }
+
+                // Hàm xóa ca trực
+                function deleteShift(shiftId) {
+                    fetch('/admin/shift/api/delete/' + shiftId, {
+                        method: 'POST'
+                    })
+                    .then(() => {
+                        modal.hide();
+                        calendar.refetchEvents();
+                        alert('Xóa thành công!');
+                    })
+                    .catch(error => {
+                        alert('Lỗi khi xóa: ' + error);
+                    });
+                }
+
+                // Form submission
+                document.getElementById('shiftForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(this);
+                    
+                    fetch('/admin/shift/api/save', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.text();
+                        } else {
+                            return response.text().then(text => Promise.reject(text));
+                        }
+                    })
+                    .then(data => {
+                        modal.hide();
+                        calendar.refetchEvents();
+                        alert('Lưu thành công!');
+                    })
+                    .catch(error => {
+                        alert('Lỗi: ' + error);
+                    });
                 });
-        });
-
-    });
-</script>
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
-    <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body">
-                Thao tác thành công!
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-    </div>
-
-    <div id="errorToast" class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-body">Có lỗi!</div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-
-</div>
-
+            });
+        </script>
+    </th:block>
+</th:block>
 </body>
 </html>

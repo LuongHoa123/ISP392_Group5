@@ -17,9 +17,11 @@ import java.util.List;
 public interface ShiftRepository extends JpaRepository<ShiftEntity, Long> {
     Page<ShiftEntity> findByDoctorId(Long id, Pageable pageable);
     Page<ShiftEntity> findByNurseId(Long id, Pageable pageable);
+    Page<ShiftEntity> findByRoomId(Long id, Pageable pageable);
     Page<ShiftEntity> findByStartTimeBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
     Page<ShiftEntity> findByDoctorIdAndStartTimeBetween(Long doctorId, LocalDateTime start, LocalDateTime end, Pageable pageable);
     Page<ShiftEntity> findByNurseIdAndStartTimeBetween(Long nurseId, LocalDateTime start, LocalDateTime end, Pageable pageable);
+    Page<ShiftEntity> findByRoomIdAndStartTimeBetween(Long roomId, LocalDateTime start, LocalDateTime end, Pageable pageable);
 
     @Query("SELECT s FROM ShiftEntity s WHERE " +
             "((:doctorId IS NOT NULL AND s.doctor.id = :doctorId) OR " +
@@ -32,4 +34,12 @@ public interface ShiftRepository extends JpaRepository<ShiftEntity, Long> {
                                             @Param("endTime") LocalDateTime endTime,
                                             @Param("currentId") Long currentId);
 
+    @Query("SELECT s FROM ShiftEntity s WHERE " +
+            "s.room.id = :roomId AND " +
+            "((s.startTime < :endTime AND s.endTime > :startTime)) AND " +
+            "(:currentId IS NULL OR s.id <> :currentId)")
+    List<ShiftEntity> findRoomConflictingShifts(@Param("roomId") Long roomId,
+                                                @Param("startTime") LocalDateTime startTime,
+                                                @Param("endTime") LocalDateTime endTime,
+                                                @Param("currentId") Long currentId);
 }

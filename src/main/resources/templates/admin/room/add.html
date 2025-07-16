@@ -30,10 +30,31 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Thông tin phòng khám</h4>
+                        
+                        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                            [[${errorMessage}]]
+                        </div>
+                        
                         <form class="forms-sample" th:action="@{/admin/room/save}" th:object="${room}" method="post">
+                            
                             <div class="form-group">
-                                <label for="roomName">Tên phòng <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" th:field="*{roomName}" placeholder="Tên phòng" required>
+                                <label for="floor">Tầng <span class="text-danger">*</span></label>
+                                <select class="form-control" id="floorSelect" th:field="*{floor}" onchange="updateRoomOptions()" required>
+                                    <option value="">Chọn tầng</option>
+                                    <option value="1">Tầng 1</option>
+                                    <option value="2">Tầng 2</option>
+                                    <option value="3">Tầng 3</option>
+                                    <option value="4">Tầng 4</option>
+                                    <option value="5">Tầng 5</option>
+                                </select>
+                                <div class="text-danger" th:if="${#fields.hasErrors('floor')}" th:errors="*{floor}"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="roomName">Số phòng <span class="text-danger">*</span></label>
+                                <select class="form-control" id="roomNameSelect" th:field="*{roomName}" required disabled>
+                                    <option value="">Vui lòng chọn tầng trước</option>
+                                </select>
                                 <div class="text-danger" th:if="${#fields.hasErrors('roomName')}" th:errors="*{roomName}"></div>
                             </div>
 
@@ -52,53 +73,8 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="location">Vị trí <span class="text-danger">*</span></label>
-                                <select class="form-control" th:field="*{location}" required>
-                                    <option value="">Chọn tầng</option>
-                                    <option value="Tầng 1">Tầng 1</option>
-                                    <option value="Tầng 2">Tầng 2</option>
-                                    <option value="Tầng 3">Tầng 3</option>
-                                </select>
-                                <div class="text-danger" th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="primaryDoctor">Bác sĩ phụ trách <span class="text-danger">*</span></label>
-                                <select class="form-control" id="doctorSelect" th:field="*{primaryDoctor}" onchange="updateDoctorPhone()" required>
-                                    <option value="">Chọn bác sĩ</option>
-                                    <option th:each="doc : ${doctors}" 
-                                            th:value="${doc.id}"
-                                            th:text="${doc.firstName + ' ' + doc.lastName + ' - ' + doc.specialization}"
-                                            th:attr="data-phone=${doc.phoneNumber}">
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Số điện thoại bác sĩ</label>
-                                <input type="text" class="form-control" th:field="*{phoneNumber}" readonly>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="primaryNurse">Y tá phụ trách</label>
-                                <select class="form-control" id="nurseSelect" th:field="*{primaryNurse}" onchange="updateNursePhone()">
-                                    <option value="">Chọn y tá</option>
-                                    <option th:each="nurse : ${nurses}" 
-                                            th:value="${nurse.id}"
-                                            th:text="${nurse.firstName + ' ' + nurse.lastName}"
-                                            th:attr="data-phone=${nurse.phoneNumber}">
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Số điện thoại y tá</label>
-                                <input type="text" class="form-control" id="nursePhoneNumber" readonly>
-                            </div>
-
-                            <div class="form-group">
                                 <label for="description">Mô tả</label>
-                                <textarea class="form-control" th:field="*{description}" rows="3" placeholder="Mô tả chi tiết"></textarea>
+                                <textarea class="form-control" th:field="*{description}" rows="3" placeholder="Mô tả chi tiết về phòng khám"></textarea>
                                 <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
                             </div>
 
@@ -111,18 +87,32 @@
         </div>
 
         <script>
-        function updateDoctorPhone() {
-            var select = document.getElementById('doctorSelect');
-            var selectedOption = select.options[select.selectedIndex];
-            var phone = selectedOption.getAttribute('data-phone') || '';
-            document.getElementsByName('phoneNumber')[0].value = phone;
-        }
-
-        function updateNursePhone() {
-            var select = document.getElementById('nurseSelect');
-            var selectedOption = select.options[select.selectedIndex];
-            var phone = selectedOption.getAttribute('data-phone') || '';
-            document.getElementById('nursePhoneNumber').value = phone;
+        function updateRoomOptions() {
+            var floorSelect = document.getElementById('floorSelect');
+            var roomSelect = document.getElementById('roomNameSelect');
+            var selectedFloor = floorSelect.value;
+            
+            if (selectedFloor) {
+                // Enable room select
+                roomSelect.disabled = false;
+                
+                // Clear current options
+                roomSelect.innerHTML = '<option value="">Đang tải...</option>';
+                
+                // Generate room options for selected floor
+                var roomOptions = '<option value="">Chọn số phòng</option>';
+                for (var i = 1; i <= 5; i++) {
+                    var roomNumber = 'P' + selectedFloor + (i < 10 ? '0' + i : i);
+                    roomOptions += '<option value="' + roomNumber + '">' + roomNumber + '</option>';
+                }
+                
+                // Update room select options
+                roomSelect.innerHTML = roomOptions;
+            } else {
+                // Disable room select if no floor selected
+                roomSelect.disabled = true;
+                roomSelect.innerHTML = '<option value="">Vui lòng chọn tầng trước</option>';
+            }
         }
         </script>
     </th:block>
