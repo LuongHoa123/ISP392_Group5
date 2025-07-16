@@ -96,7 +96,7 @@ CREATE TABLE `appointments` (
   CONSTRAINT `FKhh1fyvidiepmkl061yee7n7ow` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`id`),
   CONSTRAINT `FKmse9k77i553sdeply5we7hci3` FOREIGN KEY (`recep_id`) REFERENCES `receptionists` (`id`),
   CONSTRAINT `FKmujeo4tymoo98cmf7uj3vsv76` FOREIGN KEY (`doctor_id`) REFERENCES `doctors` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -105,7 +105,7 @@ CREATE TABLE `appointments` (
 
 LOCK TABLES `appointments` WRITE;
 /*!40000 ALTER TABLE `appointments` DISABLE KEYS */;
-INSERT INTO `appointments` VALUES (1,NULL,NULL,0,NULL,NULL,18,'2000-12-11 17:00:00.000000','chuyendizz@gmail.com','Nguyễn Trang','0987666111','Tôi bị đau trong tai, có dấu hiệu ù ù trong đầu. Tôi muốn được khám chuyên sâu',1,4,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(3,NULL,NULL,0,NULL,NULL,19,'2025-06-16 09:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Tôi bị đau họng. Nghi do bị cúm. Cần khám tổng quát',1,4,2,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(5,NULL,NULL,0,NULL,NULL,20,'2025-06-16 17:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Tôi bị đau họng',3,4,2,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(9,NULL,NULL,0,NULL,NULL,22,'2025-06-18 17:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Bị đau họng',1,4,2,'Có việc gấp',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(10,NULL,NULL,2,NULL,NULL,NULL,'2025-06-17 19:08:00.000000','chuyendizz@gmail.com','Lâm Thị Bình','0917666555','Có vấn đề về họng',1,3,2,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(11,NULL,NULL,2,NULL,NULL,NULL,'2025-06-19 07:09:00.000000','chuyendizz@gmail.com','Mic Le Bim','0947134196','Có vấn đề về tai',3,3,2,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(13,NULL,NULL,2,NULL,NULL,NULL,'2025-06-16 08:43:00.000000','ntt@gmail.com','Nguyễn Thuỳ Trang','6308348000','Yếu',1,3,2,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(14,NULL,NULL,-1,NULL,NULL,NULL,'2025-06-21 10:34:00.000000','hvv@gmail.com','Hoàng Văn Vinh','0947134196','Yếu tai',1,3,2,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(15,NULL,NULL,1,NULL,NULL,19,'2025-07-06 17:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Bị đau trong tai',1,4,2,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(16,NULL,NULL,1,NULL,NULL,20,'2025-07-02 07:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Bị đau trong tai',1,4,2,NULL,NULL,NULL,100000.00,1,100000.00,NULL,NULL,NULL,NULL),(17,NULL,NULL,1,NULL,NULL,19,'2025-07-07 02:30:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Bị đau tai',1,4,2,NULL,NULL,NULL,600000.00,1,600000.00,NULL,NULL,NULL,NULL),(20,NULL,NULL,1,NULL,NULL,19,'2025-07-08 15:15:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Bị đau tai',1,4,2,NULL,NULL,NULL,400000.00,1,400000.00,NULL,NULL,NULL,NULL),(21,NULL,NULL,1,NULL,NULL,20,'2025-07-14 08:30:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Đau tai',1,4,2,NULL,NULL,NULL,258600.00,1,258600.00,NULL,NULL,NULL,NULL);
+INSERT INTO `appointments` VALUES (1,NULL,NULL,0,NULL,NULL,18,'2000-12-11 17:00:00.000000','chuyendizz@gmail.com','Nguyễn Trang','0987666111','Tôi bị đau trong tai, có dấu hiệu ù ù trong đầu. Tôi muốn được khám chuyên sâu',1,4,4,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(3,NULL,NULL,0,NULL,NULL,19,'2025-06-16 09:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Tôi bị đau họng. Nghi do bị cúm. Cần khám tổng quát',1,4,4,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(5,NULL,NULL,0,NULL,NULL,20,'2025-06-16 17:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Tôi bị đau họng',3,4,4,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(9,NULL,NULL,0,NULL,NULL,22,'2025-06-18 17:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Bị đau họng',1,4,4,'Có việc gấp',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(10,NULL,NULL,2,NULL,NULL,NULL,'2025-06-17 19:08:00.000000','chuyendizz@gmail.com','Lâm Thị Bình','0917666555','Có vấn đề về họng',1,3,5,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(11,NULL,NULL,2,NULL,NULL,NULL,'2025-06-19 07:09:00.000000','chuyendizz@gmail.com','Mic Le Bim','0947134196','Có vấn đề về tai',3,3,5,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(13,NULL,NULL,2,NULL,NULL,NULL,'2025-06-16 08:43:00.000000','ntt@gmail.com','Nguyễn Thuỳ Trang','6308348000','Yếu',1,3,5,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(14,NULL,NULL,-1,NULL,NULL,NULL,'2025-06-21 10:34:00.000000','hvv@gmail.com','Hoàng Văn Vinh','0947134196','Yếu tai',1,3,5,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(15,NULL,NULL,1,NULL,NULL,19,'2025-07-06 17:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Bị đau trong tai',1,4,6,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(16,NULL,NULL,1,NULL,NULL,20,'2025-07-02 07:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Bị đau trong tai',1,4,6,NULL,NULL,NULL,100000.00,1,100000.00,NULL,NULL,NULL,NULL),(17,NULL,NULL,1,NULL,NULL,19,'2025-07-07 02:30:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Bị đau tai',1,4,6,NULL,NULL,NULL,600000.00,1,600000.00,NULL,NULL,NULL,NULL),(20,NULL,NULL,1,NULL,NULL,19,'2025-07-08 15:15:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Bị đau tai',1,4,7,NULL,NULL,NULL,400000.00,1,400000.00,NULL,NULL,NULL,NULL),(21,NULL,NULL,1,NULL,NULL,20,'2025-07-14 08:30:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Đau tai',1,4,7,NULL,NULL,NULL,258600.00,1,258600.00,NULL,NULL,NULL,NULL),(22,NULL,NULL,-1,NULL,NULL,100,'2025-07-16 17:00:00.000000','chuyendizz@gmail.com','Nguyễn Văn Trang','0987666111','Bị đau tai',NULL,4,7,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `appointments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -354,6 +354,8 @@ CREATE TABLE `patients` (
   `phone` varchar(20) DEFAULT NULL,
   `user_id` bigint DEFAULT NULL,
   `avatar` varchar(255) DEFAULT NULL,
+  `identification` varchar(255) DEFAULT NULL,
+  `nation` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FKuwca24wcd1tg6pjex8lmc0y7` (`user_id`),
   CONSTRAINT `FKuwca24wcd1tg6pjex8lmc0y7` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
@@ -366,7 +368,7 @@ CREATE TABLE `patients` (
 
 LOCK TABLES `patients` WRITE;
 /*!40000 ALTER TABLE `patients` DISABLE KEYS */;
-INSERT INTO `patients` VALUES (1,NULL,NULL,1,NULL,NULL,'3602 Gaylord Dr','2000-12-11','Hoàng','MALE','Vinh','6308348000',1,NULL),(2,NULL,NULL,1,NULL,NULL,'3602 Gaylord Dr','2000-03-11','Nguyễn','FEMALE','Trang','6308348000',2,NULL),(3,NULL,NULL,1,NULL,NULL,'Quận 5','2000-12-11','Minh','MALE','Tuấn','0912345611',4,NULL),(4,NULL,NULL,1,NULL,NULL,'3602 Gaylord Dr','2000-12-09','Nguyễn Văn','MALE','Trang','0987666111',9,'http://res.cloudinary.com/djyw3ytjd/image/upload/v1751421640/mykte6feovcjnezh8ghk.jpg');
+INSERT INTO `patients` VALUES (1,NULL,NULL,1,NULL,NULL,'3602 Gaylord Dr','2000-12-11','Hoàng','MALE','Vinh','6308348000',1,NULL,NULL,NULL),(2,NULL,NULL,1,NULL,NULL,'3602 Gaylord Dr','2000-03-11','Nguyễn','FEMALE','Trang','6308348000',2,NULL,NULL,NULL),(3,NULL,NULL,1,NULL,NULL,'Quận 5','2000-12-11','Minh','MALE','Tuấn','0912345611',4,NULL,NULL,NULL),(4,NULL,NULL,1,NULL,NULL,'3602 Gaylord Dr','2000-12-08','Nguyễn Văn','MALE','Trang','0987666111',9,'http://res.cloudinary.com/djyw3ytjd/image/upload/v1751421640/mykte6feovcjnezh8ghk.jpg','0987666111','Kinh');
 /*!40000 ALTER TABLE `patients` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -518,20 +520,14 @@ CREATE TABLE `rooms` (
   `status` int DEFAULT NULL,
   `modified_date_time` datetime(6) DEFAULT NULL,
   `updated_by` varchar(255) DEFAULT NULL,
-  `capacity` int DEFAULT NULL,
   `description` varchar(500) DEFAULT NULL,
   `location` varchar(255) DEFAULT NULL,
   `room_name` varchar(100) NOT NULL,
   `room_type` varchar(100) DEFAULT NULL,
   `phone_number` varchar(20) DEFAULT NULL,
-  `primary_doctor` bigint DEFAULT NULL,
-  `primary_nurse` bigint DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK3kldibiwp67ay4xxxx2kjyv3u` (`primary_doctor`),
-  KEY `FKmvj0epabe0f67exysw48uif1t` (`primary_nurse`),
-  CONSTRAINT `FK3kldibiwp67ay4xxxx2kjyv3u` FOREIGN KEY (`primary_doctor`) REFERENCES `doctors` (`id`),
-  CONSTRAINT `FKmvj0epabe0f67exysw48uif1t` FOREIGN KEY (`primary_nurse`) REFERENCES `nurses` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `floor` int DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -540,7 +536,7 @@ CREATE TABLE `rooms` (
 
 LOCK TABLES `rooms` WRITE;
 /*!40000 ALTER TABLE `rooms` DISABLE KEYS */;
-INSERT INTO `rooms` VALUES (2,NULL,NULL,NULL,NULL,NULL,NULL,'Phòng khám mũi chuyên sâu','Tầng 1','P101','Phòng khám mũi','0901234111',1,NULL);
+INSERT INTO `rooms` VALUES (4,'2025-07-16 00:00:00.000000','ADMIN',1,'2025-07-16 00:00:00.000000','ADMIN','Phòng khám chuyên về các bệnh lý tai','Tầng 1','P101','Phòng tai',NULL,1),(5,'2025-07-16 00:00:00.000000','ADMIN',1,'2025-07-16 00:00:00.000000','ADMIN','Phòng khám chuyên về các bệnh lý mũi','Tầng 1','P102','Phòng mũi',NULL,1),(6,'2025-07-16 00:00:00.000000','ADMIN',1,'2025-07-16 00:00:00.000000','ADMIN','Phòng khám chuyên về các bệnh lý họng','Tầng 1','P103','Phòng họng',NULL,1),(7,'2025-07-16 00:00:00.000000','ADMIN',1,'2025-07-16 00:00:00.000000','ADMIN','Phòng nội soi chuyên khoa tai mũi họng','Tầng 2','P201','Phòng nội soi (tai - mũi/ họng)',NULL,2),(8,'2025-07-16 00:00:00.000000','ADMIN',1,'2025-07-16 00:00:00.000000','ADMIN','Phòng thực hiện các thủ thuật nhỏ','Tầng 2','P202','Phòng thủ thuật (hút mũi, lấy dị vật)',NULL,2),(9,'2025-07-16 00:00:00.000000','ADMIN',1,'2025-07-16 00:00:00.000000','ADMIN','Phòng xét nghiệm máu, nước tiểu và các xét nghiệm cơ bản','Tầng 3','P301','Phòng xét nghiệm',NULL,3);
 /*!40000 ALTER TABLE `rooms` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -667,4 +663,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-15 11:39:30
+-- Dump completed on 2025-07-16  9:15:56
