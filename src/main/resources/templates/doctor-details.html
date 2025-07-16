@@ -9,6 +9,7 @@
     <link rel="icon" th:href="@{/assets/favicon.ico}" type="image/jpeg">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             margin-top: 20px;
@@ -226,21 +227,63 @@
                                         <h6 class="d-flex align-items-center mb-3">
                                             <i class="material-icons text-info mr-2">assignment</i>Thống kê đánh giá
                                         </h6>
-                                        <small>Thái độ phục vụ</small>
-                                        <div class="progress mb-3" style="height: 5px">
-                                            <div class="progress-bar bg-primary" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                                        
+                                        <!-- Tổng quan đánh giá -->
+                                        <div class="text-center mb-4" th:if="${totalReviews > 0}">
+                                            <h4 class="text-primary" th:text="${averageRating} + '/5.0'">0/5.0</h4>
+                                            <div class="mb-2">
+                                                <i class="fas fa-star text-warning" th:each="i : ${#numbers.sequence(1, averageRating)}" th:if="${averageRating >= i}"></i>
+                                                <i class="fas fa-star-half-alt text-warning" th:if="${averageRating % 1 >= 0.5}"></i>
+                                                <i class="far fa-star text-warning" th:each="i : ${#numbers.sequence(1, 5 - averageRating)}" th:if="${averageRating < i}"></i>
+                                            </div>
+                                            <small class="text-muted" th:text="'(' + ${totalReviews} + ' đánh giá)'">0 đánh giá</small>
                                         </div>
-                                        <small>Chuyên môn</small>
-                                        <div class="progress mb-3" style="height: 5px">
-                                            <div class="progress-bar bg-primary" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                                        
+                                        <div class="text-center mb-4" th:unless="${totalReviews > 0}">
+                                            <h4 class="text-muted">Chưa có đánh giá</h4>
+                                            <small class="text-muted">Bác sĩ chưa nhận được đánh giá nào</small>
                                         </div>
-                                        <small>Tư vấn</small>
-                                        <div class="progress mb-3" style="height: 5px">
-                                            <div class="progress-bar bg-primary" role="progressbar" style="width: 95%" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
+                                        
+                                        <!-- Đánh giá gần đây -->
+                                        <div th:if="${totalReviews > 0}" class="mt-4">
+                                            <h6 class="mb-3">Đánh giá gần đây</h6>
+                                            <div th:each="review : ${recentReviews}" class="border rounded p-3 mb-2">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <strong th:text="${review.patient.firstName + ' ' + review.patient.lastName}">Tên bệnh nhân</strong>
+                                                    <div>
+                                                        <i class="fas fa-star text-warning" th:each="i : ${#numbers.sequence(1, review.star)}" th:if="${review.star >= i}"></i>
+                                                        <i class="far fa-star text-warning" th:each="i : ${#numbers.sequence(1, 5 - review.star)}" th:if="${review.star < i}"></i>
+                                                        <small class="text-muted ml-2" th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}">Ngày đánh giá</small>
+                                                    </div>
+                                                </div>
+                                                <p class="text-muted mb-0" th:text="${review.content}">Nội dung đánh giá</p>
+                                            </div>
                                         </div>
-                                        <small>Thời gian chờ đợi</small>
-                                        <div class="progress mb-3" style="height: 5px">
-                                            <div class="progress-bar bg-primary" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                        
+                                        <!-- Phân bố đánh giá -->
+                                        <div th:if="${totalReviews > 0}" class="mt-4">
+                                            <h6 class="mb-3">Phân bố đánh giá</h6>
+                                            <div class="mb-2 d-flex align-items-center">
+                                                <small class="text-success mr-2" style="width: 100px;">Xuất sắc (4-5★):</small>
+                                                <div class="progress flex-grow-1 mr-2" style="height: 4px">
+                                                    <div class="progress-bar bg-success" th:style="'width: ' + ${excellentPercent} + '%'"></div>
+                                                </div>
+                                                <small th:text="${excellentPercent} + '%'">0%</small>
+                                            </div>
+                                            <div class="mb-2 d-flex align-items-center">
+                                                <small class="text-warning mr-2" style="width: 100px;">Bình thường (3★):</small>
+                                                <div class="progress flex-grow-1 mr-2" style="height: 4px">
+                                                    <div class="progress-bar bg-warning" th:style="'width: ' + ${goodPercent} + '%'"></div>
+                                                </div>
+                                                <small th:text="${goodPercent} + '%'">0%</small>
+                                            </div>
+                                            <div class="mb-2 d-flex align-items-center">
+                                                <small class="text-danger mr-2" style="width: 100px;">Cần cải thiện (1-2★):</small>
+                                                <div class="progress flex-grow-1 mr-2" style="height: 4px">
+                                                    <div class="progress-bar bg-danger" th:style="'width: ' + ${poorPercent} + '%'"></div>
+                                                </div>
+                                                <small th:text="${poorPercent} + '%'">0%</small>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

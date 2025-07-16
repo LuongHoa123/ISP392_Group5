@@ -1,7 +1,9 @@
 package com.ISP392.demo.controller;
 
 import com.ISP392.demo.entity.DoctorEntity;
+import com.ISP392.demo.entity.ReviewEntity;
 import com.ISP392.demo.repository.DoctorRepository;
+import com.ISP392.demo.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Controller;
@@ -9,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 @RequestMapping("/doctors")
@@ -16,6 +19,9 @@ public class DoctorController {
 
     @Autowired
     private DoctorRepository doctorRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     @GetMapping
     public String getAllDoctors(
@@ -88,7 +94,37 @@ public class DoctorController {
             model.addAttribute("error", "Không tìm thấy bác sĩ");
             return "redirect:/doctors";
         }
+        
+        // Tính toán thống kê đánh giá từ bảng review
+        List<ReviewEntity> reviews = reviewRepository.findByDoctor(doctor);
+        Double averageRating = reviewRepository.getAverageRatingByDoctor(doctor);
+        Long totalReviews = reviewRepository.getTotalReviewsByDoctor(doctor);
+        
+        // Tính phân bố đánh giá thực tế
+        long excellentCount = reviews.stream().filter(r -> r.getStar() != null && r.getStar() >= 4).count();
+        long goodCount = reviews.stream().filter(r -> r.getStar() != null && r.getStar() == 3).count();
+        long poorCount = reviews.stream().filter(r -> r.getStar() != null && r.getStar() <= 2).count();
+        
+        // Tính phần trăm (mặc định 0 nếu không có đánh giá)
+        int excellentPercent = totalReviews > 0 ? (int) Math.round((excellentCount * 100.0) / totalReviews) : 0;
+        int goodPercent = totalReviews > 0 ? (int) Math.round((goodCount * 100.0) / totalReviews) : 0;
+        int poorPercent = totalReviews > 0 ? (int) Math.round((poorCount * 100.0) / totalReviews) : 0;
+        
+        // Lấy một số đánh giá gần đây để hiển thị
+        List<ReviewEntity> recentReviews = reviews.stream()
+                .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
+                .limit(3)
+                .collect(java.util.stream.Collectors.toList());
+        
         model.addAttribute("doctor", doctor);
+        model.addAttribute("reviews", reviews);
+        model.addAttribute("recentReviews", recentReviews);
+        model.addAttribute("averageRating", averageRating != null ? Math.round(averageRating * 10.0) / 10.0 : 0);
+        model.addAttribute("totalReviews", totalReviews);
+        model.addAttribute("excellentPercent", excellentPercent);
+        model.addAttribute("goodPercent", goodPercent);
+        model.addAttribute("poorPercent", poorPercent);
+        
         return "doctor-details";
     }
 }
