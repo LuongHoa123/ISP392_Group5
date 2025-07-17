@@ -117,7 +117,7 @@
                 <h4>Kết luận cho lịch khám của
                     <span class="text-primary" th:text="${appointment.name}"></span>
                 </h4>
-                <div th:if="${appointment.conclusionEntity.id != null}">
+                <div th:if="${appointment.conclusionEntity != null}">
                     <div class="border rounded p-3 bg-light">
                         <p><strong>Nội dung kết luận:</strong>
                             <span th:text="${appointment.conclusionEntity.content}"></span>
