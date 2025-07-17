@@ -231,24 +231,15 @@ public class PatientAppointmentController {
     @Autowired
     private PdfExportService pdfExportService;
 
-    @GetMapping("/generatePdf/{appointmentId}")
-    public ResponseEntity<InputStreamResource> generatePdf(@PathVariable Long appointmentId) {
-        try {
-            AppointmentEntity appointment = appointmentRepository.findById(appointmentId).get();
-
-            ByteArrayInputStream pdfFile = pdfExportService.exportMedicalSummaryPdf(appointment);
-
-            String filename = "ho_so_benh_an_" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".pdf";
-
-            InputStreamResource file = new InputStreamResource(pdfFile);
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .body(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
+    @GetMapping("/view/{appointmentId}")
+    public String view(@PathVariable Long appointmentId, Model model) {
+        AppointmentEntity appointment = appointmentRepository.findById(appointmentId).get();
+        model.addAttribute("appointment", appointment);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByEmail(username).orElse(null);
+        PatientEntity patient = user.getPatients().stream().findFirst().orElse(null);
+        model.addAttribute("patient", patient);
+        return "patient/view";
     }
 
 }
