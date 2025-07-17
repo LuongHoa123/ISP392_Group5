@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hồ sơ bệnh án</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+    <style>
+        .medical-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            padding: 40px;
+            max-width: 900px;
+        }
+        
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 4px solid #2c3e50;
+            padding-bottom: 25px;
+            position: relative;
+        }
+        
+        .header-section::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+        }
+        
+        .country-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .motto {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        
+        .main-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .form-number {
+            font-size: 14px;
+            color: #95a5a6;
+            font-style: italic;
+        }
+        
+        .section {
+            margin-bottom: 35px;
+            padding: 25px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            background: #fefefe;
+        }
+        
+        .section-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: #3498db;
+            font-size: 24px;
+        }
+        
+        .info-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 15px;
+            min-height: 45px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #34495e;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-label::before {
+            content: '▸';
+            color: #3498db;
+            font-weight: bold;
+        }
+        
+        .info-value {
+            flex: 1;
+            color: #2c3e50;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            border: 2px solid #e8e8e8;
+            font-size: 16px;
+        }
+        
+        .description-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e8e8e8;
+            margin-top: 15px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .prescription-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #27ae60;
+            margin-top: 15px;
+        }
+        
+        .prescription-list ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .prescription-list li {
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        
+        .signature-section {
+            margin-top: 50px;
+            padding: 25px;
+            border: 2px dashed #bdc3c7;
+            border-radius: 10px;
+            background: #ecf0f1;
+            text-align: center;
+        }
+        
+        .print-btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .print-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+        }
+        
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+        }
+        
+        @media print {
+            .medical-container {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+            .print-btn {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .medical-container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .info-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .info-label {
+                min-width: auto;
+                margin-bottom: 5px;
+            }
+            
+            .info-value {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <th:block th:replace="layout/admin-layout :: layout">
+        <th:block th:fragment="pageContent">
+            <div class="page-header">
+                <h3 class="page-title">Hồ sơ bệnh án</h3>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/admin/patient}">Danh sách bệnh nhân</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Hồ sơ bệnh án</li>
+                    </ol>
+                </nav>
+            </div>
+
+            <!-- Alert Messages -->
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+            </div>
+
+            <div class="medical-container" th:if="${appointment != null}">
+                <!-- Header Section -->
+                <div class="header-section">
+                    <div class="country-name">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                    <div class="motto">Độc lập - Tự do - Hạnh phúc</div>
+                    <div class="main-title">BẢN TÓM TẮT HỒ SƠ BỆNH ÁN</div>
+                    <div class="form-number">Mẫu số: 52/BV2</div>
+                </div>
+
+                <!-- I. HÀNH CHÍNH -->
+                <div class="section">
+                    <div class="section-title">
+                        <i class="fas fa-user"></i> I. HÀNH CHÍNH
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Họ và tên (In hoa):</div>
+                        <div class="info-value" th:text="${appointment.patient != null ? (appointment.patient.firstName + ' ' + appointment.patient.lastName).toUpperCase() : appointment.name.toUpperCase()}"></div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Giới tính:</div>
+                        <div class="info-value" th:text="${appointment.patient != null ? (appointment.patient.gender == 'MALE' ? 'Nam' : 'Nữ') : 'Không xác định'}"></div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Ngày sinh:</div>
+                        <div class="info-value" th:text="${appointment.patient != null and appointment.patient.dateOfBirth != null ? #temporals.format(appointment.patient.dateOfBirth, 'dd/MM/yyyy') : 'Không xác định'}"></div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Địa chỉ cư trú:</div>
+                        <div class="info-value" th:text="${appointment.patient != null ? appointment.patient.address : 'Không xác định'}"></div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Số CCCD/Hộ chiếu:</div>
+                        <div class="info-value" th:text="${appointment.patient != null ? appointment.patient.identification : 'Không xác định'}"></div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Dân tộc:</div>
+                        <div class="info-value" th:text="${appointment.patient != null ? appointment.patient.nation : 'Không xác định'}"></div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Ra viện ngày:</div>
+                        <div class="info-value" th:text="${#temporals.format(appointment.appointmentDateTime, 'dd/MM/yyyy')}"></div>
+                    </div>
+                </div>
+
+                <!-- II. CHẨN ĐOÁN -->
+                <div class="section">
+                    <div class="section-title">
+                        <i class="fas fa-stethoscope"></i> II. CHẨN ĐOÁN (Tên bệnh và mã ICD đính kèm)
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Vào viện ngày:</div>
+                        <div class="info-value" th:text="${#temporals.format(appointment.appointmentDateTime, 'dd/MM/yyyy')}"></div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Chẩn đoán vào viện:</div>
+                        <div class="info-value" th:text="${appointment.diagnosis != null ? appointment.diagnosis.content : 'Chưa có chẩn đoán'}"></div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Chẩn đoán ra viện:</div>
+                        <div class="info-value" th:text="${appointment.conclusionEntity != null ? appointment.conclusionEntity.content : 'Chưa có kết luận'}"></div>
+                    </div>
+                </div>
+
+                <!-- III. TÓM TẮT QUÁ TRÌNH ĐIỀU TRỊ -->
+                <div class="section">
+                    <div class="section-title">
+                        <i class="fas fa-notes-medical"></i> III. TÓM TẮT QUÁ TRÌNH ĐIỀU TRỊ
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Tuổi:</div>
+                        <div class="info-value" th:text="${appointment.age != null ? appointment.age : 'Không xác định'}"></div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Tóm tắt quá trình bệnh lý và diễn biến lâm sàng:</div>
+                    </div>
+                    
+                    <div class="description-section">
+                        <p th:text="${appointment.reason != null ? appointment.reason : 'Không có thông tin'}"></p>
+                    </div>
+
+                    <!-- Đơn thuốc -->
+                    <div th:if="${appointment.conclusionEntity != null and appointment.conclusionEntity.prescription != null and !appointment.conclusionEntity.prescription.isEmpty()}" class="prescription-list">
+                        <div class="info-label" style="margin-bottom: 10px;">
+                            <i class="fas fa-pills"></i> Đơn thuốc:
+                        </div>
+                        <ul>
+                            <li th:each="med : ${appointment.conclusionEntity.prescription.split('\n')}">
+                                <span th:text="${med}"></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Dịch vụ đã sử dụng -->
+                    <div th:if="${appointment.appointmentServiceEntities != null and !appointment.appointmentServiceEntities.isEmpty()}">
+                        <div class="info-label" style="margin-top: 20px; margin-bottom: 10px;">
+                            <i class="fas fa-clipboard-list"></i> Dịch vụ đã sử dụng:
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Tên dịch vụ</th>
+                                        <th>Kết quả</th>
+                                        <th>Giá tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="service, iterStat : ${appointment.appointmentServiceEntities}">
+                                        <td th:text="${iterStat.index + 1}"></td>
+                                        <td th:text="${service.service != null ? service.service.content : 'Không xác định'}"></td>
+                                        <td th:text="${service.content != null ? service.content : 'Chưa có kết quả'}"></td>
+                                        <td th:text="${service.service != null and service.service.price != null ? service.service.price : 0}" class="vnd-price"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Signature Section -->
+                <div class="signature-section">
+                    <div style="display: flex; justify-content: space-between; gap: 50px;">
+                        <div style="flex: 1; text-align: center;">
+                            <div style="font-weight: bold; margin-bottom: 10px;">Bác sĩ điều trị</div>
+                            <div style="font-style: italic; margin-bottom: 40px;">(Họ tên và chữ ký)</div>
+                            <div style="border-bottom: 2px solid #34495e; width: 200px; margin: 0 auto;">
+                                <span th:text="${appointment.doctor != null ? appointment.doctor.firstName + ' ' + appointment.doctor.lastName : ''}"></span>
+                            </div>
+                        </div>
+                        
+                        <div style="flex: 1; text-align: center;">
+                            <div style="font-weight: bold; margin-bottom: 10px;">Trưởng khoa</div>
+                            <div style="font-style: italic; margin-bottom: 40px;">(Họ tên và chữ ký)</div>
+                            <div style="border-bottom: 2px solid #34495e; width: 200px; margin: 0 auto;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Print Button -->
+                <button class="print-btn" onclick="window.print()">
+                    <i class="fas fa-print"></i> In bản tóm tắt
+                </button>
+            </div>
+        </th:block>
+    </th:block>
+
+    <!-- Scripts -->
+    <script th:src="@{/assets_admin/vendors/js/vendor.bundle.base.js}"></script>
+    <script th:src="@{/assets_admin/js/off-canvas.js}"></script>
+    <script th:src="@{/assets_admin/js/hoverable-collapse.js}"></script>
+    <script th:src="@{/assets_admin/js/misc.js}"></script>
+    <script>
+        // Format currency
+        document.querySelectorAll(".vnd-price").forEach(el => {
+            const rawValue = parseFloat(el.innerText);
+            if (!isNaN(rawValue)) {
+                el.innerText = new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                }).format(rawValue);
+            }
+        });
+    </script>
+</body>
+</html> 

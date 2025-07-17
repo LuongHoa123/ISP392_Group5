@@ -3,6 +3,7 @@ package com.ISP392.demo.controller.admin;
 import com.ISP392.demo.dto.AppointmentDto;
 import com.ISP392.demo.entity.AppointmentEntity;
 import com.ISP392.demo.entity.PatientEntity;
+import com.ISP392.demo.repository.AppointmentRepository;
 import com.ISP392.demo.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,9 @@ public class AdminPatientController {
 
     @Autowired
     private PatientRepository patientRepository;
+
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
     private static final int PAGE_SIZE = 5;
 
@@ -99,5 +103,25 @@ public class AdminPatientController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(appointments);
+    }
+
+    @GetMapping("/medical-record/{appointmentId}")
+    public String viewMedicalRecord(@PathVariable Long appointmentId, Model model) {
+        AppointmentEntity appointment = appointmentRepository.findById(appointmentId).orElse(null);
+        
+        if (appointment == null) {
+            model.addAttribute("errorMessage", "Không tìm thấy lịch khám.");
+            return "admin/patient/medical-record";
+        }
+
+        if (appointment.getStatus() != 1) {
+            model.addAttribute("errorMessage", "Lịch khám chưa hoàn thành.");
+            return "admin/patient/medical-record";
+        }
+
+        model.addAttribute("appointment", appointment);
+        model.addAttribute("patient", appointment.getPatient());
+        
+        return "admin/patient/medical-record";
     }
 } 
