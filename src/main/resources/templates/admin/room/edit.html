@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" th:fragment="layout" xmlns:th="http://www.thymeleaf.org"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
@@ -10,13 +10,31 @@
     <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
     <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
     <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+    <style>
+        /* Fix màu chữ trong select để thấy rõ */
+        .form-control {
+            color: #333 !important;
+        }
+        
+        .form-control option {
+            color: #333 !important;
+        }
+        
+        .form-control:focus {
+            color: #333 !important;
+        }
+        
+        .form-control::placeholder {
+            color: #6c757d !important;
+        }
+    </style>
 </head>
 
 <body>
 <th:block th:replace="layout/admin-layout :: layout">
     <th:block th:fragment="pageContent">
         <div class="page-header">
-            <h3 class="page-title"> Cập nhật Phòng Khám </h3>
+            <h3 class="page-title">Cập nhật Phòng Khám</h3>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a th:href="@{/admin/room}">Quản lý phòng</a></li>
@@ -30,14 +48,6 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Thông tin phòng</h4>
-
-                        <!-- Debug information -->
-                        <div class="alert alert-info" style="font-size: 12px;">
-                            <strong>Debug:</strong> 
-                            Room Name: <span th:text="${room.roomName}">N/A</span> | 
-                            Floor: <span th:text="${room.floor}">N/A</span> | 
-                            Room Type: <span th:text="${room.roomType}">N/A</span>
-                        </div>
 
                         <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
                             [[${errorMessage}]]
@@ -53,7 +63,7 @@
 
                             <div class="form-group">
                                 <label for="floor">Tầng <span class="text-danger">*</span></label>
-                                <select class="form-control" id="floorSelect" th:field="*{floor}" onchange="updateRoomOptions()" required>
+                                <select class="form-control" id="floorSelect" th:field="*{floor}" required>
                                     <option value="">Chọn tầng</option>
                                     <option value="1">Tầng 1</option>
                                     <option value="2">Tầng 2</option>
@@ -105,10 +115,9 @@
             var floorSelect = document.getElementById('floorSelect');
             var roomSelect = document.getElementById('roomNameSelect');
             var selectedFloor = floorSelect.value;
-            var currentRoomName = roomSelect.getAttribute('data-current-value') || '';
+            var currentRoomName = roomSelect.getAttribute('data-current-value') || roomSelect.value;
             
             if (selectedFloor) {
-                // Generate room options for selected floor
                 var roomOptions = '<option value="">Chọn số phòng</option>';
                 for (var i = 1; i <= 5; i++) {
                     var roomNumber = 'P' + selectedFloor + (i < 10 ? '0' + i : i);
@@ -116,10 +125,8 @@
                     roomOptions += '<option value="' + roomNumber + '" ' + selected + '>' + roomNumber + '</option>';
                 }
                 
-                // Update room select options
                 roomSelect.innerHTML = roomOptions;
                 
-                // Set the current value back if it matches the floor
                 if (currentRoomName && currentRoomName.startsWith('P' + selectedFloor)) {
                     roomSelect.value = currentRoomName;
                 }
@@ -128,39 +135,31 @@
             }
         }
 
-        // Initialize room options when page loads
-        window.onload = function() {
+        document.addEventListener('DOMContentLoaded', function() {
             var roomSelect = document.getElementById('roomNameSelect');
             var floorSelect = document.getElementById('floorSelect');
-            var roomTypeSelect = document.querySelector('select[name="roomType"]');
             
             var currentRoomValue = roomSelect.value;
             var currentFloorValue = floorSelect.value;
             
-            console.log('=== EDIT FORM DEBUG ===');
-            console.log('Current room value:', currentRoomValue);
-            console.log('Current floor value:', currentFloorValue);
-            console.log('Current room type:', roomTypeSelect ? roomTypeSelect.value : 'not found');
-            
-            // Store current room name for later use
             roomSelect.setAttribute('data-current-value', currentRoomValue);
             
-            // If we have a current room value but no floor, extract floor from room name
+            // Extract floor từ roomName nếu chưa có floor
             if (currentRoomValue && currentRoomValue.startsWith('P') && !currentFloorValue) {
-                // Extract floor from room name: P101->1, P201->2, P301->3, etc.
                 var floorNumber = currentRoomValue.substring(1, 2);
-                
-                console.log('Extracted floor from room name:', floorNumber);
-                
-                // Set floor value and trigger update
                 floorSelect.value = floorNumber;
-                updateRoomOptions();
-            } else if (currentFloorValue) {
-                // If floor is already set, just update room options
-                console.log('Floor already set, updating room options');
+            }
+            
+            // Generate room options
+            if (floorSelect.value) {
                 updateRoomOptions();
             }
-        }
+            
+            // Add event listener
+            floorSelect.addEventListener('change', function() {
+                updateRoomOptions();
+            });
+        });
         </script>
     </th:block>
 </th:block>

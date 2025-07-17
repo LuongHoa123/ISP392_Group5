@@ -10,6 +10,56 @@
     <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
     <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
     <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+    <style>
+        /* Fix màu chữ trong select để thấy rõ */
+        .form-control {
+            color: #333 !important;
+        }
+        
+        .form-control option {
+            color: #333 !important;
+        }
+        
+        /* Fix màu chữ cho input và textarea */
+        .form-control:focus {
+            color: #333 !important;
+        }
+        
+        /* Đảm bảo placeholder vẫn nhạt */
+        .form-control::placeholder {
+            color: #6c757d !important;
+        }
+        
+        /* Màu cho disabled select */
+        .form-control:disabled {
+            color: #6c757d !important;
+        }
+    </style>
+    <style>
+        /* Fix màu chữ trong select để thấy rõ */
+        .form-control {
+            color: #333 !important;
+        }
+        
+        .form-control option {
+            color: #333 !important;
+        }
+        
+        /* Fix màu chữ cho input và textarea */
+        .form-control:focus {
+            color: #333 !important;
+        }
+        
+        /* Đảm bảo placeholder vẫn nhạt */
+        .form-control::placeholder {
+            color: #6c757d !important;
+        }
+        
+        /* Màu cho disabled select */
+        .form-control:disabled {
+            color: #6c757d !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -39,7 +89,7 @@
                             
                             <div class="form-group">
                                 <label for="floor">Tầng <span class="text-danger">*</span></label>
-                                <select class="form-control" id="floorSelect" th:field="*{floor}" onchange="updateRoomOptions()" required>
+                                <select class="form-control" id="floorSelect" th:field="*{floor}" required>
                                     <option value="">Chọn tầng</option>
                                     <option value="1">Tầng 1</option>
                                     <option value="2">Tầng 2</option>
@@ -114,6 +164,12 @@
                 roomSelect.innerHTML = '<option value="">Vui lòng chọn tầng trước</option>';
             }
         }
+        
+        // Add event listener thay vì inline onchange
+        document.addEventListener('DOMContentLoaded', function() {
+            var floorSelect = document.getElementById('floorSelect');
+            floorSelect.addEventListener('change', updateRoomOptions);
+        });
         </script>
     </th:block>
 </th:block>
