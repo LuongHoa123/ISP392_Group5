@@ -2,6 +2,7 @@ package com.ISP392.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -23,6 +24,7 @@ public class RoomEntity extends AbstractEntity {
     private String roomType; // Room type like "Phòng tai", "Phòng mũi", etc.
 
     @Column(name = "description", nullable = true, length = 500)
+    @Size(max = 500, message = "Mô tả không được vượt quá 500 ký tự")
     private String description;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
