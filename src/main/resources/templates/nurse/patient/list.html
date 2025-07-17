@@ -63,7 +63,7 @@
                         <tbody>
                         <tr th:each="appt, iterStat : ${appointments}"
                             data-bs-toggle="modal"
-                            th:attr="data-bs-target='#apptModal__${appt.id}'">
+                            th:attr="data-bs-target='#apptModal__' + ${appt.id}">
                             <td th:text="${iterStat.index + 1}"></td>
                             <td th:text="${appt.patient.firstName}"></td>
                             <td th:text="${appt.patient.lastName}"></td>

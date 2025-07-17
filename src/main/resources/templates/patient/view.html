@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Lịch Khám Bệnh</title>
@@ -10,190 +10,480 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
     <style>
-        h3, h4 {
-            font-size: 2rem;
+        body {
+            font-family: 'Times New Roman', serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        
+        .medical-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            padding: 40px;
+            max-width: 900px;
+        }
+        
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 4px solid #2c3e50;
+            padding-bottom: 25px;
+            position: relative;
+        }
+        
+        .header-section::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+        }
+        
+        .country-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .motto {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+        
+        .main-title {
+            font-size: 26px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .form-number {
+            font-size: 18px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        .section {
+            margin-bottom: 35px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title::before {
+            content: '';
+            width: 30px;
+            height: 3px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            border-radius: 2px;
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            min-width: 200px;
+            color: #34495e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        
+        .info-label::before {
+            content: '▸';
+            color: #3498db;
             font-weight: bold;
         }
-
-        .table th, .table td {
-            font-size: 1.2rem;
+        
+        .info-value {
+            flex: 1;
+            color: #2c3e50;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            border: 2px solid #e8e8e8;
+            font-size: 16px;
         }
-
-        .bg-light, .card-body, .border.rounded {
-            font-size: 1.15rem;
+        
+        .description-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e8e8e8;
+            margin-top: 15px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
-
-        .btn-lg {
-            font-size: 1.3rem;
-            padding: 0.75rem 2rem;
+        
+        .prescription-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #27ae60;
+            margin-top: 15px;
         }
-
+        
+        .prescription-list ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .prescription-list li {
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        
+        .signature-section {
+            margin-top: 50px;
+            padding: 25px;
+            border: 2px dashed #bdc3c7;
+            border-radius: 10px;
+            background: #ecf0f1;
+            text-align: center;
+        }
+        
+        .print-btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .print-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+        }
+        
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+        }
+        
         .back-to-top {
             position: fixed;
             bottom: 30px;
             right: 30px;
             z-index: 1000;
-            background-color: #1e40af;
+            background: linear-gradient(45deg, #3498db, #2980b9);
             color: white;
-            padding: 12px 16px;
+            padding: 15px 18px;
             border-radius: 50%;
             font-size: 18px;
             cursor: pointer;
             display: none;
-            box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
-            transition: opacity 0.3s;
+            box-shadow: 0 5px 20px rgba(52, 152, 219, 0.4);
+            transition: all 0.3s ease;
         }
-
+        
         .back-to-top:hover {
-            opacity: 0.8;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.5);
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .medical-container {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+            .print-btn, .back-to-top {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .medical-container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .info-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .info-label {
+                min-width: auto;
+                margin-bottom: 5px;
+            }
+            
+            .info-value {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-<div th:if="${errorMessage}" class="alert alert-danger">
-    <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
-</div>
+    <!-- Alert Messages -->
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+    </div>
 
-<div th:if="${successMessage}" class="alert alert-success">
-    <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
-</div>
-<th:block th:replace="layout/user-layout :: layout">
-    <th:block th:fragment="pageContent">
-        <div class="container mt-5">
-            <!-- Tiêu đề -->
-            <h3 class="text-center mb-4">
-                CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
-            </h3>
-            <h4 class="text-center mb-4">
-                Độc lập - Tự do - Hạnh phúc
-            </h4>
-            <h4 class="text-center mb-4">
-                BẢN TÓM TẮT HỒ SƠ BỆNH ÁN
-            </h4>
-            <p class="text-center font-italic mb-4">Mẫu số: 52/BV2</p>
+    <div th:if="${successMessage}" class="alert alert-success">
+        <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+    </div>
 
-            <!-- I. HÀNH CHÍNH -->
-            <div class="mb-5">
-                <h4 class="font-weight-bold">I. HÀNH CHÍNH</h4>
-                <p><strong>Họ và tên (In hoa):</strong>
-                    <span th:text="${(appointment.patient.firstName + ' ' + appointment.patient.lastName).toUpperCase()}"></span>
-                </p>
-                <p><strong>Giới tính:</strong>
-                    <span th:text="${appointment.patient.gender == 'MALE' ? 'Nam' : 'Nữ'}"></span>
-                </p>
-                <p><strong>Địa chỉ cư trú:</strong>
-                    <span th:text="${appointment.patient.address}"></span>
-                </p>
-                <p><strong>Số CCCD/Hộ chiếu:</strong>
-                    <span th:text="${appointment.patient.identification}"></span>
-                </p>
-                <p><strong>Ngày sinh:</strong>
-                    <span th:text="${#temporals.format(appointment.patient.dateOfBirth, 'dd/MM/yyyy')}"></span>
-                </p>
-                <p><strong>Dân tộc:</strong>
-                    <span th:text="${appointment.patient.nation}"></span>
-                </p>
-                <p><strong>Ra viện ngày:</strong>
-                    <span th:text="${#temporals.format(appointment.appointmentDateTime, 'dd/MM/yyyy')}"></span>
-                </p>
-            </div>
-
-            <!-- II. CHẨN ĐOÁN -->
-            <div class="mb-5">
-                <h4 class="font-weight-bold">II. CHẨN ĐOÁN (Tên bệnh và mã ICD đính kèm)</h4>
-                <p><strong>Vào viện ngày:</strong>
-                    <span th:text="${#temporals.format(appointment.appointmentDateTime, 'dd/MM/yyyy')}"></span>
-                </p>
-                <p><strong>Chẩn đoán vào viện:</strong>
-                    <span th:text="${appointment.diagnosis != null ? appointment.diagnosis.content : ''}"></span>
-                </p>
-                <p><strong>Chẩn đoán ra viện:</strong>
-                    <span th:text="${appointment.conclusionEntity != null ? appointment.conclusionEntity.content : ''}"></span>
-                </p>
-            </div>
-
-            <!-- III. TÓM TẮT QUÁ TRÌNH ĐIỀU TRỊ -->
-            <div class="mb-5">
-                <h4 class="font-weight-bold">III. TÓM TẮT QUÁ TRÌNH ĐIỀU TRỊ</h4>
-                <p><strong>Tuổi:</strong>
-                    <span th:text="${appointment.age}"></span>
-                </p>
-                <p><strong>Tóm tắt quá trình bệnh lý và diễn biến lâm sàng:</strong></p>
-                <p th:text="${appointment.reason != null ? appointment.reason : 'Không có mô tả'}"></p>
-
-                <!-- Đơn thuốc -->
-                <div th:if="${appointment.conclusionEntity != null and appointment.conclusionEntity.prescription != null}">
-                    <p><strong>Đơn thuốc:</strong></p>
-                    <ul>
-                        <li th:each="med : ${appointment.conclusionEntity.prescription.split('\n')}">
-                            <span th:text="'- ' + ${med}"></span>
-                        </li>
-                    </ul>
+    <th:block th:replace="layout/user-layout :: layout">
+        <th:block th:fragment="pageContent">
+            <div class="medical-container">
+                <!-- Header Section -->
+                <div class="header-section">
+                    <div class="country-name">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                    <div class="motto">Độc lập - Tự do - Hạnh phúc</div>
+                    <div class="main-title">BẢN TÓM TẮT HỒ SƠ BỆNH ÁN</div>
+                    <div class="form-number">Mẫu số: 52/BV2</div>
                 </div>
-            </div>
 
-            <!-- Footer -->
-            <div class="mt-5 text-right">
-                <p>(Ký tên, đóng dấu)</p>
+                <!-- I. HÀNH CHÍNH -->
+                <div class="section">
+                    <div class="section-title">
+                        <i class="fas fa-user"></i> I. HÀNH CHÍNH
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Họ và tên (In hoa):</div>
+                        <div class="info-value" th:text="${(appointment.patient.firstName + ' ' + appointment.patient.lastName).toUpperCase()}">NGUYỄN VĂN TRANG</div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Giới tính:</div>
+                        <div class="info-value" th:text="${appointment.patient.gender == 'MALE' ? 'Nam' : 'Nữ'}">Nữ</div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Ngày sinh:</div>
+                        <div class="info-value" th:text="${#temporals.format(appointment.patient.dateOfBirth, 'dd/MM/yyyy')}">08/12/2000</div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Địa chỉ cư trú:</div>
+                        <div class="info-value" th:text="${appointment.patient.address}">3602 Gaylord Dr</div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Số CCCD/Hộ chiếu:</div>
+                        <div class="info-value" th:text="${appointment.patient.identification}">0987666111</div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Dân tộc:</div>
+                        <div class="info-value" th:text="${appointment.patient.nation}">Kinh</div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Ra viện ngày:</div>
+                        <div class="info-value" th:text="${#temporals.format(appointment.appointmentDateTime, 'dd/MM/yyyy')}">08/07/2025</div>
+                    </div>
+                </div>
+
+                <!-- II. CHẨN ĐOÁN -->
+                <div class="section">
+                    <div class="section-title">
+                        <i class="fas fa-stethoscope"></i> II. CHẨN ĐOÁN (Tên bệnh và mã ICD đính kèm)
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Vào viện ngày:</div>
+                        <div class="info-value" th:text="${#temporals.format(appointment.appointmentDateTime, 'dd/MM/yyyy')}">08/07/2025</div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Chẩn đoán vào viện:</div>
+                        <div class="info-value" th:text="${appointment.diagnosis != null ? appointment.diagnosis.content : ''}">Viêm tai giữa cấp tính</div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Chẩn đoán ra viện:</div>
+                        <div class="info-value" th:text="${appointment.conclusionEntity != null ? appointment.conclusionEntity.content : ''}">Viêm tai giữa - đã điều trị ổn định</div>
+                    </div>
+                </div>
+
+                <!-- III. TÓM TẮT QUÁ TRÌNH ĐIỀU TRỊ -->
+                <div class="section">
+                    <div class="section-title">
+                        <i class="fas fa-notes-medical"></i> III. TÓM TẮT QUÁ TRÌNH ĐIỀU TRỊ
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Tuổi:</div>
+                        <div class="info-value" th:text="${appointment.age}">19</div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Tóm tắt quá trình bệnh lý và diễn biến lâm sàng:</div>
+                    </div>
+                    
+                    <div class="description-section">
+                        <p th:text="${appointment.reason != null ? appointment.reason : 'Bị đau tai'}">
+                            Bị đau tai
+                        </p>
+                    </div>
+
+                    <!-- Đơn thuốc -->
+                    <div th:if="${appointment.conclusionEntity != null and appointment.conclusionEntity.prescription != null}" class="prescription-list">
+                        <div class="info-label" style="margin-bottom: 10px;">
+                            <i class="fas fa-pills"></i> Đơn thuốc:
+                        </div>
+                        <ul>
+                            <li th:each="med : ${appointment.conclusionEntity.prescription.split('\n')}">
+                                <span th:text="${med}"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Signature Section -->
+                <div class="signature-section">
+                    <div style="display: flex; justify-content: space-between; gap: 50px;">
+                        <div style="flex: 1; text-align: center;">
+                            <div style="font-weight: bold; margin-bottom: 10px;">Bác sĩ điều trị</div>
+                            <div style="font-style: italic; margin-bottom: 40px;">(Họ tên và chữ ký)</div>
+                            <div style="border-bottom: 2px solid #34495e; width: 200px; margin: 0 auto;"></div>
+                        </div>
+                        
+                        <div style="flex: 1; text-align: center;">
+                            <div style="font-weight: bold; margin-bottom: 10px;">Trưởng khoa</div>
+                            <div style="font-style: italic; margin-bottom: 40px;">(Họ tên và chữ ký)</div>
+                            <div style="border-bottom: 2px solid #34495e; width: 200px; margin: 0 auto;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Print Button -->
+                <button class="print-btn" onclick="window.print()">
+                    <i class="fas fa-print"></i> In bản tóm tắt
+                </button>
             </div>
-        </div>
+        </th:block>
     </th:block>
-</th:block>
 
+    <!-- Back to Top Button -->
+    <div class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <i class="fas fa-arrow-up"></i>
+    </div>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.querySelectorAll(".vnd-price").forEach(el => {
-        const rawValue = parseFloat(el.innerText);
-        el.innerText = new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND'
-        }).format(rawValue);
-    });
-</script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll(".vnd-price").forEach(el => {
+            const rawValue = parseFloat(el.innerText);
+            el.innerText = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(rawValue);
+        });
+    </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<script th:inline="javascript">
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('addPaymentForm');
-        if (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
-        }
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('addPaymentForm');
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            }
 
-        let totalCost = /*[[${appointment.totalCost}]]*/ 0;
-        let paid = /*[[${appointment.payCost}]]*/ 0;
-        let remaining = totalCost - paid;
+            let totalCost = /*[[${appointment.totalCost}]]*/ 0;
+            let paid = /*[[${appointment.payCost}]]*/ 0;
+            let remaining = totalCost - paid;
 
-        const paymentInput = document.getElementById('paymentAmount');
-        const remainingInput = document.getElementById('remainingAmount');
+            const paymentInput = document.getElementById('paymentAmount');
+            const remainingInput = document.getElementById('remainingAmount');
 
-        if (paymentInput && remainingInput) {
-            remainingInput.value = remaining;
-            paymentInput.max = remaining;
+            if (paymentInput && remainingInput) {
+                remainingInput.value = remaining;
+                paymentInput.max = remaining;
 
-            paymentInput.addEventListener('input', function () {
-                const entered = parseFloat(this.value) || 0;
-                if (entered > remaining) {
-                    this.value = remaining;
+                paymentInput.addEventListener('input', function () {
+                    const entered = parseFloat(this.value) || 0;
+                    if (entered > remaining) {
+                        this.value = remaining;
+                    }
+                });
+            }
+
+            setTimeout(function () {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => alert.style.display = 'none');
+            }, 4000);
+
+            // Back to top button
+            const backToTop = document.querySelector('.back-to-top');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 300) {
+                    backToTop.style.display = 'block';
+                } else {
+                    backToTop.style.display = 'none';
                 }
             });
-        }
-
-        setTimeout(function () {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => alert.style.display = 'none');
-        }, 4000);
-    });
-</script>
-
+        });
+    </script>
 </body>
 </html>
