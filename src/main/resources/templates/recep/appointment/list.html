@@ -174,25 +174,19 @@
     </span>
                             <td>
                                 <div class="d-flex flex-wrap gap-1">
-                                    <div th:if="${appt.status != 1}">
-                                        <button type="button" class="btn btn-sm btn-success"
-                                                data-toggle="modal"
-                                                th:attr="data-target='#assignModal_' + ${appt.id}">
-                                            Chỉ định
-                                        </button>
-                                    </div>
+        <span th:if="${appt.status == 1}">
+            <a th:href="@{'/recep/appointment/generatePdf/' + ${appt.id}}"
+               class="btn btn-sm btn-primary">
+                In Phiếu
+            </a>
+        </span>
 
-                                    <div th:if="${appt.status == 1}">
-                                        <a th:href="@{'/recep/appointment/generatePdf/' + ${appt.id}}"
-                                           class="btn btn-sm btn-primary" target="_blank">
-                                            In Phiếu
-                                        </a>
-                                    </div>
-
-                                    <a th:href="@{'/recep/invoice/' + ${appt.id}}"
-                                       class="btn btn-sm btn-primary">
-                                        Thanh toán
-                                    </a>
+                                    <span th:if="${appt.status == 1}">
+            <a th:href="@{'/recep/invoice/' + ${appt.id}}"
+               class="btn btn-sm btn-primary">
+                Thanh toán
+            </a>
+        </span>
 
                                     <form th:if="${appt.status == 1}"
                                           th:action="@{/recep/appointment/detail}" method="get" class="d-inline">
@@ -202,13 +196,14 @@
 
                                     <form th:if="${appt.status == -1}"
                                           th:action="@{/recep/appointment/delete}" method="post"
-                                          class="d-inline"
-                                          onsubmit="return confirm('Bạn có chắc chắn muốn xoá lịch hẹn này?')">
+                                          onsubmit="return confirm('Bạn có chắc chắn muốn xoá lịch hẹn này?')"
+                                          class="d-inline">
                                         <input type="hidden" name="appointmentId" th:value="${appt.id}"/>
                                         <button type="submit" class="btn btn-sm btn-danger">Xoá</button>
                                     </form>
                                 </div>
                             </td>
+
                         </tr>
                         </tbody>
                     </table>
