@@ -5680,7 +5680,7 @@ textarea.form-control-lg {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  height: 220px;
+  
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
@@ -14424,10 +14424,13 @@ dl {
     min-height: 100vh; }
 
 .main-panel {
+  
+
   -webkit-transition: width 0.25s ease, margin 0.25s ease;
   transition: width 0.25s ease, margin 0.25s ease;
   width: calc(100% - 260px);
-  min-height: calc(100vh - 70px);
+  min-height: 100vh;
+  overflow-y: auto;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;

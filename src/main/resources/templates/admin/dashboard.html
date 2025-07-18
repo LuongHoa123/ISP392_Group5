@@ -31,6 +31,8 @@
                 </ul>
             </nav>
         </div>
+        
+        <!-- Statistics Cards Row -->
         <div class="row">
             <div class="col-md-4 stretch-card grid-margin">
                 <div class="card bg-gradient-danger card-img-holder text-white">
@@ -74,41 +76,78 @@
             </div>
         </div>
 
-        <div class="row mt-5">
+        <!-- Revenue Chart Row -->
+        <div class="row mt-4">
             <div class="col-md-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title d-flex justify-content-between align-items-center">
                             Doanh thu theo ngày trong tháng
                             <span>
-                        <button id="prevMonthBtn" class="btn btn-outline-primary btn-sm"><<</button>
-                        <span id="revenueMonthLabel" class="mx-2"></span>
-                        <button id="nextMonthBtn" class="btn btn-outline-primary btn-sm">>></button>
-                    </span>
+                                <button id="prevMonthBtn" class="btn btn-outline-primary btn-sm"><<</button>
+                                <span id="revenueMonthLabel" class="mx-2"></span>
+                                <button id="nextMonthBtn" class="btn btn-outline-primary btn-sm">>></button>
+                            </span>
                         </h4>
-                        <canvas id="dailyRevenueChart" height="120"></canvas>
+                        <div class="chart-container" style="position: relative; height: 400px;">
+                            <canvas id="dailyRevenueChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
+        <!-- Appointments Chart Row -->
+        <div class="row mt-4">
             <div class="col-md-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Lịch hẹn theo tháng trong năm</h4>
-                        <canvas id="appointmentsBarChart" height="120"></canvas>
+                        <div class="chart-container" style="position: relative; height: 400px;">
+                            <canvas id="appointmentsBarChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
+        <!-- Pie Chart Row -->
+        <div class="row mt-4">
             <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Thống kê lịch hẹn trong tháng này</h4>
-                        <canvas id="appointmentsPieChart" height="240"></canvas>
+                        <div class="chart-container" style="position: relative; height: 300px;">
+                            <canvas id="appointmentsPieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Lịch hẹn chờ xử lý</h4>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Tên bệnh nhân</th>
+                                        <th>Ngày hẹn</th>
+                                        <th>Trạng thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="appointment : ${appointmentsPending}" th:if="${appointmentsPending != null}">
+                                        <td th:text="${appointment.name}">-</td>
+                                        <td th:text="${#temporals.format(appointment.appointmentDateTime, 'dd/MM/yyyy HH:mm')}">-</td>
+                                        <td><span class="badge badge-warning">Chờ xác nhận</span></td>
+                                    </tr>
+                                    <tr th:if="${appointmentsPending == null || appointmentsPending.isEmpty()}">
+                                        <td colspan="3" class="text-center">Không có lịch hẹn nào</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -152,11 +191,20 @@
                             datasets: [{
                                 label: 'Doanh thu (VND)',
                                 data: values,
-                                backgroundColor: '#00c292'
+                                backgroundColor: '#00c292',
+                                borderColor: '#00c292',
+                                borderWidth: 1
                             }]
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top'
+                                }
+                            },
                             scales: {
                                 y: {
                                     beginAtZero: true,
@@ -213,11 +261,20 @@
             datasets: [{
                 label: 'Số lịch hẹn',
                 data: barData,
-                backgroundColor: '#4b49ac'
+                backgroundColor: '#4b49ac',
+                borderColor: '#4b49ac',
+                borderWidth: 1
             }]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            },
             scales: {
                 y: {
                     beginAtZero: true,
@@ -253,14 +310,21 @@
             labels: pieLabels,
             datasets: [{
                 data: pieData,
-                backgroundColor: ['#ffc107', '#dc3545', '#28a745', '#17a2b8']
+                backgroundColor: ['#ffc107', '#dc3545', '#28a745', '#17a2b8'],
+                borderColor: ['#ffc107', '#dc3545', '#28a745', '#17a2b8'],
+                borderWidth: 2
             }]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'bottom'
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true
+                    }
                 }
             }
         }
