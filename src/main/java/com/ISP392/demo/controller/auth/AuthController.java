@@ -109,7 +109,7 @@ public class AuthController {
         session.setAttribute("otp-register", otpCode());
         session.setMaxInactiveInterval(360);
         String subject = "Đây là OTP của bạn";
-        String mess = "Xin chào @" + " \n" + email + "Đây là OTP của bạn: " + session.getAttribute("otp-register") + " Hãy điền vào form!" + "\n Cảm ơn!";
+        String mess = "Xin chào "  + email + " \n" + "Đây là OTP của bạn: " + session.getAttribute("otp-register") + " \n" + "Hãy điền vào form!" + "\nCảm ơn!";
         // Gửi email bất đồng bộ
         this.emailSenderService.sendEmailAsync(email, subject, mess);
         session.setAttribute("email", email);
