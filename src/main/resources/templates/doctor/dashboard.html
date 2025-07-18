@@ -84,19 +84,19 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-        <script>
-            // Lấy số liệu trực tiếp từ Thymeleaf
+        <script th:inline="javascript">
+            var patientsByWeek = [[${patientsByWeek}]];
+            var weekLabels = patientsByWeek.map(function(_, i) { return 'Tuần ' + (i+1); });
             var daKham = [[${daKham}]];
             var chuaKham = [[${chuaKham}]];
-            // Bar chart
             new Chart(document.getElementById('barChartPatients'), {
                 type: 'bar',
                 data: {
-                    labels: ['Đã khám', 'Chưa khám'],
+                    labels: weekLabels,
                     datasets: [{
-                        label: 'Số bệnh nhân',
-                        data: [daKham, chuaKham],
-                        backgroundColor: ['#4CAF50', '#FF9800']
+                        label: 'Số bệnh nhân đã khám',
+                        data: patientsByWeek,
+                        backgroundColor: '#4CAF50'
                     }]
                 },
                 options: {
