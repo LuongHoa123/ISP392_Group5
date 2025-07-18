@@ -139,8 +139,7 @@
                             <th>Phòng</th>
                             <th>Chi tiết</th>
                             <th>Trạng thái</th>
-                            <th>Thanh toán</th>
-                            <th></th>
+                            <th>Hành động</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -173,53 +172,43 @@
         <span th:case="2" class="badge badge-info">Đang chờ khám</span>
         <span th:case="*">Không xác định</span>
     </span>
-                            </td>
                             <td>
-                                <div class="d-flex flex-column gap-2">
-        <span th:if="${appt.status != 1}">
-            <button type="button" class="btn btn-sm btn-success mb-1"
-                    data-toggle="modal"
-                    th:attr="data-target='#assignModal_' + ${appt.id}">
-                Chỉ định
-            </button>
-        </span>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <div th:if="${appt.status != 1}">
+                                        <button type="button" class="btn btn-sm btn-success"
+                                                data-toggle="modal"
+                                                th:attr="data-target='#assignModal_' + ${appt.id}">
+                                            Chỉ định
+                                        </button>
+                                    </div>
 
-                                </div>
+                                    <div th:if="${appt.status == 1}">
+                                        <a th:href="@{'/recep/appointment/generatePdf/' + ${appt.id}}"
+                                           class="btn btn-sm btn-primary" target="_blank">
+                                            In Phiếu
+                                        </a>
+                                    </div>
 
-                                <div class="d-flex flex-column gap-2">
-                                    <span th:if="${appt.status == 1}">
-                        <a th:href="@{'/recep/appointment/generatePdf/' + ${appt.id}}"
-                           class="btn btn-sm btn-primary" target="_blank">
-                            In Phiếu
-                        </a>
-                    </span>
-                                </div>
-                            </td>
-                            <td>
-                                <a th:href="@{'/recep/invoice/' + ${appt.id}}"
-                                   class="btn btn-sm btn-primary">
-                                    Thanh toán
-                                </a>
-                            </td>
-                            <td>
-                                <div class="d-flex flex-column gap-2">
+                                    <a th:href="@{'/recep/invoice/' + ${appt.id}}"
+                                       class="btn btn-sm btn-primary">
+                                        Thanh toán
+                                    </a>
+
                                     <form th:if="${appt.status == 1}"
-                                          th:action="@{/recep/appointment/detail}" method="get">
+                                          th:action="@{/recep/appointment/detail}" method="get" class="d-inline">
                                         <input type="hidden" name="appointmentId" th:value="${appt.id}"/>
                                         <button type="submit" class="btn btn-sm btn-danger">Kết luận</button>
                                     </form>
-                                </div>
 
-                                <div class="d-flex flex-column gap-2">
                                     <form th:if="${appt.status == -1}"
                                           th:action="@{/recep/appointment/delete}" method="post"
+                                          class="d-inline"
                                           onsubmit="return confirm('Bạn có chắc chắn muốn xoá lịch hẹn này?')">
                                         <input type="hidden" name="appointmentId" th:value="${appt.id}"/>
                                         <button type="submit" class="btn btn-sm btn-danger">Xoá</button>
                                     </form>
                                 </div>
                             </td>
-
                         </tr>
                         </tbody>
                     </table>
