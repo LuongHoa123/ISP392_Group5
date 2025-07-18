@@ -107,7 +107,7 @@ public class OtpController {
             session.setAttribute("otp-pass", otpCode());
             session.setMaxInactiveInterval(360);
             String subject = "Đây là OTP của bạn";
-            String mess = "Xin chào @" + " \n" + email + "Đây là OTP của bạn: " + session.getAttribute("otp-pass") + " Hãy điền vào form!" + "\n Cảm ơn!";
+            String mess = "Xin chào "  + email + " \n" + "Đây là OTP của bạn: " + session.getAttribute("otp-pass") + " \n" + "Hãy điền vào form!" + "\nCảm ơn!";
             
             // Gửi email bất đồng bộ với error handling
             this.emailSenderService.sendEmailAsync(email, subject, mess)
@@ -228,7 +228,7 @@ public class OtpController {
             
             // Gửi email bất đồng bộ
             String subject = "Đây là OTP của bạn";
-            String mess = "Xin chào @" + " \n" + email + "Đây là OTP của bạn: " + newOtp + " Hãy điền vào form!" + "\n Cảm ơn!";
+            String mess = "Xin chào "  + email + " \n" + "Đây là OTP của bạn: " + newOtp + " \n" + "Hãy điền vào form!" + "\nCảm ơn!";
             
             System.out.println("Sending register email to: " + email);
             
