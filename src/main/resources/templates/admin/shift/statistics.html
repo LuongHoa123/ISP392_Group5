@@ -22,14 +22,27 @@
             font-weight: 600;
             text-align: center;
             padding: 12px 8px;
-            font-size: 14px;
+            font-size: 13px;
+            border: none;
+        }
+
+        .day-header {
+            background: #17a2b8;
+            position: relative;
+        }
+
+        .shift-subheader {
+            background: rgba(255,255,255,0.15);
+            font-size: 11px;
+            padding: 6px 4px;
         }
         
         .statistics-table td {
-            padding: 12px 8px;
+            padding: 10px 6px;
             text-align: center;
             vertical-align: middle;
             border-bottom: 1px solid #f8f9fa;
+            font-size: 12px;
         }
         
         .statistics-table tbody tr:nth-child(even) {
@@ -41,34 +54,45 @@
         }
         
         .shift-cell {
-            min-width: 100px;
-            font-size: 12px;
+            min-width: 60px;
+            padding: 6px 4px;
+        }
+
+        .shift-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .shift-item {
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+            text-align: center;
+            min-height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .shift-morning {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 12px;
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
         }
         
         .shift-afternoon {
-            background-color: #fff3cd;
-            color: #856404;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 12px;
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
         }
         
         .shift-off {
+            background-color: #f8f9fa;
             color: #6c757d;
             font-style: italic;
-        }
-        
-        .shift-text {
-            font-size: 12px;
-            word-wrap: break-word;
+            border: 1px solid #dee2e6;
         }
         
         .week-navigation {
@@ -94,8 +118,6 @@
             padding: 20px;
             margin-top: 20px;
         }
-        
-
         
         .position-badge {
             padding: 4px 8px;
@@ -132,6 +154,34 @@
         .pagination-custom .page-item.active .page-link {
             background-color: #20c997;
             border-color: #20c997;
+        }
+
+        .total-shifts {
+            background-color: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        /* Responsive cho bảng */
+        @media (max-width: 1200px) {
+            .shift-cell {
+                min-width: 50px;
+                padding: 4px 2px;
+            }
+            
+            .shift-item {
+                font-size: 9px;
+                padding: 2px 4px;
+                min-height: 16px;
+            }
+            
+            .statistics-table th {
+                font-size: 11px;
+                padding: 8px 4px;
+            }
         }
     </style>
 </head>
@@ -211,19 +261,42 @@
                 <table class="table table-striped table-hover mb-0">
                     <thead>
                         <tr>
-                            <th>STT</th>
-                            <th>Họ Tên Bác Sĩ</th>
-                            <th>Chức vụ</th>
-                            <th>Khoa</th>
-                            <th>Thứ 2</th>
-                            <th>Thứ 3</th>
-                            <th>Thứ 4</th>
-                            <th>Thứ 5</th>
-                            <th>Thứ 6</th>
-                            <th>Thứ 7</th>
-                            <th>Chủ Nhật</th>
-                            <th>Tổng số ca</th>
-                            <th>Ghi chú</th>
+                            <th rowspan="2">STT</th>
+                            <th rowspan="2">Họ Tên</th>
+                            <th rowspan="2">Chức vụ</th>
+                            <th rowspan="2">Khoa</th>
+                            <th colspan="2" class="day-header">Thứ 2</th>
+                            <th colspan="2" class="day-header">Thứ 3</th>
+                            <th colspan="2" class="day-header">Thứ 4</th>
+                            <th colspan="2" class="day-header">Thứ 5</th>
+                            <th colspan="2" class="day-header">Thứ 6</th>
+                            <th colspan="2" class="day-header">Thứ 7</th>
+                            <th colspan="2" class="day-header">Chủ Nhật</th>
+                            <th rowspan="2">Tổng ca</th>
+                            <th rowspan="2">Ghi chú</th>
+                        </tr>
+                        <tr>
+                            <!-- Thứ 2 -->
+                            <th class="shift-subheader">Sáng</th>
+                            <th class="shift-subheader">Chiều</th>
+                            <!-- Thứ 3 -->
+                            <th class="shift-subheader">Sáng</th>
+                            <th class="shift-subheader">Chiều</th>
+                            <!-- Thứ 4 -->
+                            <th class="shift-subheader">Sáng</th>
+                            <th class="shift-subheader">Chiều</th>
+                            <!-- Thứ 5 -->
+                            <th class="shift-subheader">Sáng</th>
+                            <th class="shift-subheader">Chiều</th>
+                            <!-- Thứ 6 -->
+                            <th class="shift-subheader">Sáng</th>
+                            <th class="shift-subheader">Chiều</th>
+                            <!-- Thứ 7 -->
+                            <th class="shift-subheader">Sáng</th>
+                            <th class="shift-subheader">Chiều</th>
+                            <!-- Chủ Nhật -->
+                            <th class="shift-subheader">Sáng</th>
+                            <th class="shift-subheader">Chiều</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -235,35 +308,141 @@
                                       th:text="${stat.position}"></span>
                             </td>
                             <td th:text="${stat.department != null && !stat.department.isEmpty() ? stat.department : ''}"></td>
+                            
+                            <!-- Thứ 2 - Sáng -->
                             <td class="shift-cell">
-                                <span th:class="${stat.monday == 'Nghỉ' ? 'shift-off' : 'shift-text'}" 
-                                      th:text="${stat.monday}"></span>
+                                <div th:if="${#strings.contains(stat.monday, 'Sáng')}" class="shift-item shift-morning">
+                                    <span th:text="${#strings.contains(stat.monday, 'Sáng (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.monday, 'Sáng ('), ')') : 
+                                        'Sáng'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.monday, 'Sáng')}" class="shift-item shift-off">Trống</div>
                             </td>
+                            <!-- Thứ 2 - Chiều -->
                             <td class="shift-cell">
-                                <span th:class="${stat.tuesday == 'Nghỉ' ? 'shift-off' : 'shift-text'}" 
-                                      th:text="${stat.tuesday}"></span>
+                                <div th:if="${#strings.contains(stat.monday, 'Chiều')}" class="shift-item shift-afternoon">
+                                    <span th:text="${#strings.contains(stat.monday, 'Chiều (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.monday, 'Chiều ('), ')') : 
+                                        'Chiều'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.monday, 'Chiều')}" class="shift-item shift-off">Trống</div>
                             </td>
+                            
+                            <!-- Thứ 3 - Sáng -->
                             <td class="shift-cell">
-                                <span th:class="${stat.wednesday == 'Nghỉ' ? 'shift-off' : 'shift-text'}" 
-                                      th:text="${stat.wednesday}"></span>
+                                <div th:if="${#strings.contains(stat.tuesday, 'Sáng')}" class="shift-item shift-morning">
+                                    <span th:text="${#strings.contains(stat.tuesday, 'Sáng (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.tuesday, 'Sáng ('), ')') : 
+                                        'Sáng'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.tuesday, 'Sáng')}" class="shift-item shift-off">Trống</div>
                             </td>
+                            <!-- Thứ 3 - Chiều -->
                             <td class="shift-cell">
-                                <span th:class="${stat.thursday == 'Nghỉ' ? 'shift-off' : 'shift-text'}" 
-                                      th:text="${stat.thursday}"></span>
+                                <div th:if="${#strings.contains(stat.tuesday, 'Chiều')}" class="shift-item shift-afternoon">
+                                    <span th:text="${#strings.contains(stat.tuesday, 'Chiều (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.tuesday, 'Chiều ('), ')') : 
+                                        'Chiều'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.tuesday, 'Chiều')}" class="shift-item shift-off">Trống</div>
                             </td>
+                            
+                            <!-- Thứ 4 - Sáng -->
                             <td class="shift-cell">
-                                <span th:class="${stat.friday == 'Nghỉ' ? 'shift-off' : 'shift-text'}" 
-                                      th:text="${stat.friday}"></span>
+                                <div th:if="${#strings.contains(stat.wednesday, 'Sáng')}" class="shift-item shift-morning">
+                                    <span th:text="${#strings.contains(stat.wednesday, 'Sáng (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.wednesday, 'Sáng ('), ')') : 
+                                        'Sáng'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.wednesday, 'Sáng')}" class="shift-item shift-off">Trống</div>
                             </td>
+                            <!-- Thứ 4 - Chiều -->
                             <td class="shift-cell">
-                                <span th:class="${stat.saturday == 'Nghỉ' ? 'shift-off' : 'shift-text'}" 
-                                      th:text="${stat.saturday}"></span>
+                                <div th:if="${#strings.contains(stat.wednesday, 'Chiều')}" class="shift-item shift-afternoon">
+                                    <span th:text="${#strings.contains(stat.wednesday, 'Chiều (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.wednesday, 'Chiều ('), ')') : 
+                                        'Chiều'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.wednesday, 'Chiều')}" class="shift-item shift-off">Trống</div>
                             </td>
+                            
+                            <!-- Thứ 5 - Sáng -->
                             <td class="shift-cell">
-                                <span th:class="${stat.sunday == 'Nghỉ' ? 'shift-off' : 'shift-text'}" 
-                                      th:text="${stat.sunday}"></span>
+                                <div th:if="${#strings.contains(stat.thursday, 'Sáng')}" class="shift-item shift-morning">
+                                    <span th:text="${#strings.contains(stat.thursday, 'Sáng (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.thursday, 'Sáng ('), ')') : 
+                                        'Sáng'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.thursday, 'Sáng')}" class="shift-item shift-off">Trống</div>
                             </td>
-                            <td><strong th:text="${stat.totalShifts}"></strong></td>
+                            <!-- Thứ 5 - Chiều -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.thursday, 'Chiều')}" class="shift-item shift-afternoon">
+                                    <span th:text="${#strings.contains(stat.thursday, 'Chiều (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.thursday, 'Chiều ('), ')') : 
+                                        'Chiều'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.thursday, 'Chiều')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            
+                            <!-- Thứ 6 - Sáng -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.friday, 'Sáng')}" class="shift-item shift-morning">
+                                    <span th:text="${#strings.contains(stat.friday, 'Sáng (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.friday, 'Sáng ('), ')') : 
+                                        'Sáng'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.friday, 'Sáng')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            <!-- Thứ 6 - Chiều -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.friday, 'Chiều')}" class="shift-item shift-afternoon">
+                                    <span th:text="${#strings.contains(stat.friday, 'Chiều (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.friday, 'Chiều ('), ')') : 
+                                        'Chiều'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.friday, 'Chiều')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            
+                            <!-- Thứ 7 - Sáng -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.saturday, 'Sáng')}" class="shift-item shift-morning">
+                                    <span th:text="${#strings.contains(stat.saturday, 'Sáng (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.saturday, 'Sáng ('), ')') : 
+                                        'Sáng'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.saturday, 'Sáng')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            <!-- Thứ 7 - Chiều -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.saturday, 'Chiều')}" class="shift-item shift-afternoon">
+                                    <span th:text="${#strings.contains(stat.saturday, 'Chiều (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.saturday, 'Chiều ('), ')') : 
+                                        'Chiều'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.saturday, 'Chiều')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            
+                            <!-- Chủ Nhật - Sáng -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.sunday, 'Sáng')}" class="shift-item shift-morning">
+                                    <span th:text="${#strings.contains(stat.sunday, 'Sáng (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.sunday, 'Sáng ('), ')') : 
+                                        'Sáng'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.sunday, 'Sáng')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            <!-- Chủ Nhật - Chiều -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.sunday, 'Chiều')}" class="shift-item shift-afternoon">
+                                    <span th:text="${#strings.contains(stat.sunday, 'Chiều (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.sunday, 'Chiều ('), ')') : 
+                                        'Chiều'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.sunday, 'Chiều')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            
+                            <td><span class="total-shifts" th:text="${stat.totalShifts}"></span></td>
                             <td th:text="${stat.notes}"></td>
                         </tr>
                     </tbody>
@@ -307,7 +486,7 @@
         </div>
 
         <script th:inline="javascript">
-            // Lấy dữ liệu từ server (lấy tất cả chartData, không phân trang)
+            // Lấy dữ liệu từ server
             const allChartData = /*[[${chartData}]]*/ [];
             
             // Tạo dữ liệu cho biểu đồ
@@ -321,32 +500,18 @@
                 });
             });
             
-            // Nếu không có dữ liệu thực, tạo dữ liệu mẫu
-            if (allStatistics.length === 0) {
-                allStatistics = [
-                    { name: 'Nguyễn Văn A', totalShifts: 5 },
-                    { name: 'Trần Thị B', totalShifts: 3 },
-                    { name: 'Lê Văn C', totalShifts: 4 },
-                    { name: 'Phạm Thị D', totalShifts: 2 },
-                    { name: 'Hoàng Văn E', totalShifts: 6 },
-                    { name: 'Vũ Thị F', totalShifts: 4 }
-                ];
-            }
-            
             let chart;
             
             function initChart() {
                 const ctx = document.getElementById('shiftChart').getContext('2d');
                 
-                // Kiểm tra xem canvas có tồn tại không
-                if (!ctx) {
-                    console.error('Canvas element not found');
+                if (!ctx || allStatistics.length === 0) {
+                    console.error('Canvas element not found or no data');
                     return;
                 }
                 
-                // Tạo mảng màu hồng cho tất cả các cột
-                const pinkColors = allStatistics.map(() => 'rgba(255, 105, 180, 0.8)'); // Deep pink
-                const pinkBorders = allStatistics.map(() => 'rgba(255, 105, 180, 1)');
+                const colors = allStatistics.map(() => '#20c997');
+                const borderColors = allStatistics.map(() => '#1a9e7e');
                 
                 chart = new Chart(ctx, {
                     type: 'bar',
@@ -355,8 +520,8 @@
                         datasets: [{
                             label: 'Số ca làm việc trong tuần',
                             data: allStatistics.map(stat => stat.totalShifts),
-                            backgroundColor: pinkColors,
-                            borderColor: pinkBorders,
+                            backgroundColor: colors,
+                            borderColor: borderColors,
                             borderWidth: 1
                         }]
                     },
@@ -378,7 +543,7 @@
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                max: 7,
+                                max: 14,
                                 ticks: {
                                     stepSize: 1
                                 },
@@ -404,10 +569,6 @@
             
             // Initialize chart when page loads
             document.addEventListener('DOMContentLoaded', function() {
-                console.log('Chart data:', allStatistics);
-                console.log('Chart data length:', allStatistics.length);
-                
-                // Wait for Chart.js to load
                 setTimeout(function() {
                     initChart();
                 }, 100);
@@ -416,4 +577,4 @@
     </th:block>
 </th:block>
 </body>
-</html> 
+</html>

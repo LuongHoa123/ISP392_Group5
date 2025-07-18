@@ -175,29 +175,46 @@ public class AdminShiftStatisticsController {
             if (dayShifts.isEmpty()) {
                 stats.put(weekDays[i], "Nghỉ");
             } else {
-                List<String> morningShiftParts = new ArrayList<>();
-                List<String> afternoonShiftParts = new ArrayList<>();
+                // Sửa logic để chỉ lấy 1 shift cho mỗi ca (sáng/chiều)
+                String morningShiftInfo = "";
+                String afternoonShiftInfo = "";
                 
-                for (ShiftEntity shift : dayShifts) {
-                    LocalTime startTime = shift.getStartTime().toLocalTime();
-                    String roomInfo = shift.getRoom() != null ? " (" + shift.getRoom().getRoomName() + ")" : "";
-                    
-                    if (startTime.equals(LocalTime.of(7, 0))) {
-                        morningShiftParts.add("Sáng" + roomInfo);
-                        morningShifts++;
-                    } else if (startTime.equals(LocalTime.of(13, 0))) {
-                        afternoonShiftParts.add("Chiều" + roomInfo);
-                        afternoonShifts++;
-                    }
+                // Lấy ca sáng duy nhất
+                Optional<ShiftEntity> morningShift = dayShifts.stream()
+                    .filter(shift -> shift.getStartTime().toLocalTime().equals(LocalTime.of(7, 0)))
+                    .findFirst();
+                
+                if (morningShift.isPresent()) {
+                    String roomInfo = morningShift.get().getRoom() != null ? 
+                        " (" + morningShift.get().getRoom().getRoomName() + ")" : "";
+                    morningShiftInfo = "Sáng" + roomInfo;
+                    morningShifts++;
+                    totalShifts++;
+                }
+                
+                // Lấy ca chiều duy nhất
+                Optional<ShiftEntity> afternoonShift = dayShifts.stream()
+                    .filter(shift -> shift.getStartTime().toLocalTime().equals(LocalTime.of(13, 0)))
+                    .findFirst();
+                
+                if (afternoonShift.isPresent()) {
+                    String roomInfo = afternoonShift.get().getRoom() != null ? 
+                        " (" + afternoonShift.get().getRoom().getRoomName() + ")" : "";
+                    afternoonShiftInfo = "Chiều" + roomInfo;
+                    afternoonShifts++;
                     totalShifts++;
                 }
                 
                 // Kết hợp ca sáng và ca chiều
-                List<String> allShiftParts = new ArrayList<>();
-                allShiftParts.addAll(morningShiftParts);
-                allShiftParts.addAll(afternoonShiftParts);
+                List<String> shiftParts = new ArrayList<>();
+                if (!morningShiftInfo.isEmpty()) {
+                    shiftParts.add(morningShiftInfo);
+                }
+                if (!afternoonShiftInfo.isEmpty()) {
+                    shiftParts.add(afternoonShiftInfo);
+                }
                 
-                stats.put(weekDays[i], String.join(", ", allShiftParts));
+                stats.put(weekDays[i], shiftParts.isEmpty() ? "Nghỉ" : String.join(", ", shiftParts));
             }
         }
         
