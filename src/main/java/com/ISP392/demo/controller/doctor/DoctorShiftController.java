@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ISP392.demo.entity.AppointmentEntity;
 import com.ISP392.demo.entity.DoctorEntity;
@@ -111,5 +112,30 @@ public class DoctorShiftController {
         model.addAttribute("shift", shift);
         model.addAttribute("appointments", appointments);
         return "doctor/shift/detail";
+    }
+
+    @GetMapping("/calendar/shifts")
+    @ResponseBody
+    public List<Map<String, Object>> getShiftsForCalendar() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
+        DoctorEntity doctor = doctorRepository.findByUser(userEntity);
+        java.time.LocalDate now = java.time.LocalDate.now();
+        java.time.LocalDate firstDay = now.withDayOfMonth(1);
+        java.time.LocalDate lastDay = now.withDayOfMonth(now.lengthOfMonth());
+        List<ShiftEntity> allShiftsInMonth = shiftRepository.findAll().stream()
+            .filter(s -> s.getDoctor() != null && s.getDoctor().getId().equals(doctor.getId()))
+            .filter(s -> !s.getStartTime().isBefore(firstDay.atStartOfDay()) && !s.getStartTime().isAfter(lastDay.atTime(23, 59, 59)))
+            .toList();
+        List<Map<String, Object>> result = new java.util.ArrayList<>();
+        for (ShiftEntity shift : allShiftsInMonth) {
+            Map<String, Object> map = new java.util.HashMap<>();
+            map.put("title", "Ca trực");
+            map.put("start", shift.getStartTime().toString());
+            map.put("end", shift.getEndTime().toString());
+            map.put("color", "#b39ddb"); // tím nhạt
+            result.add(map);
+        }
+        return result;
     }
 }
