@@ -13,20 +13,21 @@
 
     <style>
         .back-to-top {
-    position: fixed;
-    bottom: 100px; /* Đặt phía trên icon chat */
-    right: 30px;   /* Điều chỉnh sao cho không trùng icon */
-    z-index: 99999;
-    background-color: #1e40af;
-    color: white;
-    padding: 12px 16px;
-    border-radius: 50%;
-    font-size: 18px;
-    cursor: pointer;
-    display: none;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
-    transition: opacity 0.3s;
-}
+            position: fixed;
+            bottom: 100px; /* Đặt phía trên icon chat */
+            right: 30px; /* Điều chỉnh sao cho không trùng icon */
+            z-index: 99999;
+            background-color: #1e40af;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+            transition: opacity 0.3s;
+        }
+
         .back-to-top:hover {
             opacity: 0.8;
         }
@@ -172,6 +173,7 @@
         .registration-modal .close:hover {
             opacity: 1;
         }
+
         .faq-questions {
             padding: 10px;
             background-color: #f2f2f2;
@@ -209,7 +211,8 @@
 </div>
 
 <!-- Registration Success Modal -->
-<div class="modal fade registration-modal" id="registrationSuccessModal" tabindex="-1" role="dialog" aria-labelledby="registrationModalLabel" aria-hidden="true" th:if="${registrationSuccess}">
+<div class="modal fade registration-modal" id="registrationSuccessModal" tabindex="-1" role="dialog"
+     aria-labelledby="registrationModalLabel" aria-hidden="true" th:if="${registrationSuccess}">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -222,7 +225,7 @@
                     <i class="fas fa-info-circle mr-1"></i>
                     Tài khoản của bạn đã được tạo thành công. Vui lòng lưu lại thông tin bên dưới.
                 </div>
-                
+
                 <div class="user-info">
                     <div class="info-row">
                         <span class="info-label">Họ tên bệnh nhân:</span>
@@ -249,7 +252,7 @@
                         <span class="info-value" th:text="${userAddress}">Tphcm</span>
                     </div>
                 </div>
-                
+
                 <div class="success-note">
                     <i class="fas fa-exclamation-triangle mr-1"></i>
                     <strong>Lưu ý:</strong> Bạn có thể đăng nhập vào hệ thống bằng email và mật khẩu đã đăng ký.
@@ -340,7 +343,8 @@
             <h1 class="heading"><span>Đánh Giá</span> Của Khách Hàng</h1>
             <div class="box-container">
                 <div class="box" th:each="review : ${reviews}">
-                    <img th:src="${review.patient.avatar != null ? review.patient.avatar : '/assets/Man.jpg'}" alt="Avatar">
+                    <img th:src="${review.patient.avatar != null ? review.patient.avatar : '/assets/Man.jpg'}"
+                         alt="Avatar">
                     <h3 th:text="${review.patient.firstName + ' ' + review.patient.lastName}">Tên người dùng</h3>
                     <div class="stars">
                         <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, review.star)}"></i>
@@ -352,7 +356,16 @@
         </section>
     </th:block>
 </th:block>
+<style>
+    .delete-btn {
+        background-color: transparent;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        margin-left: 5px;
+    }
 
+</style>
 <script>
     function openChat() {
         document.getElementById("chatWidget").style.display = "block";
@@ -376,9 +389,12 @@
     <div class="chat-body" id="chats">
         <div class="faq-questions">
             <p><strong>Câu hỏi thường gặp:</strong></p>
-            <button class="faq-btn" onclick="sendFAQ('Khung giờ làm việc như nào?')">Khung giờ làm việc như nào?</button>
+            <button class="faq-btn" onclick="sendFAQ('Khung giờ làm việc như nào?')">Khung giờ làm việc như nào?
+            </button>
             <button class="faq-btn" onclick="sendFAQ('Địa chỉ bệnh viện ở đâu?')">Địa chỉ bệnh viện ở đâu?</button>
-            <button class="faq-btn" onclick="sendFAQ('Có thể đặt hẹn khám trước không?')">Có thể đặt hẹn khám trước không?</button>
+            <button class="faq-btn" onclick="sendFAQ('Có thể đặt hẹn khám trước không?')">Có thể đặt hẹn khám trước
+                không?
+            </button>
         </div>
 
         <div class="message time">21:29</div>
@@ -387,6 +403,7 @@
         <input type="text" id="myMessage" placeholder="Nhập tin nhắn..."
                onkeydown="if(event.key === 'Enter') sendMessage()">
         <button class="send-btn" onclick="sendMessage()">📨</button>
+        <button class="delete-btn" onclick="deleteLastChat()">🗑️</button>
     </div>
 </div>
 
@@ -399,6 +416,33 @@
 <script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
 <script th:src="@{/js/script.js}"></script>
 <script>
+    document.getElementById("myMessage").addEventListener("input", function () {
+        let maxLength = 500;
+        if (this.value.length > maxLength) {
+            this.value = this.value.slice(0, maxLength);
+        }
+    });
+
+    function deleteLastChat() {
+        let chats = $("#chats").children();
+
+        let userMsgIndex = -1;
+        let botMsgIndex = -1;
+
+        for (let i = chats.length - 1; i >= 0; i--) {
+            if (userMsgIndex === -1 && $(chats[i]).hasClass("outgoing-chats")) {
+                userMsgIndex = i;
+            } else if (botMsgIndex === -1 && $(chats[i]).hasClass("received-chats")) {
+                botMsgIndex = i;
+            }
+            if (userMsgIndex !== -1 && botMsgIndex !== -1) break;
+        }
+
+        if (botMsgIndex !== -1) chats[botMsgIndex].remove();
+        if (userMsgIndex !== -1) chats[userMsgIndex].remove();
+
+        scrollToBottom();
+    }
 
     $(document).ready(function () {
         let initialMessage = "Tôi là Chatbot AI, có thể giúp gì cho bạn?";
@@ -413,6 +457,7 @@
       </div>`);
         scrollToBottom();
     });
+
 
     function getCurrentTime() {
         const now = new Date();
