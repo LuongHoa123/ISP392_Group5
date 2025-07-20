@@ -1,7 +1,6 @@
 package com.ISP392.demo.controller.admin;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -99,7 +98,6 @@ public class AdminRoomController {
         return "admin/room/add";
     }
 
-    // API endpoint to get available room numbers for a specific floor
     @GetMapping("/api/available-rooms")
     public String getAvailableRooms(@RequestParam Integer floor, Model model) {
         List<String> occupiedRooms = roomRepository.findAll().stream()
@@ -138,7 +136,6 @@ public class AdminRoomController {
         
         saveLog("Thêm phòng " + room.getRoomName() + " ở tầng " + room.getFloor());
         roomRepository.save(room);
-        redirectAttributes.addFlashAttribute("successMessage", "Thêm phòng thành công!");
         return "redirect:/admin/room?add=true";
     }
 
@@ -176,7 +173,6 @@ public class AdminRoomController {
         room.setId(id);
         roomRepository.save(room);
         saveLog("Cập nhật thông tin phòng " + room.getRoomName());
-        redirectAttributes.addFlashAttribute("successMessage", "Cập nhật phòng thành công!");
         return "redirect:/admin/room?edit=true";
     }
 
@@ -188,7 +184,6 @@ public class AdminRoomController {
                 RoomEntity room = roomOptional.get();
                 roomRepository.delete(room);
                 saveLog("Xoá phòng " + room.getRoomName());
-                redirectAttributes.addFlashAttribute("successMessage", "Xóa phòng thành công!");
                 return "redirect:/admin/room?delete=true";
             }
         } catch (Exception e) {

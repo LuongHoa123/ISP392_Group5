@@ -9,116 +9,362 @@
     <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
     <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
     <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .page-header {
+            background: white;
+            padding: 24px;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 0;
+        }
+        
+        .btn-add {
+            background: #38b2ac;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        
+        .btn-add:hover {
+            background: #319795;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .search-section {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .search-input {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 14px;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #9f7aea;
+            box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.1);
+        }
+        
+        .btn-search {
+            background: #9f7aea;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-search:hover {
+            background: #805ad5;
+            color: white;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .table {
+            margin: 0;
+        }
+        
+        .table thead th {
+            background: #f7fafc;
+            border: none;
+            color: #718096;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 16px;
+        }
+        
+        .table tbody td {
+            border: none;
+            padding: 16px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+        
+        .badge-room {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-weight: 500;
+            font-size: 12px;
+        }
+        
+        .badge-floor {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-weight: 500;
+            font-size: 12px;
+        }
+        
+        .btn-edit {
+            background: #fef3cd;
+            color: #b45309;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-right: 8px;
+            transition: all 0.2s;
+        }
+        
+        .btn-edit:hover {
+            background: #fde68a;
+            color: #92400e;
+            text-decoration: none;
+        }
+        
+        .btn-delete {
+            background: #fecaca;
+            color: #dc2626;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+        
+        .btn-delete:hover {
+            background: #f87171;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .pagination {
+            margin: 24px 0 0 0;
+            justify-content: center;
+        }
+        
+        .page-link {
+            color: #718096;
+            border: none;
+            padding: 8px 12px;
+            margin: 0 2px;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        
+        .page-item.active .page-link {
+            background: #3182ce;
+            color: white;
+        }
+        
+        .page-item.disabled .page-link {
+            color: #cbd5e0;
+        }
+        
+        .row-number {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .room-type {
+            font-weight: 500;
+            color: #2d3748;
+        }
+        
+        .room-description {
+            color: #718096;
+            font-size: 14px;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 48px 24px;
+            color: #9ca3af;
+        }
+        
+        .alert {
+            border: none;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+        }
+        
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .alert-danger {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+    </style>
 </head>
 <body>
 <th:block th:replace="layout/admin-layout :: layout">
     <th:block th:fragment="pageContent">
-        <div class="container mt-4">
-            <h3 class="mb-3">Quản lý phòng khám</h3>
-
-            <div th:if="${param.add}" class="alert alert-success" role="alert">
-                Thêm phòng thành công!
-            </div>
-
-            <div th:if="${param.edit}" class="alert alert-success" role="alert">
-                Cập nhật phòng thành công!
-            </div>
-
-            <div th:if="${param.delete}" class="alert alert-success" role="alert">
-                Xoá phòng thành công!
-            </div>
-
-            <div th:if="${successMessage}" class="alert alert-success" role="alert">
-                [[${successMessage}]]
-            </div>
-
-            <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-                [[${errorMessage}]]
-            </div>
-
-            <!-- Form tìm kiếm -->
-            <form class="form-inline mb-3" method="get" th:action="@{/admin/room}">
-                <div class="form-group mr-2">
-                    <input type="text" class="form-control" name="search" placeholder="Tìm kiếm phòng..."
-                           th:value="${search}">
-                </div>
-                <button type="submit" class="btn btn-primary mr-2">Tìm kiếm</button>
-                <a class="btn btn-success" th:href="@{/admin/room/add}">Thêm phòng</a>
-            </form>
-
-            <!-- Bảng danh sách phòng -->
-            <div class="card">
-                <div class="card-body">
-                    <table class="table table-bordered">
-                        <thead class="thead-dark">
-                        <tr>
-                            <th>#</th>
-                            <th>Số phòng</th>
-                            <th>Tầng</th>
-                            <th>Loại phòng</th>
-                            <th>Mô tả</th>
-                            <th>Hành động</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="room, iterStat : ${rooms}">
-                            <td th:text="${iterStat.index + 1 + (currentPage * 5)}"></td>
-                            <td>
-                                <span class="badge badge-primary" th:text="${room.roomName}"></span>
-                            </td>
-                            <td>
-                                <span class="badge badge-info">Tầng [[${room.floor}]]</span>
-                            </td>
-                            <td th:text="${room.roomType}"></td>
-                            <td>
-                                <span th:text="${room.description != null and !#strings.isEmpty(room.description) ? room.description : 'Chưa có mô tả'}"
-                                      th:class="${room.description != null and !#strings.isEmpty(room.description) ? '' : 'text-muted'}"></span>
-                            </td>
-                            <td>
-                                <a class="btn btn-warning btn-sm"
-                                   th:href="@{'/admin/room/edit/' + ${room.id}}">
-                                   <i class="mdi mdi-pencil"></i> Sửa
-                                </a>
-                                <a class="btn btn-danger btn-sm"
-                                   th:href="@{'/admin/room/delete/' + ${room.id}}"
-                                   onclick="return confirm('Bạn có chắc chắn muốn xóa phòng này không?');">
-                                   <i class="mdi mdi-delete"></i> Xoá
-                                </a>
-                            </td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(rooms)}">
-                            <td colspan="6" class="text-center text-muted">
-                                <i class="mdi mdi-information-outline"></i>
-                                Không có phòng nào được tìm thấy
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                    <!-- Phân trang -->
-                    <nav th:if="${totalPages > 1}">
-                        <ul class="pagination justify-content-center mt-3">
-                            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                                <a class="page-link"
-                                   th:href="@{/admin/room(page=${currentPage - 1}, search=${search})}">Trước</a>
-                            </li>
-                            <li class="page-item"
-                                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-                                th:classappend="${i == currentPage} ? 'active'">
-                                <a class="page-link"
-                                   th:href="@{/admin/room(page=${i}, search=${search})}"
-                                   th:text="${i + 1}"></a>
-                            </li>
-                            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                                <a class="page-link"
-                                   th:href="@{/admin/room(page=${currentPage + 1}, search=${search})}">Sau</a>
-                            </li>
-                        </ul>
-                    </nav>
-
-                </div>
-            </div>
+        
+        <!-- Page Header -->
+        <div class="page-header">
+            <h3 class="page-title">Quản lý phòng khám</h3>
         </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${param.add}" class="alert alert-success" role="alert">
+            Thêm phòng thành công!
+        </div>
+
+        <div th:if="${param.edit}" class="alert alert-success" role="alert">
+            Cập nhật phòng thành công!
+        </div>
+
+        <div th:if="${param.delete}" class="alert alert-success" role="alert">
+            Xoá phòng thành công!
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success" role="alert">
+            [[${successMessage}]]
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            [[${errorMessage}]]
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <form class="d-flex gap-3" method="get" th:action="@{/admin/room}">
+                <div class="flex-grow-1">
+                    <input type="text" class="search-input" name="search" 
+                           placeholder="Tìm kiếm phòng..." th:value="${search}">
+                </div>
+                <button type="submit" class="btn-search">Tìm kiếm</button>
+                <a class="btn-add" th:href="@{/admin/room/add}">
+                    <span>+</span>
+                    Thêm phòng
+                </a>
+            </form>
+        </div>
+
+        <!-- Table Section -->
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 8%">#</th>
+                        <th style="width: 15%">SỐ PHÒNG</th>
+                        <th style="width: 12%">TẦNG</th>
+                        <th style="width: 20%">LOẠI PHÒNG</th>
+                        <th style="width: 30%">MÔ TẢ</th>
+                        <th style="width: 15%">HÀNH ĐỘNG</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="room, iterStat : ${rooms}">
+                        <td>
+                            <span class="row-number" th:text="${iterStat.index + 1 + (currentPage * 5)}"></span>
+                        </td>
+                        <td>
+                            <span class="badge-room" th:text="${room.roomName}"></span>
+                        </td>
+                        <td>
+                            <span class="badge-floor">Tầng [[${room.floor}]]</span>
+                        </td>
+                        <td>
+                            <span class="room-type" th:text="${room.roomType}"></span>
+                        </td>
+                        <td>
+                            <span class="room-description" 
+                                  th:text="${room.description != null and !#strings.isEmpty(room.description) ? room.description : 'Chưa có mô tả'}"></span>
+                        </td>
+                        <td>
+                            <a class="btn-edit"
+                               th:href="@{'/admin/room/edit/' + ${room.id}}">
+                               <i class="mdi mdi-pencil"></i> Sửa
+                            </a>
+                            <a class="btn-delete"
+                               th:href="@{'/admin/room/delete/' + ${room.id}}"
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa phòng này không?');">
+                               <i class="mdi mdi-delete"></i> Xóa
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(rooms)}">
+                        <td colspan="6">
+                            <div class="no-data">
+                                <i class="mdi mdi-information-outline" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
+                                Không có phòng nào được tìm thấy
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <nav th:if="${totalPages > 1}">
+                <ul class="pagination">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/room(page=${currentPage - 1}, search=${search})}">Trước</a>
+                    </li>
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link"
+                           th:href="@{/admin/room(page=${i}, search=${search})}"
+                           th:text="${i + 1}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/room(page=${currentPage + 1}, search=${search})}">Sau</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
     </th:block>
 </th:block>
 

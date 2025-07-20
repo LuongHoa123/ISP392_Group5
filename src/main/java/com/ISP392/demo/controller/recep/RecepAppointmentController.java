@@ -131,7 +131,7 @@ public class RecepAppointmentController {
                     + "👨‍⚕️ Bác sĩ: " + appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName() + "\n"
                     + "🏥 Phòng: " + appointment.getRoom().getRoomName() + "\n\n"
                     + "👉 Vui lòng xác nhận lịch khám tại liên kết sau: " + confirmLink + "\n\n"
-                    + "Trân trọng,\nPhòng khám";
+                    + "Trân trọng,\nPhòng khám Veritas";
 
             emailSenderService.sendEmail(appointment.getEmail(), "Xác nhận lịch khám", message);
         }

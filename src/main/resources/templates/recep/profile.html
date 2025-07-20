@@ -10,18 +10,29 @@
     <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
     <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
     <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+    <style>
+        .btn-warning {
+            background-color: #28a745 !important;
+            border-color: #28a745 !important;
+            color: #fff !important;
+        }
+        .btn-warning:hover {
+            background-color: #218838 !important;
+            border-color: #1e7e34 !important;
+        }
+    </style>
 </head>
 
 <body>
 <th:block th:replace="layout/recep-layout :: layout">
     <th:block th:fragment="pageContent">
-        <div class="page-header">
-            <h3 class="page-title"> Đổi thông tin cá nhân lễ tân </h3>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item active"><a href="#">Đổi thông tin cá nhân lễ tân</a></li>
-                </ol>
-            </nav>
+        <div class="page-header d-flex justify-content-between align-items-center">
+            <div>
+                <h3 class="page-title"> Đổi thông tin cá nhân lễ tân </h3>
+            </div>
+            <a class="btn btn-warning" th:href="@{/recep/changePass}">
+                <i class="mdi mdi-lock-reset"></i> Đổi mật khẩu
+            </a>
         </div>
         <div class="row">
             <div class="col-12 grid-margin stretch-card">

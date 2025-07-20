@@ -25,7 +25,7 @@
             </div>
 
             <!-- Thống kê tổng quan -->
-            <div class="row mb-4">
+            <!-- <div class="row mb-4">
                 <div class="col-md-3">
                     <div class="card bg-danger text-white">
                         <div class="card-body">
@@ -47,7 +47,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <h4 class="card-title">Đánh giá bình thường</h4>
+                                    <h5 class="card-title">Đánh giá bình thường</h5>
                                     <h2 class="mb-0" th:text="${totalNormalReviews}">0</h2>
                                     <small>3 sao</small>
                                 </div>
@@ -90,7 +90,77 @@
                         </div>
                     </div>
                 </div>
+            </div> -->
+
+
+
+
+            <div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-danger text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">Đánh giá tiêu cực</h4>
+                        <h2 class="mb-0" th:text="${totalNegativeReviews}">0</h2>
+                        <small>≤ 2 sao</small>
+                    </div>
+                    <div>
+                        <i class="mdi mdi-emoticon-sad mdi-36px"></i>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Đánh giá bình thường</h5>
+                        <h2 class="mb-0" th:text="${totalNormalReviews}">0</h2>
+                        <small>3 sao</small>
+                    </div>
+                    <div>
+                        <i class="mdi mdi-emoticon-neutral mdi-36px"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">Đánh giá tốt</h4>
+                        <h2 class="mb-0" th:text="${totalGoodReviews}">0</h2>
+                        <small>≥ 4 sao</small>
+                    </div>
+                    <div>
+                        <i class="mdi mdi-emoticon-happy mdi-36px"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">Tổng cộng</h4>
+                        <h2 class="mb-0" th:text="${totalNegativeReviews + totalNormalReviews + totalGoodReviews}">0</h2>
+                        <small>Tất cả đánh giá</small>
+                    </div>
+                    <div>
+                        <i class="mdi mdi-star-circle mdi-36px"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
             <!-- Form tìm kiếm và lọc -->
             <form class="form-inline mb-3" method="get" th:action="@{/admin/review}">

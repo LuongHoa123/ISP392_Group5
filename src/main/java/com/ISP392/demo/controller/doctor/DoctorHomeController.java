@@ -76,6 +76,20 @@ public class DoctorHomeController {
             .count();
         model.addAttribute("soCaTrucThang", soCaTrucThang);
 
+        // Thống kê số bệnh nhân đã khám theo từng tuần trong tháng (chỉ lấy 4 tuần)
+        List<AppointmentEntity> daKhamList = appointmentRepository.findByDoctorAndStatusAndMonthAndYear(doctor, 1, month, year);
+        java.util.List<Integer> patientsByWeek = new java.util.ArrayList<>();
+        for (int w = 1; w <= 4; w++) {
+            int count = 0;
+            for (AppointmentEntity a : daKhamList) {
+                int day = a.getAppointmentDateTime().getDayOfMonth();
+                int weekOfMonth = ((day - 1 + now.withDayOfMonth(1).getDayOfWeek().getValue() - 1) / 7) + 1;
+                if (weekOfMonth == w) count++;
+            }
+            patientsByWeek.add(count);
+        }
+        model.addAttribute("patientsByWeek", patientsByWeek);
+
         return "doctor/dashboard";
     }
 

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thống Kê Lịch Làm Việc</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .statistics-table {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .statistics-table th {
+            background: #20c997;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            padding: 12px 8px;
+            font-size: 13px;
+            border: none;
+        }
+
+        .day-header {
+            background: #17a2b8;
+            position: relative;
+        }
+
+        .shift-subheader {
+            background: rgba(255,255,255,0.15);
+            font-size: 11px;
+            padding: 6px 4px;
+        }
+        
+        .statistics-table td {
+            padding: 10px 6px;
+            text-align: center;
+            vertical-align: middle;
+            border-bottom: 1px solid #f8f9fa;
+            font-size: 12px;
+        }
+        
+        .statistics-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .statistics-table tbody tr:hover {
+            background-color: #e9ecef;
+        }
+        
+        .shift-cell {
+            min-width: 60px;
+            padding: 6px 4px;
+        }
+
+        .shift-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .shift-item {
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+            text-align: center;
+            min-height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .shift-morning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .shift-afternoon {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .shift-off {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            font-style: italic;
+            border: 1px solid #dee2e6;
+        }
+        
+        .week-navigation {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .search-filter {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .position-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .position-doctor {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .position-nurse {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+        }
+        
+        .pagination-custom {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .pagination-custom .page-item {
+            margin: 0 2px;
+        }
+        
+        .pagination-custom .page-link {
+            color: #20c997;
+            border-color: #20c997;
+        }
+        
+        .pagination-custom .page-item.active .page-link {
+            background-color: #20c997;
+            border-color: #20c997;
+        }
+
+        .total-shifts {
+            background-color: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        /* Responsive cho bảng */
+        @media (max-width: 1200px) {
+            .shift-cell {
+                min-width: 50px;
+                padding: 4px 2px;
+            }
+            
+            .shift-item {
+                font-size: 9px;
+                padding: 2px 4px;
+                min-height: 16px;
+            }
+            
+            .statistics-table th {
+                font-size: 11px;
+                padding: 8px 4px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<th:block th:replace="layout/admin-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>Thống Kê Lịch Làm Việc</h3>
+                <a href="/admin/shift" class="btn btn-secondary">
+                    <i class="mdi mdi-arrow-left"></i> Quay lại
+                </a>
+            </div>
+
+            <!-- Week Navigation -->
+            <div class="week-navigation">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <a th:href="@{/admin/shift/statistics(week=${previousWeek})}" class="btn btn-outline-secondary">
+                            <i class="mdi mdi-chevron-left"></i> Tuần trước
+                        </a>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <h4 th:text="${weekTitle}" class="mb-0"></h4>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a th:href="@{/admin/shift/statistics(week=${nextWeek})}" class="btn btn-outline-secondary">
+                            Tuần sau <i class="mdi mdi-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="search-filter">
+                <form method="get" th:action="@{/admin/shift/statistics}">
+                    <input type="hidden" name="week" th:value="${currentWeek}">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="search">Tìm kiếm theo tên:</label>
+                                <input type="text" id="search" name="search" class="form-control" 
+                                       th:value="${search}" placeholder="Nhập tên bác sĩ hoặc y tá...">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="shiftType">Lọc theo ca làm việc:</label>
+                                <select id="shiftType" name="shiftType" class="form-control">
+                                    <option value="">Tất cả ca</option>
+                                    <option value="MORNING" th:selected="${shiftType == 'MORNING'}">Ca sáng</option>
+                                    <option value="AFTERNOON" th:selected="${shiftType == 'AFTERNOON'}">Ca chiều</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="mdi mdi-magnify"></i> Lọc
+                                    </button>
+                                    <a th:href="@{/admin/shift/statistics(week=${currentWeek})}" class="btn btn-secondary">
+                                        <i class="mdi mdi-refresh"></i> Reset
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Statistics Table -->
+            <div class="statistics-table">
+                <table class="table table-striped table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">STT</th>
+                            <th rowspan="2">Họ Tên</th>
+                            <th rowspan="2">Chức vụ</th>
+                            <th rowspan="2">Khoa</th>
+                            <th colspan="2" class="day-header">Thứ 2</th>
+                            <th colspan="2" class="day-header">Thứ 3</th>
+                            <th colspan="2" class="day-header">Thứ 4</th>
+                            <th colspan="2" class="day-header">Thứ 5</th>
+                            <th colspan="2" class="day-header">Thứ 6</th>
+                            <th colspan="2" class="day-header">Thứ 7</th>
+                            <th colspan="2" class="day-header">Chủ Nhật</th>
+                            <th rowspan="2">Tổng ca</th>
+                            <th rowspan="2">Ghi chú</th>
+                        </tr>
+                        <tr>
+                            <!-- Thứ 2 -->
+                            <th class="shift-subheader">Sáng</th>
+                            <th class="shift-subheader">Chiều</th>
+                            <!-- Thứ 3 -->
+                            <th class="shift-subheader">Sáng</th>
+                            <th class="shift-subheader">Chiều</th>
+                            <!-- Thứ 4 -->
+                            <th class="shift-subheader">Sáng</th>
+                            <th class="shift-subheader">Chiều</th>
+                            <!-- Thứ 5 -->
+                            <th class="shift-subheader">Sáng</th>
+                            <th class="shift-subheader">Chiều</th>
+                            <!-- Thứ 6 -->
+                            <th class="shift-subheader">Sáng</th>
+                            <th class="shift-subheader">Chiều</th>
+                            <!-- Thứ 7 -->
+                            <th class="shift-subheader">Sáng</th>
+                            <th class="shift-subheader">Chiều</th>
+                            <!-- Chủ Nhật -->
+                            <th class="shift-subheader">Sáng</th>
+                            <th class="shift-subheader">Chiều</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="stat, iterStat : ${statistics}">
+                            <td th:text="${iterStat.index + 1 + (currentPage * 5)}"></td>
+                            <td th:text="${stat.name}" class="fw-bold"></td>
+                            <td>
+                                <span th:class="${stat.position == 'Bác sĩ' ? 'position-badge position-doctor' : 'position-badge position-nurse'}" 
+                                      th:text="${stat.position}"></span>
+                            </td>
+                            <td th:text="${stat.department != null && !stat.department.isEmpty() ? stat.department : ''}"></td>
+                            
+                            <!-- Thứ 2 - Sáng -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.monday, 'Sáng')}" class="shift-item shift-morning">
+                                    <span th:text="${#strings.contains(stat.monday, 'Sáng (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.monday, 'Sáng ('), ')') : 
+                                        'Sáng'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.monday, 'Sáng')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            <!-- Thứ 2 - Chiều -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.monday, 'Chiều')}" class="shift-item shift-afternoon">
+                                    <span th:text="${#strings.contains(stat.monday, 'Chiều (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.monday, 'Chiều ('), ')') : 
+                                        'Chiều'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.monday, 'Chiều')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            
+                            <!-- Thứ 3 - Sáng -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.tuesday, 'Sáng')}" class="shift-item shift-morning">
+                                    <span th:text="${#strings.contains(stat.tuesday, 'Sáng (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.tuesday, 'Sáng ('), ')') : 
+                                        'Sáng'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.tuesday, 'Sáng')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            <!-- Thứ 3 - Chiều -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.tuesday, 'Chiều')}" class="shift-item shift-afternoon">
+                                    <span th:text="${#strings.contains(stat.tuesday, 'Chiều (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.tuesday, 'Chiều ('), ')') : 
+                                        'Chiều'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.tuesday, 'Chiều')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            
+                            <!-- Thứ 4 - Sáng -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.wednesday, 'Sáng')}" class="shift-item shift-morning">
+                                    <span th:text="${#strings.contains(stat.wednesday, 'Sáng (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.wednesday, 'Sáng ('), ')') : 
+                                        'Sáng'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.wednesday, 'Sáng')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            <!-- Thứ 4 - Chiều -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.wednesday, 'Chiều')}" class="shift-item shift-afternoon">
+                                    <span th:text="${#strings.contains(stat.wednesday, 'Chiều (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.wednesday, 'Chiều ('), ')') : 
+                                        'Chiều'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.wednesday, 'Chiều')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            
+                            <!-- Thứ 5 - Sáng -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.thursday, 'Sáng')}" class="shift-item shift-morning">
+                                    <span th:text="${#strings.contains(stat.thursday, 'Sáng (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.thursday, 'Sáng ('), ')') : 
+                                        'Sáng'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.thursday, 'Sáng')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            <!-- Thứ 5 - Chiều -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.thursday, 'Chiều')}" class="shift-item shift-afternoon">
+                                    <span th:text="${#strings.contains(stat.thursday, 'Chiều (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.thursday, 'Chiều ('), ')') : 
+                                        'Chiều'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.thursday, 'Chiều')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            
+                            <!-- Thứ 6 - Sáng -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.friday, 'Sáng')}" class="shift-item shift-morning">
+                                    <span th:text="${#strings.contains(stat.friday, 'Sáng (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.friday, 'Sáng ('), ')') : 
+                                        'Sáng'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.friday, 'Sáng')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            <!-- Thứ 6 - Chiều -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.friday, 'Chiều')}" class="shift-item shift-afternoon">
+                                    <span th:text="${#strings.contains(stat.friday, 'Chiều (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.friday, 'Chiều ('), ')') : 
+                                        'Chiều'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.friday, 'Chiều')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            
+                            <!-- Thứ 7 - Sáng -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.saturday, 'Sáng')}" class="shift-item shift-morning">
+                                    <span th:text="${#strings.contains(stat.saturday, 'Sáng (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.saturday, 'Sáng ('), ')') : 
+                                        'Sáng'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.saturday, 'Sáng')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            <!-- Thứ 7 - Chiều -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.saturday, 'Chiều')}" class="shift-item shift-afternoon">
+                                    <span th:text="${#strings.contains(stat.saturday, 'Chiều (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.saturday, 'Chiều ('), ')') : 
+                                        'Chiều'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.saturday, 'Chiều')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            
+                            <!-- Chủ Nhật - Sáng -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.sunday, 'Sáng')}" class="shift-item shift-morning">
+                                    <span th:text="${#strings.contains(stat.sunday, 'Sáng (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.sunday, 'Sáng ('), ')') : 
+                                        'Sáng'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.sunday, 'Sáng')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            <!-- Chủ Nhật - Chiều -->
+                            <td class="shift-cell">
+                                <div th:if="${#strings.contains(stat.sunday, 'Chiều')}" class="shift-item shift-afternoon">
+                                    <span th:text="${#strings.contains(stat.sunday, 'Chiều (') ? 
+                                        #strings.substringBefore(#strings.substringAfter(stat.sunday, 'Chiều ('), ')') : 
+                                        'Chiều'}"></span>
+                                </div>
+                                <div th:unless="${#strings.contains(stat.sunday, 'Chiều')}" class="shift-item shift-off">Trống</div>
+                            </td>
+                            
+                            <td><span class="total-shifts" th:text="${stat.totalShifts}"></span></td>
+                            <td th:text="${stat.notes}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="pagination-custom" th:if="${totalPages > 1}">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li class="page-item" th:class="${currentPage == 0 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/admin/shift/statistics(week=${currentWeek}, search=${search}, shiftType=${shiftType}, page=${currentPage - 1})}">
+                                    Trang trước
+                                </a>
+                            </li>
+                            
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                th:class="${i == currentPage ? 'active' : ''}">
+                                <a class="page-link" th:href="@{/admin/shift/statistics(week=${currentWeek}, search=${search}, shiftType=${shiftType}, page=${i})}"
+                                   th:text="${i + 1}"></a>
+                            </li>
+                            
+                            <li class="page-item" th:class="${currentPage >= totalPages - 1 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/admin/shift/statistics(week=${currentWeek}, search=${search}, shiftType=${shiftType}, page=${currentPage + 1})}">
+                                    Trang sau
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="chart-container">
+                <div class="mb-4">
+                    <h4>Biểu Đồ Thống Kê Số Ca Làm Việc</h4>
+                    <p class="text-muted">Hiển thị tổng số ca làm việc trong tuần của tất cả bác sĩ và y tá</p>
+                </div>
+                
+                <canvas id="shiftChart" style="width: 100%; height: 400px;"></canvas>
+            </div>
+        </div>
+
+        <script th:inline="javascript">
+            // Lấy dữ liệu từ server
+            const allChartData = /*[[${chartData}]]*/ [];
+            
+            // Tạo dữ liệu cho biểu đồ
+            let allStatistics = [];
+            
+            // Chuyển đổi dữ liệu từ Thymeleaf sang JavaScript
+            allChartData.forEach(function(stat) {
+                allStatistics.push({
+                    name: stat.name,
+                    totalShifts: stat.totalShifts
+                });
+            });
+            
+            let chart;
+            
+            function initChart() {
+                const ctx = document.getElementById('shiftChart').getContext('2d');
+                
+                if (!ctx || allStatistics.length === 0) {
+                    console.error('Canvas element not found or no data');
+                    return;
+                }
+                
+                const colors = allStatistics.map(() => '#20c997');
+                const borderColors = allStatistics.map(() => '#1a9e7e');
+                
+                chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: allStatistics.map(stat => stat.name),
+                        datasets: [{
+                            label: 'Số ca làm việc trong tuần',
+                            data: allStatistics.map(stat => stat.totalShifts),
+                            backgroundColor: colors,
+                            borderColor: borderColors,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Số ca làm việc trong tuần',
+                                font: {
+                                    size: 16
+                                }
+                            },
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 14,
+                                ticks: {
+                                    stepSize: 1
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Số ca'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Bác sĩ / Y tá'
+                                },
+                                ticks: {
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Initialize chart when page loads
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(function() {
+                    initChart();
+                }, 100);
+            });
+        </script>
+    </th:block>
+</th:block>
+</body>
+</html>

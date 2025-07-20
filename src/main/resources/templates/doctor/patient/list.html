@@ -64,7 +64,7 @@
                             <td>
                                 <a th:href="@{/doctor/patient/detail(id=${patient.id})}" class="btn btn-sm btn-info">Xem</a>
 
-                                <a th:href="@{/doctor/appointment(patientId=${patient.id})}" class="btn btn-primary">Chi tiết</a>
+                                <a th:href="@{/doctor/appointment(patientId=${patient.id})}" class="btn btn-sm btn-primary">Chi tiết</a>
 
                                 <!-- Nút xóa -->
                                 <form th:action="@{/doctor/patient/delete/{id}(id=${patient.id})}" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bệnh nhân này khỏi danh sách của bạn?');">
