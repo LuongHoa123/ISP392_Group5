@@ -8,6 +8,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
+import com.ISP392.demo.entity.DoctorEntity;
+import com.ISP392.demo.repository.DoctorRepository;
 import com.ISP392.demo.service.PdfExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -44,6 +46,9 @@ public class PatientAppointmentController {
     private PatientRepository patientRepository;
 
     @Autowired
+    private DoctorRepository doctorRepository;
+
+    @Autowired
     private AppointmentRepository appointmentRepository;
 
 
@@ -56,14 +61,13 @@ public class PatientAppointmentController {
         if (userEntity == null) {
             return "redirect:/index";
         }
-
         PatientEntity patient = userEntity.getPatients().stream().findFirst().orElse(null);
 
         if (patient != null) {
             model.addAttribute("patient", patient);
+            model.addAttribute("doctors", doctorRepository.findAll());
             return "appointment";
         }
-
         return "redirect:/";
     }
 
@@ -74,6 +78,7 @@ public class PatientAppointmentController {
             @RequestParam String email,
             @RequestParam int age,
             @RequestParam String date,
+            @RequestParam Long doctorId,
             @RequestParam String problem
     ) {
         UserEntity userEntity = userRepository.findByEmail(email).orElse(null);
@@ -99,11 +104,13 @@ public class PatientAppointmentController {
             return "redirect:/patient/appointment?error=duplicate";
         }
 
+        DoctorEntity doctorEntity = doctorRepository.findById(doctorId).get();
         AppointmentEntity appointment = new AppointmentEntity();
         appointment.setPatient(patient);
         appointment.setAge(age);
         appointment.setName(name);
         appointment.setEmail(email);
+        appointment.setDoctor(doctorEntity);
         appointment.setPhoneNumber(phone);
         appointment.setAppointmentDateTime(appointmentDate.atStartOfDay());
         appointment.setStatus(-1);
@@ -132,7 +139,6 @@ public class PatientAppointmentController {
 
         return "patient/history";
     }
-
 
 
     @GetMapping("/calendar/data")
@@ -208,7 +214,8 @@ public class PatientAppointmentController {
     public ResponseEntity<?> deleteAppointment(@PathVariable Long id) {
         AppointmentEntity appt = appointmentRepository.findById(id).orElse(null);
         if (appt == null) return ResponseEntity.notFound().build();
-        if (appt.getStatus() != 0 && appt.getStatus() != -1) return ResponseEntity.badRequest().body("Chỉ xóa lịch đã hủy hoặc chờ xác nhận!");
+        if (appt.getStatus() != 0 && appt.getStatus() != -1)
+            return ResponseEntity.badRequest().body("Chỉ xóa lịch đã hủy hoặc chờ xác nhận!");
 
         appointmentRepository.delete(appt);
         return ResponseEntity.ok().build();

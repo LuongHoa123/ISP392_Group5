@@ -184,7 +184,17 @@
                     </div>
 
                     <div class="input-wrapper">
-                        <input type="tel" name="phone" th:value="${patient.phone}" placeholder="Số điện thoại" readonly
+                        <select name="doctorId" class="box">
+                            <option value="">--Chọn bác sĩ--</option>
+                            <option th:each="doctor : ${doctors}"
+                                    th:value="${doctor.id}"
+                                    th:text="${doctor.firstName + ' ' + doctor.lastName + ' - Chuyên khoa: ' + doctor.specialization}"></option>
+                        </select>
+                    </div>
+
+                    <div class="input-wrapper">
+                        <input type="tel" name="phone" th:value="${patient.phone}" placeholder="Số điện thoại"
+                               readonly
                                class="box" maxlength="10" required>
                         <span class="required-star">*</span>
                         <div id="phoneError" class="text-danger"></div>
@@ -198,7 +208,8 @@
                     </div>
 
                     <div class="input-wrapper">
-                        <input type="email" name="email" th:value="${patient.user.email}" placeholder="Địa chỉ email" readonly
+                        <input type="email" name="email" th:value="${patient.user.email}"
+                               placeholder="Địa chỉ email" readonly
                                class="box" required>
                         <span class="required-star">*</span>
                     </div>

@@ -139,6 +139,25 @@ public class RecepAppointmentController {
         return "redirect:/recep/appointment";
     }
 
+    @PostMapping("/send-cancel-email")
+    public String sendCancelEmail(@RequestParam Long appointmentId,
+                                  @RequestParam String cancelReason,
+                                  RedirectAttributes redirectAttributes) {
+        System.out.println("TESSTST: 12313223");
+        AppointmentEntity appointment = appointmentRepository.findById(appointmentId).orElse(null);
+        String cancelLink = "http://localhost:8080/appointment/cancel?id=" + appointment.getId();
+        String message = "Xin chào " + appointment.getName() + ",\n\n"
+                + "Phòng khám xin thông báo lịch khám của bạn có thể bị huỷ vì lý do sau:\n"
+                + "❌ " + cancelReason + "\n\n"
+                + "👉 Nếu bạn đồng ý huỷ lịch, vui lòng bấm vào liên kết sau: " + cancelLink + "\n\n"
+                + "Trân trọng,\nPhòng khám Veritas";
+
+        emailSenderService.sendEmail(appointment.getEmail(), "Yêu cầu huỷ lịch khám", message);
+
+        redirectAttributes.addFlashAttribute("success", "Email huỷ lịch đã được gửi cho bệnh nhân.");
+        return "redirect:/recep/appointment";
+    }
+
 
     @PostMapping("/add")
     public String addAppointment(@RequestParam String name,

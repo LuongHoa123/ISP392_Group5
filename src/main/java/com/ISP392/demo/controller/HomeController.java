@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Collection;
 import java.util.List;
@@ -66,6 +67,21 @@ public class HomeController {
             appointment.setStatus(2);
             appointmentRepository.save(appointment);
         }
+        return "confirmation-success";
+    }
+
+    @GetMapping("/appointment/cancel")
+    public String cancelByPatient(@RequestParam Long id, RedirectAttributes redirectAttributes) {
+        AppointmentEntity appointment = appointmentRepository.findById(id).orElse(null);
+        if (appointment == null || appointment.getStatus() != -1) {
+            return "redirect:/";
+        }
+
+        appointment.setStatus(0);
+        appointment.setNoteCancel("Huỷ bởi bệnh nhân qua email");
+        appointmentRepository.save(appointment);
+
+        redirectAttributes.addFlashAttribute("message", "Bạn đã huỷ lịch thành công!");
         return "confirmation-success";
     }
 
