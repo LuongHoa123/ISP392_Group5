@@ -176,7 +176,7 @@ CREATE TABLE `diagnosis` (
 
 LOCK TABLES `diagnosis` WRITE;
 /*!40000 ALTER TABLE `diagnosis` DISABLE KEYS */;
-INSERT INTO `diagnosis` VALUES (10,NULL,NULL,NULL,NULL,NULL,'Đang nghi bị viêm tai, cần siêu âm, chụp X-Quang. Yêu cầu y tá Nguyễn Y Tá làm luôn',21,NULL,NULL,NULL);
+INSERT INTO `diagnosis` VALUES (10,NULL,NULL,NULL,NULL,NULL,'Đang nghi bị viêm tai, cần siêu âm, chụp X-Quang.',21,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `diagnosis` ENABLE KEYS */;
 UNLOCK TABLES;
 
