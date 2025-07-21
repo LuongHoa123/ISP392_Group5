@@ -85,19 +85,23 @@
                               th:classappend="${user.status == 1} ? 'text-success' : 'text-danger'"></span>
                             </td>
                             <td>
-                                <a class="btn btn-warning btn-lg" th:href="@{'/admin/user/edit/' + ${user.id}}">Sửa</a>
-                                <form th:action="@{'/admin/user/update-status/' + ${user.id}}"
+                                <!-- Disable actions for current logged-in user -->
+                                <a class="btn btn-warning btn-lg" th:href="@{'/admin/user/edit/' + ${user.id}}"
+                                   th:if="${user.email != currentUserEmail}">Sửa</a>
+
+                                <form th:action="@{'/admin/user/update-status/' + ${user.id}}" th:if="${user.email != currentUserEmail}"
                                       method="post" style="display:inline-block;">
                                     <input type="hidden" name="status" th:value="${user.status == 1 ? 0 : 1}"/>
-                                    <button type="submit"
-                                            class="btn btn-secondary btn-lg"
+                                    <button type="submit" class="btn btn-secondary btn-lg"
                                             th:text="${user.status == 1 ? 'Khóa' : 'Mở'}"
+
                                             onclick="return confirm('Bạn có chắc muốn thay đổi trạng thái người dùng này?')"></button>
                                 </form>
+
                                 <form th:action="@{'/admin/user/delete/' + ${user.id}}"
-                                      method="get" style="display:inline-block;"
+                                      method="get" style="display:inline-block;" th:if="${user.email != currentUserEmail}"
                                       onsubmit="return confirm('Bạn có chắc chắn muốn xóa người dùng này không?');">
-                                    <button type="submit" class="btn btn-danger btn-lg">Xoá</button>
+                                    <button type="submit" class="btn btn-danger btn-lg" >Xoá</button>
                                 </form>
                             </td>
                         </tr>

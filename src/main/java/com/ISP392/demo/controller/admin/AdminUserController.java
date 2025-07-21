@@ -71,6 +71,9 @@ public class AdminUserController {
 
         List<UserEntity> allUsers = userRepository.findAll();
 
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByEmail(username).orElse(null);
+
         if (emailParam != null && !emailParam.isEmpty()) {
             allUsers = allUsers.stream()
                     .filter(u -> u.getEmail() != null && u.getEmail().toLowerCase().contains(emailParam.toLowerCase()))
@@ -98,6 +101,7 @@ public class AdminUserController {
         model.addAttribute("email", emailParam);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
+        model.addAttribute("currentUserEmail", username);
 
         return "admin/user/list";
     }
