@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -68,12 +70,22 @@ public class RecepPatientController {
                     .collect(Collectors.toList());
         }
         if (searchDate != null && !searchDate.isEmpty()) {
-            allPatients = allPatients.stream()
-                    .filter(p -> p.getAppointments().stream()
-                            .anyMatch(a ->
-                                    a.getAppointmentDateTime() != null &&
-                                    a.getAppointmentDateTime().toLocalDate().toString().equals(searchDate)))
-                    .collect(Collectors.toList());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate parsedSearchDate;
+
+            try {
+                parsedSearchDate = LocalDate.parse(searchDate, formatter);
+            } catch (DateTimeParseException e) {
+                parsedSearchDate = null;
+            }
+
+            if (parsedSearchDate != null) {
+                LocalDate finalParsedSearchDate = parsedSearchDate;
+                allPatients = allPatients.stream()
+                        .filter(p -> p.getDateOfBirth() != null && p.getDateOfBirth().equals(finalParsedSearchDate))
+                        .collect(Collectors.toList());
+            }
+
         }
 
         int totalItems = allPatients.size();
