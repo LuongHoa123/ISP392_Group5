@@ -4,6 +4,105 @@
     <meta charset="UTF-8">
     <title>Chi tiết bệnh nhân</title>
     <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+    <style>
+        /* General Body and Component Styling */
+        body {
+            background-color: #f8f9fa; /* Light grey background for the page */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px; /* Allow wider content area */
+        }
+
+        /* Page Headers Styling */
+        h3, h4 {
+            color: #343a40;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        /* Patient Details Card Styling */
+        .card {
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+        }
+
+        .card-body p {
+            display: grid;
+            grid-template-columns: 120px 1fr; /* Create a two-column layout for details */
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .card-body p strong {
+            color: #495057;
+            font-weight: 600;
+        }
+
+        /* Appointment History Table Styling */
+        .table-container {
+            overflow-x: auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            background-color: #ffffff;
+        }
+
+        .table {
+            margin-bottom: 0; /* Remove default margin when inside container */
+        }
+
+        .table thead {
+            background-color: #4a69bd; /* Professional blue header */
+            color: #ffffff;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+            padding: 1rem 1.25rem;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .table tbody tr:nth-child(odd) {
+            background-color: #f7f9fc; /* Light blue striping for odd rows */
+        }
+
+        .table tbody tr:hover {
+            background-color: #e9ecef; /* Hover effect for all rows */
+        }
+
+        /* Status Badge Styling */
+        .badge {
+            padding: 0.5em 0.8em;
+            font-size: 0.85em;
+            font-weight: 600;
+            border-radius: 4px;
+        }
+
+        /* No History Message Styling */
+        .no-history-message td {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        /* Back Button Styling */
+        .btn-danger {
+            padding: 0.6rem 1.5rem;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.4);
+        }
+    </style>
 </head>
 <body>
 <th:block th:replace="layout/recep-layout :: layout">
@@ -16,8 +115,13 @@
                     <p><strong>Họ:</strong> <span th:text="${patient.firstName}"></span></p>
                     <p><strong>Tên:</strong> <span th:text="${patient.lastName}"></span></p>
                     <p><strong>Ngày sinh:</strong> <span th:text="${#temporals.format(patient.dateOfBirth, 'dd/MM/yyyy')}"></span></p>
-                    <p><strong>Giới tính:</strong>
-                        <span th:text="${patient.gender == 'MALE' ? 'Nam' : 'Nữ'}"></span>
+                    <p>
+                        <strong>Giới tính:</strong>
+                        <th:block th:switch="${patient.gender?.name()}">
+                            <span th:case="'MALE'">Nam</span>
+                            <span th:case="'FEMALE'">Nữ</span>
+                            <span th:case="*">Không xác định</span>
+                        </th:block>
                     </p>
                     <p><strong>Địa chỉ:</strong> <span th:text="${patient.address} ?: '---'"></span></p>
                     <p><strong>Số điện thoại:</strong> <span th:text="${patient.phone}"></span></p>
@@ -25,26 +129,26 @@
             </div>
 
             <h4>Lịch sử khám bệnh</h4>
-            <div style="overflow-x: auto;">
-            <table class="table table-bordered" style="min-width: 900px;">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Thời gian hẹn</th>
-                    <th>Lý do khám</th>
-                    <th>Phòng</th>
-                    <th>Trạng thái</th>
-                    <th>Đơn thuốc</th>
-                    <th>Nội dung kết luận</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="appt, iterStat : ${appointments}">
-                    <td th:text="${iterStat.index + 1}"></td>
-                    <td th:text="${#temporals.format(appt.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></td>
-                    <td th:text="${appt.reason}"></td>
-                    <td th:text="${appt.roomName != null ? appt.roomName : '---'}"></td>
-                    <td>
+            <div class="table-container">
+                <table class="table" style="min-width: 900px;">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Thời gian hẹn</th>
+                        <th>Lý do khám</th>
+                        <th>Phòng</th>
+                        <th>Trạng thái</th>
+                        <th>Đơn thuốc</th>
+                        <th>Nội dung kết luận</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="appt, iterStat : ${appointments}">
+                        <td th:text="${iterStat.index + 1}"></td>
+                        <td th:text="${#temporals.format(appt.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td th:text="${appt.reason}"></td>
+                        <td th:text="${appt.roomName != null ? appt.roomName : '---'}"></td>
+                        <td>
                         <span th:switch="${appt.status}">
                             <span th:case="-1" class="badge badge-warning">Chờ xác nhận</span>
                             <span th:case="0" class="badge badge-danger">Đã huỷ</span>
@@ -52,19 +156,19 @@
                             <span th:case="2" class="badge badge-info">Đang chờ khám</span>
                             <span th:case="*">Không rõ</span>
                         </span>
-                    </td>
-                    <td style="white-space: pre-line; word-break: break-word; max-width: 350px;">
-                        <span th:text="${appt.prescription != null && !#strings.isEmpty(appt.prescription) ? appt.prescription : 'Không có'}"></span>
-                    </td>
-                    <td style="white-space: pre-line; word-break: break-word; max-width: 250px;">
-                        <span th:text="${appt.conclusionContent != null && !#strings.isEmpty(appt.conclusionContent) ? appt.conclusionContent : 'Không có'}"></span>
-                    </td>
-                </tr>
-                <tr th:if="${appointments.size() == 0}">
-                    <td colspan="7" class="text-center">Chưa có lịch sử khám</td>
-                </tr>
-                </tbody>
-            </table>
+                        </td>
+                        <td style="white-space: pre-line; word-break: break-word; max-width: 350px;">
+                            <span th:text="${appt.prescription != null && !#strings.isEmpty(appt.prescription) ? appt.prescription : 'Không có'}"></span>
+                        </td>
+                        <td style="white-space: pre-line; word-break: break-word; max-width: 250px;">
+                            <span th:text="${appt.conclusionContent != null && !#strings.isEmpty(appt.conclusionContent) ? appt.conclusionContent : 'Không có'}"></span>
+                        </td>
+                    </tr>
+                    <tr th:if="${appointments.size() == 0}" class="no-history-message">
+                        <td colspan="7">Chưa có lịch sử khám</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
 
             <a th:href="@{/recep/patient}" class="btn btn-danger mt-3">Quay lại</a>
