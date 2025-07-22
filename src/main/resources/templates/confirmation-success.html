@@ -6,6 +6,36 @@
     <link rel="stylesheet" th:href="@{/assets_admin/vendors/mdi/css/materialdesignicons.min.css}">
     <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
     <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+    <style>
+        .alert.alert-success {
+            font-size: 1.6rem;
+        }
+        .alert-success .alert-heading {
+            font-size: 2.2rem;
+            font-weight: bold;
+        }
+        .alert-success p {
+            font-size: 1.3rem;
+        }
+        .alert-success .btn-primary {
+            font-size: 1.2rem;
+            padding: 0.75rem 2rem;
+            background-color: #28a745;
+            border-color: #28a745;
+            color: #fff;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+            transition: all 0.3s ease;
+        }
+        .alert-success .btn-primary:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+            transform: translateY(-1px);
+        }
+    </style>
 </head>
 <body>
 <th:block th:replace="layout/user-layout :: layout">
