@@ -32,6 +32,8 @@ public class App {
 	}
 
 	public static void main(String[] args) {
+		String baseDir = System.getProperty("user.dir");
+		System.out.println("Working dir = " + baseDir);
 		SpringApplication.run(App.class, args);
 	}
 }

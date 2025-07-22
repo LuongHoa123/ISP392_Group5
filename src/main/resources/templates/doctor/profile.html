@@ -107,7 +107,7 @@
                                         <div class="border rounded p-3 bg-light">
                                             <input type="file" class="form-control-file mb-2" name="certificateFile" accept="application/pdf">
                                             <div th:if="${doctor.certificateFileName != null}">
-                                                <a class="btn btn-sm btn-info" th:href="@{/doctor/certificate/view}" target="_blank">Xem chứng chỉ</a>
+                                                <a class="btn btn-sm btn-info" th:href="${doctor.certificateFileName}" target="_blank">Xem chứng chỉ</a>
                                             </div>
                                         </div>
                                     </div>

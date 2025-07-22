@@ -15,14 +15,16 @@
             margin-top: 20px;
             color: #1a202c;
             text-align: left;
-            background-color: #e2e8f0;    
+            background-color: #e2e8f0;
             font-size: 17px; /* Giảm kích thước chữ toàn trang */
         }
+
         .main-body {
             padding: 15px; /* Padding vừa phải */
         }
+
         .card {
-            box-shadow: 0 2px 8px 0 rgba(0,0,0,.15), 0 2px 4px 0 rgba(0,0,0,.10);
+            box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .15), 0 2px 4px 0 rgba(0, 0, 0, .10);
             position: relative;
             display: flex;
             flex-direction: column;
@@ -30,43 +32,53 @@
             word-wrap: break-word;
             background-color: #fff;
             background-clip: border-box;
-            border: 0 solid rgba(0,0,0,.125);
+            border: 0 solid rgba(0, 0, 0, .125);
             border-radius: .5rem;
             font-size: 1.05em; /* Giảm kích thước chữ trong card */
         }
+
         .card-body {
             flex: 1 1 auto;
             min-height: 1px;
             padding: 1.2rem; /* Padding vừa phải */
         }
+
         .gutters-sm {
             margin-right: -8px;
             margin-left: -8px;
         }
-        .gutters-sm>.col, .gutters-sm>[class*=col-] {
+
+        .gutters-sm > .col, .gutters-sm > [class*=col-] {
             padding-right: 8px;
             padding-left: 8px;
         }
+
         .mb-3, .my-3 {
-            margin-bottom: 1.5rem!important;
+            margin-bottom: 1.5rem !important;
         }
+
         .bg-gray-300 {
             background-color: #e2e8f0;
         }
+
         .h-100 {
-            height: 100%!important;
+            height: 100% !important;
         }
+
         .shadow-none {
-            box-shadow: none!important;
+            box-shadow: none !important;
         }
+
         .text-secondary {
             color: #757575 !important;
             font-size: 1em;
         }
+
         .progress {
             height: 6px;
             margin-bottom: 1rem;
         }
+
         .back-to-top {
             position: fixed;
             bottom: 30px;
@@ -82,29 +94,36 @@
             box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
             transition: opacity 0.3s;
         }
+
         .back-to-top:hover {
             opacity: 0.8;
         }
+
         .breadcrumb {
             font-size: 1.05em;
         }
+
         .list-group-item {
             font-size: 1em;
             padding-top: 0.7rem;
             padding-bottom: 0.7rem;
         }
+
         .btn {
             font-size: 1em;
             padding: 0.5em 1.1em;
         }
+
         h4, h6, .card h6, .card h4 {
             font-size: 1.15em;
         }
+
         .rounded-circle {
             width: 150px !important;
             height: 150px !important;
             object-fit: cover;
         }
+
         .material-icons, .fa-star, .fa-star-half-alt, .fa-star-o {
             font-size: 1.1em !important;
         }
@@ -130,7 +149,8 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex flex-column align-items-center text-center">
-                                    <img th:src="${doctor.avatar != null ? doctor.avatar : '/assets/Doc1.jpg'}" alt="Doctor" class="rounded-circle" width="150">
+                                    <img th:src="${doctor.avatar != null ? doctor.avatar : '/assets/Doc1.jpg'}"
+                                         alt="Doctor" class="rounded-circle" width="150">
                                     <div class="mt-3">
                                         <h4 th:text="${doctor.firstName + ' ' + doctor.lastName}">Tên bác sĩ</h4>
                                         <p class="text-secondary mb-1" th:text="${doctor.specialization}">Chuyên môn</p>
@@ -139,7 +159,8 @@
                                             <a th:href="@{/login}" class="btn btn-primary">Đăng ký khám</a>
                                         </div>
                                         <div sec:authorize="hasRole('ROLE_PATIENT')">
-                                            <a th:href="@{/patient/appointment}" class="btn btn-primary">Đăng ký khám</a>
+                                            <a th:href="@{/patient/appointment}" class="btn btn-primary">Đăng ký
+                                                khám</a>
                                         </div>
                                     </div>
                                 </div>
@@ -166,15 +187,16 @@
                                         <i class="material-icons text-info mr-2">work</i>
                                         Kinh nghiệm
                                     </h6>
-                                    <span class="text-secondary" th:text="${doctor.yoe != null ? doctor.yoe + ' năm kinh nghiệm' : 'Chưa cập nhật'}"></span>
+                                    <span class="text-secondary"
+                                          th:text="${doctor.yoe != null ? doctor.yoe + ' năm kinh nghiệm' : 'Chưa cập nhật'}"></span>
                                 </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap" 
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap"
                                     th:if="${doctor.certificateFileName != null && !#strings.isEmpty(doctor.certificateFileName)}">
                                     <h6 class="mb-0">
                                         <i class="material-icons text-info mr-2">verified</i>
                                         Chứng chỉ
                                     </h6>
-                                    <a th:href="@{'/uploads/certificates/' + ${doctor.certificateFileName}}" 
+                                    <a th:href="${doctor.certificateFileName}"
                                        target="_blank" class="btn btn-sm btn-outline-success">
                                         <i class="material-icons" style="font-size: 14px;">open_in_new</i>
                                     </a>
@@ -189,7 +211,8 @@
                                     <div class="col-sm-3">
                                         <h6 class="mb-0">Họ và tên</h6>
                                     </div>
-                                    <div class="col-sm-9 text-secondary" th:text="${doctor.firstName + ' ' + doctor.lastName}">
+                                    <div class="col-sm-9 text-secondary"
+                                         th:text="${doctor.firstName + ' ' + doctor.lastName}">
                                     </div>
                                 </div>
                                 <hr>
@@ -221,7 +244,8 @@
                                     <div class="col-sm-3">
                                         <h6 class="mb-0">Kinh nghiệm</h6>
                                     </div>
-                                    <div class="col-sm-9 text-secondary" th:text="${doctor.yoe != null ? doctor.yoe + ' năm kinh nghiệm' : 'Chưa cập nhật'}">
+                                    <div class="col-sm-9 text-secondary"
+                                         th:text="${doctor.yoe != null ? doctor.yoe + ' năm kinh nghiệm' : 'Chưa cập nhật'}">
                                     </div>
                                 </div>
                                 <hr>
@@ -231,9 +255,10 @@
                                     </div>
                                     <div class="col-sm-9 text-secondary">
                                         <div th:if="${doctor.certificateFileName != null && !#strings.isEmpty(doctor.certificateFileName)}">
-                                            <a th:href="@{'/uploads/certificates/' + ${doctor.certificateFileName}}" 
+                                            <a th:href="${doctor.certificateFileName}"
                                                target="_blank" class="btn btn-sm btn-outline-info">
-                                                <i class="material-icons" style="font-size: 16px; vertical-align: middle;">description</i>
+                                                <i class="material-icons"
+                                                   style="font-size: 16px; vertical-align: middle;">description</i>
                                                 Xem chứng chỉ
                                             </a>
                                         </div>
@@ -252,60 +277,80 @@
                                         <h6 class="d-flex align-items-center mb-3">
                                             <i class="material-icons text-info mr-2">assignment</i>Thống kê đánh giá
                                         </h6>
-                                        
+
                                         <!-- Tổng quan đánh giá -->
                                         <div class="text-center mb-4" th:if="${totalReviews > 0}">
                                             <h4 class="text-primary" th:text="${averageRating} + '/5.0'">0/5.0</h4>
                                             <div class="mb-2">
-                                                <i class="fas fa-star text-warning" th:each="i : ${#numbers.sequence(1, averageRating)}" th:if="${averageRating >= i}"></i>
-                                                <i class="fas fa-star-half-alt text-warning" th:if="${averageRating % 1 >= 0.5}"></i>
-                                                <i class="far fa-star text-warning" th:each="i : ${#numbers.sequence(1, 5 - averageRating)}" th:if="${averageRating < i}"></i>
+                                                <i class="fas fa-star text-warning"
+                                                   th:each="i : ${#numbers.sequence(1, averageRating)}"
+                                                   th:if="${averageRating >= i}"></i>
+                                                <i class="fas fa-star-half-alt text-warning"
+                                                   th:if="${averageRating % 1 >= 0.5}"></i>
+                                                <i class="far fa-star text-warning"
+                                                   th:each="i : ${#numbers.sequence(1, 5 - averageRating)}"
+                                                   th:if="${averageRating < i}"></i>
                                             </div>
-                                            <small class="text-muted" th:text="'(' + ${totalReviews} + ' đánh giá)'">0 đánh giá</small>
+                                            <small class="text-muted" th:text="'(' + ${totalReviews} + ' đánh giá)'">0
+                                                đánh giá</small>
                                         </div>
-                                        
+
                                         <div class="text-center mb-4" th:unless="${totalReviews > 0}">
                                             <h4 class="text-muted">Chưa có đánh giá</h4>
                                             <small class="text-muted">Bác sĩ chưa nhận được đánh giá nào</small>
                                         </div>
-                                        
+
                                         <!-- Đánh giá gần đây -->
                                         <div th:if="${totalReviews > 0}" class="mt-4">
                                             <h6 class="mb-3">Đánh giá gần đây</h6>
                                             <div th:each="review : ${recentReviews}" class="border rounded p-3 mb-2">
                                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                                    <strong th:text="${review.patient.firstName + ' ' + review.patient.lastName}">Tên bệnh nhân</strong>
+                                                    <strong th:text="${review.patient.firstName + ' ' + review.patient.lastName}">Tên
+                                                        bệnh nhân</strong>
                                                     <div>
-                                                        <i class="fas fa-star text-warning" th:each="i : ${#numbers.sequence(1, review.star)}" th:if="${review.star >= i}"></i>
-                                                        <i class="far fa-star text-warning" th:each="i : ${#numbers.sequence(1, 5 - review.star)}" th:if="${review.star < i}"></i>
-                                                        <small class="text-muted ml-2" th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}">Ngày đánh giá</small>
+                                                        <i class="fas fa-star text-warning"
+                                                           th:each="i : ${#numbers.sequence(1, review.star)}"
+                                                           th:if="${review.star >= i}"></i>
+                                                        <i class="far fa-star text-warning"
+                                                           th:each="i : ${#numbers.sequence(1, 5 - review.star)}"
+                                                           th:if="${review.star < i}"></i>
+                                                        <small class="text-muted ml-2"
+                                                               th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}">Ngày
+                                                            đánh giá</small>
                                                     </div>
                                                 </div>
-                                                <p class="text-muted mb-0" th:text="${review.content}">Nội dung đánh giá</p>
+                                                <p class="text-muted mb-0" th:text="${review.content}">Nội dung đánh
+                                                    giá</p>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Phân bố đánh giá -->
                                         <div th:if="${totalReviews > 0}" class="mt-4">
                                             <h6 class="mb-3">Phân bố đánh giá</h6>
                                             <div class="mb-2 d-flex align-items-center">
-                                                <small class="text-success mr-2" style="width: 100px;">Xuất sắc (4-5★):</small>
+                                                <small class="text-success mr-2" style="width: 100px;">Xuất sắc
+                                                    (4-5★):</small>
                                                 <div class="progress flex-grow-1 mr-2" style="height: 4px">
-                                                    <div class="progress-bar bg-success" th:style="'width: ' + ${excellentPercent} + '%'"></div>
+                                                    <div class="progress-bar bg-success"
+                                                         th:style="'width: ' + ${excellentPercent} + '%'"></div>
                                                 </div>
                                                 <small th:text="${excellentPercent} + '%'">0%</small>
                                             </div>
                                             <div class="mb-2 d-flex align-items-center">
-                                                <small class="text-warning mr-2" style="width: 100px;">Bình thường (3★):</small>
+                                                <small class="text-warning mr-2" style="width: 100px;">Bình thường
+                                                    (3★):</small>
                                                 <div class="progress flex-grow-1 mr-2" style="height: 4px">
-                                                    <div class="progress-bar bg-warning" th:style="'width: ' + ${goodPercent} + '%'"></div>
+                                                    <div class="progress-bar bg-warning"
+                                                         th:style="'width: ' + ${goodPercent} + '%'"></div>
                                                 </div>
                                                 <small th:text="${goodPercent} + '%'">0%</small>
                                             </div>
                                             <div class="mb-2 d-flex align-items-center">
-                                                <small class="text-danger mr-2" style="width: 100px;">Cần cải thiện (1-2★):</small>
+                                                <small class="text-danger mr-2" style="width: 100px;">Cần cải thiện
+                                                    (1-2★):</small>
                                                 <div class="progress flex-grow-1 mr-2" style="height: 4px">
-                                                    <div class="progress-bar bg-danger" th:style="'width: ' + ${poorPercent} + '%'"></div>
+                                                    <div class="progress-bar bg-danger"
+                                                         th:style="'width: ' + ${poorPercent} + '%'"></div>
                                                 </div>
                                                 <small th:text="${poorPercent} + '%'">0%</small>
                                             </div>

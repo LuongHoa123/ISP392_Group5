@@ -5,6 +5,7 @@ import com.ISP392.demo.entity.UserEntity;
 import com.ISP392.demo.repository.DoctorRepository;
 import com.ISP392.demo.repository.UserRepository;
 import com.ISP392.demo.service.CloudinaryService;
+import com.ISP392.demo.service.PdfService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -41,6 +42,9 @@ public class DoctorProfileController {
 
     @Autowired
     private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private PdfService pdfService;
 
     private static final String CERTIFICATE_UPLOAD_DIR = "uploads/certificates";
 
@@ -83,18 +87,8 @@ public class DoctorProfileController {
         doctor.setSpecialization(formDoctor.getSpecialization());
 
         if (file != null && !file.isEmpty()) {
-            String certificateFileName = cloudinaryService.uploadFile(file);
-            doctor.setCertificateFileName(certificateFileName);
-            try {
-                Files.createDirectories(Paths.get(CERTIFICATE_UPLOAD_DIR));
-                String filename = "doctor_" + doctor.getId() + "_certificate.pdf";
-                String filePath = CERTIFICATE_UPLOAD_DIR + "/" + filename;
-                file.transferTo(new File(filePath));
-                doctor.setCertificateFileName(filename);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return "redirect:/doctor/profile?error=file";
-            }
+            String certificateUrl = pdfService.uploadCertificate(file, doctor.getId());
+            doctor.setCertificateFileName(certificateUrl);
         }
 
         if(!avatarFile.isEmpty() && avatarFile != null) {
