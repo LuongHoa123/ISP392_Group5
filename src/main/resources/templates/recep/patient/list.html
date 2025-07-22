@@ -9,6 +9,10 @@
     <link rel="stylesheet" th:href="@{/assets_admin/vendors/css/vendor.bundle.base.css}">
     <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
     <link rel="shortcut icon" th:href="@{/assets_admin/images/favicon.ico}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 </head>
 <body>
 <th:block th:replace="layout/recep-layout :: layout">
@@ -25,12 +29,23 @@
                            style="min-width: 300px;">
                 </div>
                 <div class="form-group mr-2">
-                    <input type="date" class="form-control" name="searchDate" th:value="${searchDate}">
+                    <input type="text" class="form-control" name="searchDate" id="searchDate" th:value="${searchDate}">
                 </div>
+
                 <button type="submit" class="btn btn-primary mr-2">
                     <i class="mdi mdi-magnify"></i> Tìm kiếm
                 </button>
             </form>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    flatpickr("#searchDate", {
+                        dateFormat: "d/m/Y",
+                    });
+                });
+            </script>
+
+
 
             <div class="col-auto">
                 <a th:href="@{/recep/patient/add}" class="btn btn-success">
