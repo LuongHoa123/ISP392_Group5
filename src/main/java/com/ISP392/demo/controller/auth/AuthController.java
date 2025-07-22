@@ -204,8 +204,18 @@ public class AuthController {
             model.addAttribute("mess", "Email không tồn tại!");
             return "login";
         }
-
         UserEntity user = optionalUser.get();
+
+        if (user.getStatus() != 0) {
+            model.addAttribute("mess", "Tài khoản này không bị khoá!");
+            return "login";
+        }
+
+        if (requestRepository.findByUser(optionalUser.get()).isPresent()) {
+            model.addAttribute("mess", "Bạn đã gửi yêu cầu mở khoá trước đó. Vui lòng chờ xử lý!");
+            return "login";
+        }
+
         RequestEntity request = new RequestEntity();
         request.setUser(user);
         request.setContent(content);
