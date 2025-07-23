@@ -101,8 +101,14 @@
                                         <p><strong>Lý do:</strong> <span th:text="${appt.reason}"></span></p>
                                         <p><strong>Email:</strong> <span th:text="${appt.email}"></span></p>
                                         <p><strong>Ghi chú huỷ (nếu có):</strong> <span th:text="${appt.noteCancel ?: 'Không'}"></span></p>
-                                        <p><strong>Phòng:</strong> <span th:text="${appt.room.roomName}"></span></p>
-                                        <p><strong>Bác sĩ:</strong> <span th:text="${appt.doctor.firstName + ' ' + appt.doctor.lastName + ' - Chuyên khoa: ' + appt.doctor.specialization}"></span></p>
+                                        <p><strong>Phòng:</strong>
+                                            <span th:text="${appt.room != null ? appt.room.roomName : ''}"></span>
+                                        </p>
+
+                                        <p><strong>Bác sĩ:</strong>
+                                            <span th:text="${appt.doctor != null ? appt.doctor.firstName + ' ' + appt.doctor.lastName + ' - Chuyên khoa: ' + appt.doctor.specialization : ''}"></span>
+                                        </p>
+
                                     </div>
                                 </div>
                             </div>
