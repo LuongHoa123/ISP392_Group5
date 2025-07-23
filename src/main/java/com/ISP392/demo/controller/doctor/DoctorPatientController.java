@@ -171,4 +171,17 @@ public class DoctorPatientController {
         appointmentRepository.deleteByDoctorAndPatient(doctor, patient);
         return "redirect:/doctor/patient?deleted=true";
     }
+
+    @PostMapping("/delete-appointment/{appointmentId}")
+    @Transactional
+    public String deleteAppointmentFromPatient(@PathVariable Long appointmentId, @RequestParam("id") Long patientId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByEmail(username).orElse(null);
+        DoctorEntity doctor = doctorRepository.findByUser(user);
+        AppointmentEntity appointment = appointmentRepository.findById(appointmentId).orElse(null);
+        if (appointment != null && appointment.getDoctor() != null && doctor != null && appointment.getDoctor().getId().equals(doctor.getId())) {
+            appointmentRepository.delete(appointment);
+        }
+        return "redirect:/doctor/patient/detail?id=" + patientId;
+    }
 }
