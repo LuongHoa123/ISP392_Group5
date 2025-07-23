@@ -20,96 +20,240 @@
         <div class="container mt-4">
             <h3 class="mb-3">Tra cứu bệnh nhân</h3>
 
-            <!-- Form tìm kiếm -->
-            <form class="form-inline mb-3" method="get" th:action="@{/recep/patient}">
-                <div class="form-group mr-2 flex-fill">
-                    <input type="text" class="form-control" name="searchKeyword" 
-                           placeholder="Tìm theo họ, tên hoặc số điện thoại..."
-                           th:value="${searchKeyword}" 
-                           style="min-width: 300px;">
+            <!-- Flash Messages -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="mdi mdi-check-circle"></i>
+                <span th:text="${successMessage}"></span>
+                
+                <!-- Hiển thị thông tin tài khoản mới được tạo -->
+                <div th:if="${newAccountEmail}" class="mt-2 p-3" style="background-color: rgba(255,255,255,0.2); border-radius: 5px;">
+                    <strong>Thông tin tài khoản mới:</strong><br>
+                    <i class="mdi mdi-email"></i> Email: <span th:text="${newAccountEmail}"></span><br>
+                    <i class="mdi mdi-lock"></i> Mật khẩu: <strong th:text="${newAccountPassword}"></strong><br>
+                    <small class="text-white-50">
+                        <i class="mdi mdi-information"></i> 
+                        Bệnh nhân cần sử dụng thông tin này để đăng nhập lần đầu và xác thực OTP qua email.
+                    </small>
                 </div>
-                <div class="form-group mr-2">
-                    <input type="text" class="form-control" name="searchDate" id="searchDate" th:value="${searchDate}">
-                </div>
-
-                <button type="submit" class="btn btn-primary mr-2">
-                    <i class="mdi mdi-magnify"></i> Tìm kiếm
+                
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
                 </button>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="mdi mdi-alert-circle"></i>
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Form tìm kiếm cải tiến -->
+            <form class="mb-4" method="get" th:action="@{/recep/patient}">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Tìm kiếm theo tên -->
+                            <div class="col-md-5 mb-3">
+                                <label for="searchKeyword" class="form-label">Tìm kiếm theo tên/SĐT:</label>
+                                <input type="text" class="form-control" id="searchKeyword" name="searchKeyword" 
+                                       placeholder="Nhập họ tên đầy đủ hoặc số điện thoại..."
+                                       th:value="${searchKeyword}">
+                            </div>
+                            
+                            <!-- Lọc theo giới tính -->
+                            <div class="col-md-3 mb-3">
+                                <label for="gender" class="form-label">Giới tính:</label>
+                                <select class="form-control" id="gender" name="gender">
+                                    <option value="ALL" th:selected="${gender == null or gender == 'ALL'}">Tất cả</option>
+                                    <option value="MALE" th:selected="${gender == 'MALE'}">Nam</option>
+                                    <option value="FEMALE" th:selected="${gender == 'FEMALE'}">Nữ</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Tìm kiếm theo ngày khám -->
+                            <div class="col-md-4 mb-3">
+                                <label for="appointmentDate" class="form-label">Ngày khám:</label>
+                                <input type="text" class="form-control" name="appointmentDate" id="appointmentDate" 
+                                       placeholder="Chọn ngày khám" th:value="${appointmentDate}">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary mr-2">
+                                    <i class="mdi mdi-magnify"></i> Tìm kiếm
+                                </button>
+                                <a th:href="@{/recep/patient/add}" class="btn btn-success">
+                                    <i class="mdi mdi-plus"></i> Thêm bệnh nhân
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </form>
 
             <script>
                 document.addEventListener("DOMContentLoaded", function() {
-                    flatpickr("#searchDate", {
+                    flatpickr("#appointmentDate", {
                         dateFormat: "d/m/Y",
+                        placeholder: "Chọn ngày khám"
                     });
                 });
             </script>
 
-
-
-            <div class="col-auto">
-                <a th:href="@{/recep/patient/add}" class="btn btn-success">
-                    <i class="mdi mdi-plus"></i> Thêm bệnh nhân
-                </a>
-            </div>
-
             <!-- Bảng danh sách bệnh nhân -->
             <div class="card">
                 <div class="card-body">
-                    <table class="table table-bordered">
-                        <thead class="thead-dark">
-                        <tr>
-                            <th>#</th>
-                            <th>Họ</th>
-                            <th>Tên</th>
-                            <th>Ngày sinh</th>
-                            <th>Giới tính</th>
-                            <th>Số điện thoại</th>
-                            <th>Chi tiết</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:if="${patients.size() == 0}">
-                            <td colspan="7" class="text-center">
-                                Không có bệnh nhân nào phù hợp.<br>
-                                <a th:href="@{/recep/patient}" class="btn btn-danger mt-3">Quay lại</a>
-                            </td>
-                        </tr>
-                        <tr th:each="patient, iterStat : ${patients}">
-                            <td th:text="${iterStat.index + 1}"></td>
-                            <td th:text="${patient.firstName}"></td>
-                            <td th:text="${patient.lastName}"></td>
-                            <td th:text="${#temporals.format(patient.dateOfBirth, 'dd/MM/yyyy')}"></td>
-                            <td th:text="${patient.gender.name() == 'MALE' ? 'Nam' : 'Nữ'}"></td>
-                            <td th:text="${patient.phone}"></td>
-                            <td>
-                                <a th:href="@{/recep/patient/detail(id=${patient.id})}" class="btn btn-sm btn-info">Chi tiết</a>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0">
+                            Danh sách bệnh nhân
+                            <span th:if="${sortBy != null and !sortBy.empty}" class="badge badge-secondary ml-2">
+                                Sắp xếp: 
+                                <span th:switch="${sortBy}">
+                                    <span th:case="'firstname'">Tên</span>
+                                    <span th:case="'lastname'">Họ</span>
+                                    <span th:case="'fullname'">Họ tên đầy đủ</span>
+                                    <span th:case="'phone'">Số điện thoại</span>
+                                    <span th:case="'dateofbirth'">Ngày sinh</span>
+                                </span>
+                                (<span th:text="${sortDirection == 'desc' ? 'Z-A' : 'A-Z'}"></span>)
+                            </span>
+                        </h5>
+                        <span class="badge badge-info">Tổng: [[${patients.size()}]] bệnh nhân</span>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead class="thead-dark">
+                            <tr>
+                                <th style="width: 5%">#</th>
+                                <th style="width: 15%; cursor: pointer;" 
+                                    th:onclick="'sortTable(\'firstname\')'">
+                                    Họ
+                                    <i th:if="${sortBy == 'firstname' and sortDirection == 'asc'}" class="mdi mdi-arrow-up"></i>
+                                    <i th:if="${sortBy == 'firstname' and sortDirection == 'desc'}" class="mdi mdi-arrow-down"></i>
+                                    <i th:unless="${sortBy == 'firstname'}" class="mdi mdi-sort text-muted"></i>
+                                </th>
+                                <th style="width: 15%; cursor: pointer;" 
+                                    th:onclick="'sortTable(\'lastname\')'">
+                                    Tên
+                                    <i th:if="${sortBy == 'lastname' and sortDirection == 'asc'}" class="mdi mdi-arrow-up"></i>
+                                    <i th:if="${sortBy == 'lastname' and sortDirection == 'desc'}" class="mdi mdi-arrow-down"></i>
+                                    <i th:unless="${sortBy == 'lastname'}" class="mdi mdi-sort text-muted"></i>
+                                </th>
+                                <th style="width: 15%; cursor: pointer;" 
+                                    th:onclick="'sortTable(\'dateofbirth\')'">
+                                    Ngày sinh
+                                    <i th:if="${sortBy == 'dateofbirth' and sortDirection == 'asc'}" class="mdi mdi-arrow-up"></i>
+                                    <i th:if="${sortBy == 'dateofbirth' and sortDirection == 'desc'}" class="mdi mdi-arrow-down"></i>
+                                    <i th:unless="${sortBy == 'dateofbirth'}" class="mdi mdi-sort text-muted"></i>
+                                </th>
+                                <th style="width: 10%">Giới tính</th>
+                                <th style="width: 15%; cursor: pointer;" 
+                                    th:onclick="'sortTable(\'phone\')'">
+                                    Số điện thoại
+                                    <i th:if="${sortBy == 'phone' and sortDirection == 'asc'}" class="mdi mdi-arrow-up"></i>
+                                    <i th:if="${sortBy == 'phone' and sortDirection == 'desc'}" class="mdi mdi-arrow-down"></i>
+                                    <i th:unless="${sortBy == 'phone'}" class="mdi mdi-sort text-muted"></i>
+                                </th>
+                                <th style="width: 25%">Chi tiết</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${patients.size() == 0}">
+                                <td colspan="7" class="text-center text-muted">
+                                    <div class="py-4">
+                                        <i class="mdi mdi-account-search mdi-48px"></i>
+                                        <p class="mt-2">Không tìm thấy bệnh nhân nào phù hợp với điều kiện tìm kiếm.</p>
+                                        <a th:href="@{/recep/patient}" class="btn btn-primary">Xem tất cả bệnh nhân</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:each="patient, iterStat : ${patients}">
+                                <td th:text="${(currentPage * 5) + iterStat.index + 1}"></td>
+                                <td th:text="${patient.firstName}"></td>
+                                <td th:text="${patient.lastName}"></td>
+                                <td th:text="${#temporals.format(patient.dateOfBirth, 'dd/MM/yyyy')}"></td>
+                                <td>
+                                    <span th:if="${patient.gender != null}" 
+                                          th:class="${patient.gender.name() == 'MALE' ? 'badge badge-primary' : 'badge badge-secondary'}"
+                                          th:text="${patient.gender.name() == 'MALE' ? 'Nam' : 'Nữ'}"></span>
+                                    <span th:unless="${patient.gender != null}" class="text-muted">Chưa có</span>
+                                </td>
+                                <td th:text="${patient.phone}"></td>
+                                <td>
+                                    <a th:href="@{/recep/patient/detail(id=${patient.id})}" 
+                                       class="btn btn-sm btn-info">
+                                        <i class="mdi mdi-eye"></i> Chi tiết
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
+                    <!-- Pagination cải tiến -->
                     <nav th:if="${totalPages > 1}">
                         <ul class="pagination justify-content-center mt-3">
                             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/recep/patient(page=${currentPage - 1}, searchKeyword=${searchKeyword})}">Trước</a>
+                                   th:href="@{/recep/patient(page=${currentPage - 1}, searchKeyword=${searchKeyword}, appointmentDate=${appointmentDate}, gender=${gender}, sortBy=${sortBy}, sortDirection=${sortDirection})}">
+                                   <i class="mdi mdi-chevron-left"></i> Trước
+                                </a>
                             </li>
                             <li class="page-item"
                                 th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                                 th:classappend="${i == currentPage} ? 'active'">
                                 <a class="page-link"
-                                   th:href="@{/recep/patient(page=${i}, searchKeyword=${searchKeyword})}"
+                                   th:href="@{/recep/patient(page=${i}, searchKeyword=${searchKeyword}, appointmentDate=${appointmentDate}, gender=${gender}, sortBy=${sortBy}, sortDirection=${sortDirection})}"
                                    th:text="${i + 1}"></a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/recep/patient(page=${currentPage + 1}, searchKeyword=${searchKeyword})}">Sau</a>
+                                   th:href="@{/recep/patient(page=${currentPage + 1}, searchKeyword=${searchKeyword}, appointmentDate=${appointmentDate}, gender=${gender}, sortBy=${sortBy}, sortDirection=${sortDirection})}">
+                                   Sau <i class="mdi mdi-chevron-right"></i>
+                                </a>
                             </li>
                         </ul>
+                        
+                        <div class="text-center mt-2">
+                            <small class="text-muted">
+                                Trang [[${currentPage + 1}]] / [[${totalPages}]]
+                            </small>
+                        </div>
                     </nav>
                 </div>
             </div>
+
+            <script>
+                function sortTable(column) {
+                    const currentSort = '[[${sortBy}]]';
+                    const currentDirection = '[[${sortDirection}]]';
+                    
+                    let newDirection = 'asc';
+                    if (currentSort === column && currentDirection === 'asc') {
+                        newDirection = 'desc';
+                    }
+                    
+                    const params = new URLSearchParams();
+                    params.set('sortBy', column);
+                    params.set('sortDirection', newDirection);
+                    params.set('page', '0');
+                    
+                    // Giữ các tham số tìm kiếm hiện tại
+                    const searchKeyword = '[[${searchKeyword}]]';
+                    const appointmentDate = '[[${appointmentDate}]]';
+                    const gender = '[[${gender}]]';
+                    
+                    if (searchKeyword) params.set('searchKeyword', searchKeyword);
+                    if (appointmentDate) params.set('appointmentDate', appointmentDate);
+                    if (gender) params.set('gender', gender);
+                    
+                    window.location.href = '/recep/patient?' + params.toString();
+                }
+            </script>
         </div>
     </th:block>
 </th:block>
