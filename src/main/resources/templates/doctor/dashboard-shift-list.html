@@ -21,6 +21,7 @@
                             <th>Ngày trực</th>
                             <th>Giờ bắt đầu</th>
                             <th>Giờ kết thúc</th>
+                            <th>Phòng</th>
                             <th>Mô tả</th>
                         </tr>
                         </thead>
@@ -30,10 +31,11 @@
                             <td th:text="${#temporals.format(shift.startTime, 'dd/MM/yyyy')}"></td>
                             <td th:text="${#temporals.format(shift.startTime, 'HH:mm')}"></td>
                             <td th:text="${#temporals.format(shift.endTime, 'HH:mm')}"></td>
+                            <td th:text="${shift.room != null ? shift.room.roomName : '---'}"></td>
                             <td th:text="${shift.description}"></td>
                         </tr>
                         <tr th:if="${caTrucThang.size() == 0}">
-                            <td colspan="5" class="text-center">Không có ca trực nào trong tháng này.</td>
+                            <td colspan="6" class="text-center">Không có ca trực nào trong tháng này.</td>
                         </tr>
                         </tbody>
                     </table>

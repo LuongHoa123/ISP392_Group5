@@ -94,7 +94,9 @@ public class DoctorHomeController {
     }
 
     @GetMapping("/dashboard/patients")
-    public String listPatientsByStatus(@RequestParam String status, Model model) {
+    public String listPatientsByStatus(@RequestParam String status, Model model,
+                                       @RequestParam(value = "page", defaultValue = "0") int page,
+                                       @RequestParam(value = "size", defaultValue = "5") int size) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
         if (userEntity == null) {
@@ -114,7 +116,14 @@ public class DoctorHomeController {
             appointments = appointmentRepository.findByDoctorAndStatusInAndMonthAndYear(doctor, List.of(2, -1), month, year);
             model.addAttribute("title", "Bệnh nhân chưa khám trong tháng");
         }
-        model.addAttribute("appointments", appointments);
+        int totalItems = appointments.size();
+        int totalPages = (int) Math.ceil((double) totalItems / size);
+        int start = Math.min(page * size, totalItems);
+        int end = Math.min(start + size, totalItems);
+        List<AppointmentEntity> appointmentsPage = appointments.subList(start, end);
+        model.addAttribute("appointments", appointmentsPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
         return "doctor/dashboard-patient-list";
     }
 
