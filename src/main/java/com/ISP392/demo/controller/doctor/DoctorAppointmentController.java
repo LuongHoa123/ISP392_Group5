@@ -7,8 +7,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.ISP392.demo.entity.*;
-import com.ISP392.demo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -28,6 +26,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ISP392.demo.dto.AppointmentDto;
+import com.ISP392.demo.entity.AppointmentEntity;
+import com.ISP392.demo.entity.AppointmentServiceEntity;
+import com.ISP392.demo.entity.ConclusionEntity;
+import com.ISP392.demo.entity.DoctorEntity;
+import com.ISP392.demo.entity.UserEntity;
+import com.ISP392.demo.repository.AppointmentRepository;
+import com.ISP392.demo.repository.AppointmentServiceRepository;
+import com.ISP392.demo.repository.ConclusionRepository;
+import com.ISP392.demo.repository.DoctorRepository;
+import com.ISP392.demo.repository.UserRepository;
 import com.ISP392.demo.service.ExcelExportService;
 import com.ISP392.demo.service.PdfExportService;
 import com.ISP392.demo.service.WordExportService;
@@ -116,11 +124,17 @@ public class DoctorAppointmentController {
     }
 
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public AppointmentEntity getAppointmentDetails(@PathVariable Long id) {
-        System.out.println(appointmentRepository.findById(id));
-        return appointmentRepository.findById(id).orElse(null);
+    @GetMapping("/detail/{id}")
+    public String appointmentDetailPage(Model model, @PathVariable("id") Long appointmentId) {
+        AppointmentEntity appointment = appointmentRepository.findById(appointmentId).orElse(null);
+        if (appointment == null) {
+            return "redirect:/doctor/dashboard";
+        }
+        model.addAttribute("appointment", appointment);
+        model.addAttribute("patient", appointment.getPatient());
+        ConclusionEntity conclusion = appointment.getConclusionEntity();
+        model.addAttribute("conclusion", conclusion);
+        return "doctor/appointment/detail";
     }
 
     @GetMapping("/export-excel")

@@ -39,6 +39,9 @@
                                     <span th:case="*">Không rõ</span>
                                 </span>
                             </td>
+                            <td>
+                                <a th:href="@{/doctor/appointment/detail/{id}(id=${appt.id})}" class="btn btn-sm btn-info">Xem chi tiết</a>
+                            </td>
                         </tr>
                         <tr th:if="${appointments.size() == 0}">
                             <td colspan="5" class="text-center">Không có bệnh nhân nào.</td>

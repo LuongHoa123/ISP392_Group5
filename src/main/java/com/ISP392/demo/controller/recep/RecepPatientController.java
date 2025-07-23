@@ -18,11 +18,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Comparator;
 
 @Controller
 @RequestMapping("/recep/patient")
@@ -43,7 +45,10 @@ public class RecepPatientController {
     @GetMapping("")
     public String patientListPage(Model model,
                                   @RequestParam(value = "searchKeyword", required = false) String searchKeyword,
-                                  @RequestParam(value = "searchDate", required = false) String searchDate,
+                                  @RequestParam(value = "appointmentDate", required = false) String appointmentDate,
+                                  @RequestParam(value = "gender", required = false) String gender,
+                                  @RequestParam(value = "sortBy", required = false) String sortBy,
+                                  @RequestParam(value = "sortDirection", defaultValue = "asc") String sortDirection,
                                   @RequestParam(value = "page", defaultValue = "0") int page,
                                   @RequestParam(value = "size", defaultValue = "5") int size) {
 
@@ -51,13 +56,24 @@ public class RecepPatientController {
         UserEntity userEntity = userRepository.findByEmail(username).orElse(null);
         if (userEntity == null) return "redirect:/index";
 
-
         List<PatientEntity> allPatients = patientRepository.findAll();
 
+        // Tìm kiếm theo từ khóa (full name hoặc số điện thoại)
         if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
             String keyword = searchKeyword.toLowerCase().trim();
             allPatients = allPatients.stream()
                     .filter(p -> {
+                        // Tìm kiếm theo full name
+                        String fullName = "";
+                        if (p.getFirstName() != null && p.getLastName() != null) {
+                            fullName = (p.getFirstName() + " " + p.getLastName()).toLowerCase();
+                        } else if (p.getFirstName() != null) {
+                            fullName = p.getFirstName().toLowerCase();
+                        } else if (p.getLastName() != null) {
+                            fullName = p.getLastName().toLowerCase();
+                        }
+                        
+                        boolean matchFullName = fullName.contains(keyword);
                         boolean matchFirstName = p.getFirstName() != null &&
                                 p.getFirstName().toLowerCase().contains(keyword);
                         boolean matchLastName = p.getLastName() != null &&
@@ -65,27 +81,86 @@ public class RecepPatientController {
                         boolean matchPhone = p.getPhone() != null &&
                                 p.getPhone().contains(searchKeyword.trim());
 
-                        return matchFirstName || matchLastName || matchPhone;
+                        return matchFullName || matchFirstName || matchLastName || matchPhone;
                     })
                     .collect(Collectors.toList());
         }
-        if (searchDate != null && !searchDate.isEmpty()) {
+
+        // Lọc theo giới tính
+        if (gender != null && !gender.trim().isEmpty() && !gender.equals("ALL")) {
+            try {
+                GenderEnum genderEnum = GenderEnum.valueOf(gender);
+                allPatients = allPatients.stream()
+                        .filter(p -> p.getGender() != null && p.getGender().equals(genderEnum))
+                        .collect(Collectors.toList());
+            } catch (IllegalArgumentException e) {
+                // Ignore invalid gender value
+            }
+        }
+
+        // Tìm kiếm theo ngày khám
+        if (appointmentDate != null && !appointmentDate.isEmpty()) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            LocalDate parsedSearchDate;
+            LocalDate parsedAppointmentDate;
 
             try {
-                parsedSearchDate = LocalDate.parse(searchDate, formatter);
+                parsedAppointmentDate = LocalDate.parse(appointmentDate, formatter);
             } catch (DateTimeParseException e) {
-                parsedSearchDate = null;
+                parsedAppointmentDate = null;
             }
 
-            if (parsedSearchDate != null) {
-                LocalDate finalParsedSearchDate = parsedSearchDate;
+            if (parsedAppointmentDate != null) {
+                LocalDate finalParsedAppointmentDate = parsedAppointmentDate;
                 allPatients = allPatients.stream()
-                        .filter(p -> p.getDateOfBirth() != null && p.getDateOfBirth().equals(finalParsedSearchDate))
+                        .filter(p -> p.getAppointments() != null && 
+                                p.getAppointments().stream()
+                                        .anyMatch(appointment -> 
+                                                appointment.getAppointmentDateTime() != null &&
+                                                appointment.getAppointmentDateTime().toLocalDate().equals(finalParsedAppointmentDate)))
                         .collect(Collectors.toList());
             }
+        }
 
+        // Sắp xếp theo yêu cầu
+        if (sortBy != null && !sortBy.trim().isEmpty()) {
+            Comparator<PatientEntity> comparator = null;
+            
+            switch (sortBy.toLowerCase()) {
+                case "firstname":
+                    comparator = Comparator.comparing(p -> p.getFirstName() != null ? p.getFirstName().toLowerCase() : "", String.CASE_INSENSITIVE_ORDER);
+                    break;
+                case "lastname":
+                    comparator = Comparator.comparing(p -> p.getLastName() != null ? p.getLastName().toLowerCase() : "", String.CASE_INSENSITIVE_ORDER);
+                    break;
+                case "fullname":
+                    comparator = Comparator.comparing(p -> {
+                        String fullName = "";
+                        if (p.getFirstName() != null && p.getLastName() != null) {
+                            fullName = (p.getFirstName() + " " + p.getLastName()).toLowerCase();
+                        } else if (p.getFirstName() != null) {
+                            fullName = p.getFirstName().toLowerCase();
+                        } else if (p.getLastName() != null) {
+                            fullName = p.getLastName().toLowerCase();
+                        }
+                        return fullName;
+                    }, String.CASE_INSENSITIVE_ORDER);
+                    break;
+                case "phone":
+                    comparator = Comparator.comparing(p -> p.getPhone() != null ? p.getPhone() : "", String.CASE_INSENSITIVE_ORDER);
+                    break;
+                case "dateofbirth":
+                    comparator = Comparator.comparing(p -> p.getDateOfBirth() != null ? p.getDateOfBirth() : LocalDate.MIN);
+                    break;
+            }
+            
+            if (comparator != null) {
+                if ("desc".equalsIgnoreCase(sortDirection)) {
+                    comparator = comparator.reversed();
+                }
+                allPatients = allPatients.stream()
+                        .sorted(comparator)
+                        .collect(Collectors.toList());
+            }
         }
 
         int totalItems = allPatients.size();
@@ -98,9 +173,12 @@ public class RecepPatientController {
 
         model.addAttribute("patients", patients);
         model.addAttribute("searchKeyword", searchKeyword);
+        model.addAttribute("appointmentDate", appointmentDate);
+        model.addAttribute("gender", gender);
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortDirection", sortDirection);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
-        model.addAttribute("searchDate", searchDate);
 
         return "recep/patient/list";
     }
