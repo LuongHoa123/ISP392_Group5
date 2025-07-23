@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết lịch hẹn</title>
+    <link rel="stylesheet" th:href="@{/assets_admin/css/style.css}">
+</head>
+<body>
+<th:block th:replace="layout/doctor-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container mt-4">
+            <h3>Chi tiết lịch hẹn</h3>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5>Thông tin bệnh nhân</h5>
+                    <p><strong>Họ tên bệnh nhân:</strong>
+                        <span th:text="${patient != null ? (patient.firstName ?: '') + ' ' + (patient.lastName ?: '') : '---'}"></span>
+                    </p>
+                    <p><strong>Ngày sinh:</strong>
+                        <span th:text="${patient != null && patient.dateOfBirth != null ? #temporals.format(patient.dateOfBirth, 'dd/MM/yyyy') : '---'}"></span>
+                    </p>
+                    <p><strong>Giới tính:</strong>
+                        <span th:text="${patient != null && patient.gender != null ? (patient.gender == 'MALE' ? 'Nam' : 'Nữ') : '---'}"></span>
+                    </p>
+                    <p><strong>Số điện thoại:</strong>
+                        <span th:text="${patient != null ? patient.phone : '---'}"></span>
+                    </p>
+                    <hr>
+                    <h5>Thông tin lịch hẹn</h5>
+                    <p><strong>Thời gian hẹn:</strong>
+                        <span th:text="${appointment != null && appointment.appointmentDateTime != null ? #temporals.format(appointment.appointmentDateTime, 'dd/MM/yyyy HH:mm') : '---'}"></span>
+                    </p>
+                    <p><strong>Lý do khám:</strong>
+                        <span th:text="${appointment != null ? appointment.reason : '---'}"></span>
+                    </p>
+                    <p><strong>Phòng:</strong>
+                        <span th:text="${appointment != null && appointment.room != null ? appointment.room.roomName : '---'}"></span>
+                    </p>
+                    <p><strong>Trạng thái:</strong>
+                        <span th:switch="${appointment != null ? appointment.status : -99}">
+                            <span th:case="-1" class="badge badge-warning">Chờ xác nhận</span>
+                            <span th:case="0" class="badge badge-danger">Đã huỷ</span>
+                            <span th:case="1" class="badge badge-success">Đã khám</span>
+                            <span th:case="2" class="badge badge-info">Đang chờ khám</span>
+                            <span th:case="*">Không rõ</span>
+                        </span>
+                    </p>
+                    <p><strong>Đơn thuốc:</strong><br>
+                        <span th:text="${appointment != null && appointment.prescription != null && !#strings.isEmpty(appointment.prescription) ? appointment.prescription : 'Không có'}"></span>
+                    </p>
+                    <p><strong>Nội dung kết luận:</strong><br>
+                        <span th:text="${appointment != null && appointment.conclusion != null && !#strings.isEmpty(appointment.conclusion) ? appointment.conclusion : 'Không có'}"></span>
+                    </p>
+                </div>
+            </div>
+            <a th:href="@{/doctor/dashboard/patients?status=1}" class="btn btn-danger mt-3">Quay lại</a>
+        </div>
+    </th:block>
+</th:block>
+</body>
+</html> 

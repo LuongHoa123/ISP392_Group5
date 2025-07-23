@@ -36,6 +36,7 @@
                     <th>Trạng thái</th>
                     <th>Đơn thuốc</th>
                     <th>Nội dung kết luận</th>
+                    <th>Hành động</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -59,13 +60,40 @@
                     <td style="white-space: pre-line; word-break: break-word; max-width: 250px;">
                         <span th:text="${appt.conclusionContent != null && !#strings.isEmpty(appt.conclusionContent) ? appt.conclusionContent : 'Không có'}"></span>
                     </td>
+                    <td>
+                        <form th:action="@{/doctor/patient/delete-appointment/{appointmentId}(appointmentId=${appt.id})}" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa lịch sử khám này?');">
+                            <input type="hidden" name="id" th:value="${patient.id}" />
+                            <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                        </form>
+                    </td>
                 </tr>
                 <tr th:if="${appointments.size() == 0}">
-                    <td colspan="7" class="text-center">Chưa có lịch sử khám</td>
+                    <td colspan="8" class="text-center">Chưa có lịch sử khám</td>
                 </tr>
                 </tbody>
             </table>
             </div>
+
+            <!-- Phân trang -->
+            <nav th:if="${totalPages > 1}">
+                <ul class="pagination justify-content-center mt-3">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/doctor/patient/detail(id=${patient.id}, page=${currentPage - 1})}">Trước</a>
+                    </li>
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link"
+                           th:href="@{/doctor/patient/detail(id=${patient.id}, page=${i})}"
+                           th:text="${i + 1}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/doctor/patient/detail(id=${patient.id}, page=${currentPage + 1})}">Sau</a>
+                    </li>
+                </ul>
+            </nav>
 
             <a th:href="@{/doctor/patient}" class="btn btn-danger mt-3">Quay lại</a>
         </div>

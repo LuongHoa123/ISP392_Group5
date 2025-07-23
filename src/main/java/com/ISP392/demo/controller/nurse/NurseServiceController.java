@@ -8,6 +8,7 @@ import com.ISP392.demo.repository.AppointmentRepository;
 import com.ISP392.demo.repository.AppointmentServiceRepository;
 import com.ISP392.demo.repository.DiagnosisRepository;
 import com.ISP392.demo.repository.ServiceRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -83,6 +84,7 @@ public class NurseServiceController {
 
 
     @GetMapping("/{appointmentId}/delete-service/{serviceId}")
+    @Transactional
     public String removeServiceFromAppointment(@PathVariable Long appointmentId,
                                                @PathVariable Long serviceId,
                                                RedirectAttributes redirectAttributes) {
@@ -102,6 +104,7 @@ public class NurseServiceController {
 
             redirectAttributes.addAttribute("delete", true);
         } catch (Exception e) {
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Không tìm thấy dịch vụ hoặc lịch hẹn.");
         }
 
