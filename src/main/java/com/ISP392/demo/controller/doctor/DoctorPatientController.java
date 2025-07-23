@@ -105,7 +105,8 @@ public class DoctorPatientController {
 
     @GetMapping("/detail")
     public String patientDetailPage(Model model,
-                                    @RequestParam("id") Long patientId) {
+                                    @RequestParam("id") Long patientId,
+                                    @RequestParam(value = "page", defaultValue = "0") int page) {
         PatientEntity patient = patientRepository.findById(patientId).orElse(null);
         if (patient == null) {
             return "redirect:/doctor/patient";
@@ -142,8 +143,17 @@ public class DoctorPatientController {
                 })
                 .collect(Collectors.toList());
 
+        int size = 5;
+        int totalItems = history.size();
+        int totalPages = (int) Math.ceil((double) totalItems / size);
+        int start = Math.min(page * size, totalItems);
+        int end = Math.min(start + size, totalItems);
+        List<AppointmentDto> appointmentsPage = history.subList(start, end);
+
         model.addAttribute("patient", patient);
-        model.addAttribute("appointments", history);
+        model.addAttribute("appointments", appointmentsPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
 
         return "doctor/patient/detail";
     }

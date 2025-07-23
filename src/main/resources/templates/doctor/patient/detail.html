@@ -67,6 +67,27 @@
             </table>
             </div>
 
+            <!-- Phân trang -->
+            <nav th:if="${totalPages > 1}">
+                <ul class="pagination justify-content-center mt-3">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/doctor/patient/detail(id=${patient.id}, page=${currentPage - 1})}">Trước</a>
+                    </li>
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link"
+                           th:href="@{/doctor/patient/detail(id=${patient.id}, page=${i})}"
+                           th:text="${i + 1}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/doctor/patient/detail(id=${patient.id}, page=${currentPage + 1})}">Sau</a>
+                    </li>
+                </ul>
+            </nav>
+
             <a th:href="@{/doctor/patient}" class="btn btn-danger mt-3">Quay lại</a>
         </div>
     </th:block>
