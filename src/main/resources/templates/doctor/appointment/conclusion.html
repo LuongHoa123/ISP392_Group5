@@ -74,7 +74,6 @@
                 </table>
             </div>
 
-
             <div th:if="${conclusion.id != null}">
                 <h4>Kết luận hiện tại:</h4>
                 <p><strong>Nội dung kết luận:</strong> <span th:text="${conclusion.content}"></span></p>
@@ -82,14 +81,14 @@
             </div>
 
             <div th:if="${conclusion.id == null}">
-                <form th:action="@{/doctor/appointment/conclusion/{id}(id=${appointment.id})}" method="post">
+                <form id="conclusionForm" th:action="@{/doctor/appointment/conclusion/{id}(id=${appointment.id})}" method="post">
                     <div class="form-group">
                         <label for="content">Nội dung kết luận:</label>
                         <textarea id="content" class="form-control" name="content" required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="prescription">Đơn thuốc:</label>
-                        <textarea id="prescription" class="form-control" name="prescription"></textarea>
+                        <textarea id="prescription" class="form-control" name="prescription" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Lưu kết luận</button>
                 </form>
@@ -98,5 +97,38 @@
         </div>
     </th:block>
 </th:block>
+
+<!-- JavaScript kiểm tra đơn thuốc -->
+<script>
+    document.getElementById("conclusionForm").addEventListener("submit", function (e) {
+        const prescription = document.getElementById("prescription").value.trim();
+        if (!prescription) {
+            e.preventDefault(); // Ngăn submit
+            const toastContainer = document.querySelector(".toast-container");
+
+            // Xoá các toast cũ (nếu có)
+            toastContainer.querySelectorAll(".custom-toast").forEach(el => el.remove());
+
+            const errorToast = document.createElement("div");
+            errorToast.className = "toast align-items-center text-white bg-danger border-0 show custom-toast";
+            errorToast.setAttribute("role", "alert");
+            errorToast.setAttribute("aria-live", "assertive");
+            errorToast.setAttribute("aria-atomic", "true");
+            errorToast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Đơn thuốc không được để trống!
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+            toastContainer.appendChild(errorToast);
+            setTimeout(() => {
+                errorToast.remove();
+            }, 4000);
+        }
+    });
+</script>
+
 </body>
 </html>
