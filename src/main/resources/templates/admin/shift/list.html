@@ -26,7 +26,7 @@
 
         <div class="container mt-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3>Quản lý lịch làm việc</h3>
+                <h3>Quản lý lịch trực</h3>
                 <a href="/admin/shift/statistics" class="btn btn-info">
                     <i class="mdi mdi-chart-bar"></i> Xem thống kê lịch làm việc
                 </a>
@@ -96,25 +96,20 @@
                 </form>
             </div>
         </div>
-        
-        //Khởi tạo khi trang load
-        //Chờ HTML load xong hết mới chạy JavaScript
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // const calendarEl = document.getElementById('calendar'); //Lấy div calendar để render
-                // const modal = new bootstrap.Modal(document.getElementById('shiftModal')); /Tạo object Bootstrap Modal để điều khiển popup
-                const deleteBtn = document.getElementById('deleteBtn'); //show/hide
-                //Khởi tạo FullCalendar
+                const calendarEl = document.getElementById('calendar');
+                const modal = new bootstrap.Modal(document.getElementById('shiftModal'));
+                const deleteBtn = document.getElementById('deleteBtn');
+
                 const calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'dayGridMonth',
-                    
                     headerToolbar: {
                         left: 'prev,next today',
                         center: 'title',
                         right: 'dayGridMonth,timeGridWeek,timeGridDay'
                     },
-                    //URL API để lấy dữ liệu ca trực
                     events: '/admin/shift/api',
                     selectable: true,
                     select: function(info) {
@@ -181,12 +176,10 @@
                     e.preventDefault();
                     
                     const formData = new FormData(this);
-                    //Tạo object chứa tất cả data trong form
                     
                     fetch('/admin/shift/api/save', {
                         method: 'POST',
                         body: formData
-
                     })
                     .then(response => {
                         if (response.ok) {
