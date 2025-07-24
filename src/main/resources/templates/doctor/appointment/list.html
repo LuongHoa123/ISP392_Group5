@@ -62,9 +62,10 @@
                         <input type="text" class="form-control mr-2" name="keyword" placeholder="Tìm kiếm..."
                                th:value="${keyword}" style="min-width: 200px;">
                         <input type="date" class="form-control mr-2" name="date" th:value="${date}">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary mr-2">
                             <i class="mdi mdi-magnify"></i> Tìm kiếm
                         </button>
+                        <a th:href="@{/doctor/appointment}" class="btn btn-danger">Reset</a>
                     </form>
                 </div>
                 <div class="col-auto">
