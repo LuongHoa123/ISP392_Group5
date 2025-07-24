@@ -68,6 +68,11 @@ public class NurseProfileController {
 
         nurse.setFirstName(formNurse.getFirstName());
         nurse.setLastName(formNurse.getLastName());
+        nurse.setDateOfBirth(formNurse.getDateOfBirth());
+        nurse.setAddress(formNurse.getAddress());
+        nurse.setUniversity(formNurse.getUniversity());
+        nurse.setYearOfGraduate(formNurse.getYearOfGraduate());
+
 
         Optional<NurseEntity> existingNurse = nurseRepository.findByPhoneNumber(formNurse.getPhoneNumber());
         if (existingNurse.isPresent() && existingNurse.get().getId() != nurse.getId()) {

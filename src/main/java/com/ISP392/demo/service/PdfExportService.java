@@ -471,4 +471,55 @@ public class PdfExportService {
             default -> "Không xác định";
         };
     }
+
+    public ByteArrayInputStream exportPatientsToPdf(List<PatientEntity> patients) throws IOException {
+        PdfFont font = PdfFontFactory.createFont(FONT_PATH, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(out);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
+
+        // Title
+        document.add(new Paragraph("Danh Sách Bệnh Nhân Khám Trong Ngày")
+                .setFont(font)
+                .setFontSize(16)
+                .setBold()
+                .setTextAlignment(TextAlignment.CENTER)
+                .setMarginBottom(20));
+
+        String[] columns = {"STT", "Họ", "Tên", "Ngày sinh", "Giới tính", "Số điện thoại"};
+        float[] columnWidths = {5F, 15F, 15F, 15F, 10F, 20F};
+        Table table = new Table(UnitValue.createPercentArray(columnWidths))
+                .useAllAvailableWidth()
+                .setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 1));
+
+        // Header
+        for (String col : columns) {
+            table.addHeaderCell(new Cell()
+                    .add(new Paragraph(col).setFont(font).setFontSize(10).setBold().setTextAlignment(TextAlignment.CENTER))
+                    .setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                    .setBorder(new SolidBorder(ColorConstants.BLACK, 0.5f))
+                    .setPadding(8));
+        }
+
+        int index = 1;
+        for (PatientEntity p : patients) {
+            table.addCell(new Cell().add(new Paragraph(String.valueOf(index))).setFont(font).setFontSize(9).setTextAlignment(TextAlignment.CENTER).setPadding(6));
+            table.addCell(new Cell().add(new Paragraph(p.getFirstName() != null ? p.getFirstName() : "")).setFont(font).setFontSize(9).setPadding(6));
+            table.addCell(new Cell().add(new Paragraph(p.getLastName() != null ? p.getLastName() : "")).setFont(font).setFontSize(9).setPadding(6));
+            String dob = p.getDateOfBirth() != null ? p.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "";
+            table.addCell(new Cell().add(new Paragraph(dob)).setFont(font).setFontSize(9).setTextAlignment(TextAlignment.CENTER).setPadding(6));
+            String gender = p.getGender() != null ? (p.getGender().name().equals("MALE") ? "Nam" : "Nữ") : "";
+            table.addCell(new Cell().add(new Paragraph(gender)).setFont(font).setFontSize(9).setTextAlignment(TextAlignment.CENTER).setPadding(6));
+            table.addCell(new Cell().add(new Paragraph(p.getPhone() != null ? p.getPhone() : "")).setFont(font).setFontSize(9).setPadding(6));
+
+            index++;
+        }
+
+        document.add(table);
+        document.close();
+
+        return new ByteArrayInputStream(out.toByteArray());
+    }
 }

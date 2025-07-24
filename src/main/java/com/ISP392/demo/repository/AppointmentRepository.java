@@ -27,6 +27,24 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
 
     List<AppointmentEntity> findTop5ByStatusOrderByAppointmentDateTimeDesc(Integer status);
 
+    @Query("SELECT DISTINCT a.patient FROM AppointmentEntity a WHERE a.appointmentDateTime BETWEEN :start AND :end")
+    List<PatientEntity> findDistinctPatientsByAppointmentDateTimeBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("SELECT a FROM AppointmentEntity a " +
+            "WHERE a.appointmentDateTime BETWEEN :start AND :end " +
+            "AND (LOWER(a.patient.firstName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(a.patient.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR a.patient.phone LIKE CONCAT('%', :keyword, '%'))")
+    Page<AppointmentEntity> findByAppointmentDateTimeBetweenAndPatientNameOrPhone(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end,
+            @Param("keyword") String keyword,
+            Pageable pageable);
+
+
+    @Query("SELECT COUNT(DISTINCT a.patient.id) FROM AppointmentEntity a WHERE a.appointmentDateTime BETWEEN :start AND :end")
+    Long countDistinctPatientByAppointmentDateTimeBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
     List<AppointmentEntity> findTop10ByStatusOrderByAppointmentDateTimeDesc(Integer status);
 
     @Query("SELECT MONTH(a.appointmentDateTime), COUNT(a) " +
