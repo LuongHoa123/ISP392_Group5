@@ -150,6 +150,25 @@
         .update-profile form label[for="phone"] .required-star {
             font-size: 1.3rem;
         }
+
+        .update-profile form label[for="identification"] {
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+
+        .update-profile form label[for="identification"] .required-star {
+            font-size: 1.3rem;
+        }
+
+        .update-profile form label[for="nation"] {
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+
+        .update-profile form label[for="nation"] .required-star {
+            font-size: 1.3rem;
+        }
+
         .back-to-top {
             position: fixed;
             bottom: 30px;
@@ -164,6 +183,12 @@
             display: none;
             box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
             transition: opacity 0.3s;
+        }
+
+        .update-profile form .form-control#identification {
+            font-size: 1.35rem;
+            height: 56px;
+            padding: 16px 16px;
         }
 
         .back-to-top:hover {
@@ -187,7 +212,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div class="container mt-3" th:if="${param.error}">
                 <div class="alert alert-danger text-center">Có lỗi xảy ra trong quá trình cập nhật thông tin!</div>
@@ -263,19 +287,23 @@
                             <div id="addressError" class="text-danger"></div>
                         </div>
 
-                        <!-- Số điện thoại -->
+                        <!-- Căn cước công dân -->
                         <div class="form-group">
-                            <label for="phone">Căn cước công dân<span class="required-star">*</span></label>
+                            <label for="identification">Căn cước công dân<span class="required-star">*</span></label>
                             <input type="text" id="identification" name="identification" class="form-control" th:field="*{identification}"
-                                   required>
+                                   required pattern="[0-9]{12}" maxlength="12" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))">
+                            <div id="identificationError" class="text-danger"></div>
                         </div>
 
+                        <!-- Dân tộc -->
                         <div class="form-group">
-                            <label for="phone">Dân tộc<span class="required-star">*</span></label>
+                            <label for="nation">Dân tộc<span class="required-star">*</span></label>
                             <input type="text" id="nation" name="nation" class="form-control" th:field="*{nation}"
                                    required>
+                            <div id="nationError" class="text-danger"></div>
                         </div>
 
+                        <!-- Số điện thoại -->
                         <div class="form-group">
                             <label for="phone">Số điện thoại<span class="required-star">*</span></label>
                             <input type="text" id="phone" name="phone" class="form-control" th:field="*{phone}"
@@ -289,48 +317,26 @@
             </form>
 
         </section>
-        <style>
-            .back-to-top {
-                position: fixed;
-                bottom: 30px;
-                right: 30px;
-                z-index: 1000;
-                background-color: #1e40af;
-                color: white;
-                padding: 12px 16px;
-                border-radius: 50%;
-                font-size: 18px;
-                cursor: pointer;
-                display: none;
-                box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
-                transition: opacity 0.3s;
-            }
-
-            .back-to-top:hover {
-                opacity: 0.8;
-            }
-        </style>
         <a href="#" class="back-to-top" id="backToTop" title="Lên đầu trang">
             <i class="fas fa-chevron-up"></i>
         </a>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                const dateInput = document.getElementById('appointmentDate');
+                const dateInput = document.getElementById('dateOfBirth');
                 const today = new Date();
-                const tomorrow = new Date(today);
-                tomorrow.setDate(tomorrow.getDate() + 1);
+                const maxDate = new Date(today);
+                maxDate.setFullYear(today.getFullYear() - 18);
 
-                const yyyy = tomorrow.getFullYear();
-                const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
-                const dd = String(tomorrow.getDate()).padStart(2, '0');
-                const minDateStr = `${yyyy}-${mm}-${dd}`;
+                const yyyy = maxDate.getFullYear();
+                const mm = String(maxDate.getMonth() + 1).padStart(2, '0');
+                const dd = String(maxDate.getDate()).padStart(2, '0');
+                const maxDateStr = `${yyyy}-${mm}-${dd}`;
 
-                dateInput.min = minDateStr;
+                date
+
+Input.max = maxDateStr;
             });
-        </script>
 
-
-        <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const backToTopBtn = document.getElementById("backToTop");
 
@@ -347,6 +353,106 @@
                     window.scrollTo({top: 0, behavior: "smooth"});
                 });
             });
+
+            document.getElementById('updateProfileForm').addEventListener('submit', function (e) {
+                // Clear previous error messages
+                document.getElementById('firstNameError').textContent = '';
+                document.getElementById('lastNameError').textContent = '';
+                document.getElementById('phoneError').textContent = '';
+                document.getElementById('dateOfBirthError').textContent = '';
+                document.getElementById('genderError').textContent = '';
+                document.getElementById('addressError').textContent = '';
+                document.getElementById('identificationError').textContent = '';
+                document.getElementById('nationError').textContent = '';
+
+                let isValid = true;
+
+                // Validate First Name and Last Name
+                const firstName = document.getElementById('firstName').value;
+                const lastName = document.getElementById('lastName').value;
+                const namePattern = /^[\p{L} .'-]+$/u;
+
+                if (!namePattern.test(firstName)) {
+                    document.getElementById('firstNameError').textContent = 'Họ không hợp lệ! Vui lòng chỉ nhập chữ.';
+                    isValid = false;
+                }
+                if (!namePattern.test(lastName)) {
+                    document.getElementById('lastNameError').textContent = 'Tên không hợp lệ! Vui lòng chỉ nhập chữ.';
+                    isValid = false;
+                }
+
+                // Validate Phone Number
+                const phone = document.getElementById('phone').value;
+                const phonePattern = /^[0-9]{10,11}$/;
+
+                if (!phonePattern.test(phone)) {
+                    document.getElementById('phoneError').textContent = 'Số điện thoại không hợp Huntington, Ontario hợp lệ!';
+                    isValid = false;
+                }
+
+                // Validate Date of Birth
+                const dateOfBirth = document.getElementById('dateOfBirth').value;
+                if (!dateOfBirth) {
+                    document.getElementById('dateOfBirthError').textContent = 'Vui lòng nhập ngày sinh!';
+                    isValid = false;
+                }
+
+                // Validate Address
+                const address = document.getElementById('address').value;
+                if (address.length < 5) {
+                    document.getElementById('addressError').textContent = 'Địa chỉ phải có ít nhất 5 ký tự!';
+                    isValid = false;
+                }
+
+                // Validate Gender
+                const gender = document.getElementById('gender').value;
+                if (!gender) {
+                    document.getElementById('genderError').textContent = 'Vui lòng chọn giới tính!';
+                    isValid = false;
+                }
+
+                // Validate Identification (12 digits, numbers only)
+                const identification = document.getElementById('identification').value;
+                const idPattern = /^[0-9]{12}$/;
+
+                if (!idPattern.test(identification)) {
+                    document.getElementById('identificationError').textContent = 'Căn cước công dân phải đúng 12 số!';
+                    isValid = false;
+                }
+
+                // Validate Nation
+                const nation = document.getElementById('nation').value;
+                if (!nation || nation.trim().length === 0) {
+                    document.getElementById('nationError').textContent = 'Vui lòng nhập dân tộc!';
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                }
+            });
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const avatarInput = document.getElementById('avatarFile');
+                const avatarPreview = document.getElementById('avatarPreview');
+
+                avatarInput.addEventListener('change', function () {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            avatarPreview.src = e.target.result;
+                            avatarPreview.style.display = 'block';
+                        };
+
+                        reader.readAsDataURL(file);
+                    } else {
+                        avatarPreview.src = '#';
+                        avatarPreview.style.display = 'none';
+                    }
+                });
+            });
         </script>
     </th:block>
 </th:block>
@@ -356,91 +462,5 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-<script>
-    // Validation khi submit form
-    document.getElementById('updateProfileForm').addEventListener('submit', function (e) {
-            // Clear previous error messages
-            document.getElementById('firstNameError').textContent = '';
-            document.getElementById('lastNameError').textContent = '';
-            document.getElementById('phoneError').textContent = '';
-            document.getElementById('dateOfBirthError').textContent = '';
-            document.getElementById('genderError').textContent = '';
-            document.getElementById('addressError').textContent = '';
-
-            let isValid = true;
-
-            // Validate First Name and Last Name
-            const firstName = document.getElementById('firstName').value;
-            const lastName = document.getElementById('lastName').value;
-            const namePattern = /^[\p{L} .'-]+$/u; // Chỉ cho phép chữ, dấu chấm, dấu gạch nối và dấu nháy đơn
-
-            if (!namePattern.test(firstName)) {
-                document.getElementById('firstNameError').textContent = 'Họ và tên không hợp lệ! Vui lòng chỉ nhập chữ.';
-                isValid = false;
-            }
-            if (!namePattern.test(lastName)) {
-                document.getElementById('lastNameError').textContent = 'Họ và tên không hợp lệ! Vui lòng chỉ nhập chữ.';
-                isValid = false;
-            }
-
-            // Validate Phone Number
-            const phone = document.getElementById('phone').value;
-            const phonePattern = /^[0-9]{10,11}$/;
-
-            if (!phonePattern.test(phone)) {
-                document.getElementById('phoneError').textContent = 'Số điện thoại không hợp lệ!';
-                isValid = false;
-            }
-
-            // Validate Date of Birth
-            const dateOfBirth = document.getElementById('dateOfBirth').value;
-            if (!dateOfBirth) {
-                document.getElementById('dateOfBirthError').textContent = 'Vui lòng nhập ngày sinh!';
-                isValid = false;
-            }
-
-            // Validate Address
-            const address = document.getElementById('address').value;
-            if (address.length < 5) {
-                document.getElementById('addressError').textContent = 'Địa chỉ phải có ít nhất 5 ký tự!';
-                isValid = false;
-            }
-
-            // Validate Gender
-            const gender = document.getElementById('gender').value;
-            if (!gender) {
-                document.getElementById('genderError').textContent = 'Vui lòng chọn giới tính!';
-                isValid = false;
-            }
-
-            if (!isValid) {
-                e.preventDefault();
-            }
-        }
-    );
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const avatarInput = document.getElementById('avatarFile');
-        const avatarPreview = document.getElementById('avatarPreview');
-
-        avatarInput.addEventListener('change', function () {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-
-                reader.onload = function (e) {
-                    avatarPreview.src = e.target.result;
-                    avatarPreview.style.display = 'block';
-                };
-
-                reader.readAsDataURL(file);
-            } else {
-                avatarPreview.src = '#';
-                avatarPreview.style.display = 'none';
-            }
-        });
-    });
-</script>
 </body>
 </html>
