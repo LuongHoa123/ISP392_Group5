@@ -114,9 +114,19 @@ public class PatientReviewController {
     @Transactional
     public String deleteReview(@PathVariable Long reviewId) {
         ReviewEntity review = reviewRepository.findById(reviewId).orElse(null);
-        Long appointmentId = review.getAppointment().getId();
+        if (review == null) {
+            return "redirect:/patient/reviews?error=notfound";
+        }
+
+        AppointmentEntity appointment = review.getAppointment();
+
+        appointment.setReviewEntity(null);
+        appointmentRepository.save(appointment);
+
         reviewRepository.delete(review);
-        return "redirect:/patient/review/" + appointmentId + "?deleted=true";
+
+        return "redirect:/patient/review/" + appointment.getId() + "?deleted=true";
     }
+
 
 }
