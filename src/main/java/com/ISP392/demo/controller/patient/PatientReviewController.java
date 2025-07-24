@@ -9,6 +9,7 @@ import com.ISP392.demo.repository.AppointmentRepository;
 import com.ISP392.demo.repository.PatientRepository;
 import com.ISP392.demo.repository.ReviewRepository;
 import com.ISP392.demo.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -93,6 +94,29 @@ public class PatientReviewController {
         reviewRepository.save(review);
 
         return "redirect:/patient/review/" + id + "?success=true";
+    }
+
+    @PostMapping("/update")
+    public String updateReview(@RequestParam("reviewId") Long reviewId,
+                               @RequestParam("content") String content,
+                               @RequestParam("rating") Integer rating) {
+        ReviewEntity review = reviewRepository.findById(reviewId).orElse(null);
+        if (review != null) {
+            review.setContent(content);
+            review.setStar(rating);
+            review.setUpdatedAt(LocalDateTime.now());
+            reviewRepository.save(review);
+        }
+        return "redirect:/patient/review/" + review.getAppointment().getId();
+    }
+
+    @GetMapping("/delete/{reviewId}")
+    @Transactional
+    public String deleteReview(@PathVariable Long reviewId) {
+        ReviewEntity review = reviewRepository.findById(reviewId).orElse(null);
+        Long appointmentId = review.getAppointment().getId();
+        reviewRepository.delete(review);
+        return "redirect:/patient/review/" + appointmentId + "?deleted=true";
     }
 
 }

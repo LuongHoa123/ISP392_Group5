@@ -185,7 +185,7 @@
                                     <button class="btn btn-sm btn-warning" data-toggle="modal"
                                             th:data-target="${'#cancelModal-' + appt.id}"
                                             th:if="${appt.status == -1 || appt.status == 2}">
-                                        🛑 Huỷ lịch
+                                        Huỷ lịch
                                     </button>
 
                                     <div th:if="${appt.status == 1}">
@@ -282,8 +282,9 @@
                     <div th:each="appt : ${appointments}" th:if="${appt.status == -1}">
                         <div class="modal fade" th:id="${'cancelModal-' + appt.id}" tabindex="-1" role="dialog">
                             <div class="modal-dialog" role="document">
-                                <form th:action="@{/recep/appointment/send-cancel-email}" method="post" class="modal-content">
-                                    <input type="hidden" name="appointmentId" th:value="${appt.id}" />
+                                <form th:action="@{/recep/appointment/send-cancel-email}" method="post"
+                                      class="modal-content">
+                                    <input type="hidden" name="appointmentId" th:value="${appt.id}"/>
 
                                     <div class="modal-header">
                                         <h5 class="modal-title">Gửi email huỷ lịch hẹn</h5>
@@ -295,7 +296,8 @@
                                     <div class="modal-body">
                                         <p><strong>Tên bệnh nhân:</strong> <span th:text="${appt.name}"></span></p>
                                         <p><strong>Thời gian hẹn:</strong>
-                                            <span th:text="${#temporals.format(appt.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></span></p>
+                                            <span th:text="${#temporals.format(appt.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></span>
+                                        </p>
 
                                         <div class="form-group">
                                             <label>Lý do huỷ lịch</label>
@@ -305,7 +307,8 @@
 
                                     <div class="modal-footer">
                                         <button type="submit" class="btn btn-danger">Gửi email huỷ</button>
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng
+                                        </button>
                                     </div>
                                 </form>
                             </div>

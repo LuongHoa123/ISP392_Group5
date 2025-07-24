@@ -8,8 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-
-
 @Controller
 @RequestMapping("/admin/doctor")
 public class AdminDoctorController {
@@ -33,23 +31,19 @@ public class AdminDoctorController {
             (specialization != null && !specialization.trim().isEmpty()) ||
             (experienceRange != null && !experienceRange.trim().isEmpty())) {
             
-            // Lọc theo số năm kinh nghiệm thực tế
             Integer minExperience = null;
             Integer maxExperience = null;
 
             if ("under5".equals(experienceRange)) {
-                // Dưới 5 năm: kinh nghiệm < 5
                 maxExperience = 4;
             } else if ("5-10".equals(experienceRange)) {
-                // 5-10 năm: 5 <= kinh nghiệm <= 10
                 minExperience = 5;
                 maxExperience = 10;
             } else if ("over10".equals(experienceRange)) {
-                // Trên 10 năm: kinh nghiệm > 10
                 minExperience = 11;
             }
 
-            doctorPage = doctorRepository.searchByMultipleFilters(
+            doctorPage = doctorRepository.searchAdminByMultipleFilters(
                 search, specialization, minExperience, maxExperience, pageable);
         } else {
             doctorPage = doctorRepository.findAll(pageable);

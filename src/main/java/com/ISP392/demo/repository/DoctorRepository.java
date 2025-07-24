@@ -23,19 +23,38 @@ public interface DoctorRepository extends JpaRepository<DoctorEntity, Long> {
 
     Optional<DoctorEntity> findByPhoneNumber(String phone);
 
-    @Query("SELECT d FROM DoctorEntity d WHERE " +
-            "(:keyword IS NULL OR LOWER(CONCAT(d.firstName, ' ', d.lastName)) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "   OR LOWER(d.specialization) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "   OR LOWER(d.email) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
-            "AND (:specialization IS NULL OR LOWER(d.specialization) LIKE LOWER(CONCAT('%', :specialization, '%'))) " +
+    @Query("SELECT d FROM DoctorEntity d " +
+            "WHERE (:keyword IS NULL OR " +
+            "LOWER(CONCAT(d.firstName, ' ', d.lastName)) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(d.specialization) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(d.email) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+            "AND (:specialization IS NULL OR d.specialization = :specialization) " +
+            "AND (:gender IS NULL OR d.gender = :gender) " +
             "AND (:minExperience IS NULL OR d.yoe >= :minExperience) " +
             "AND (:maxExperience IS NULL OR d.yoe <= :maxExperience)")
     Page<DoctorEntity> searchByMultipleFilters(
             @Param("keyword") String keyword,
             @Param("specialization") String specialization,
+            @Param("gender") String gender,
             @Param("minExperience") Integer minExperience,
             @Param("maxExperience") Integer maxExperience,
-            Pageable pageable
-    );
+            Pageable pageable);
+
+
+    @Query("SELECT d FROM DoctorEntity d " +
+            "WHERE (:keyword IS NULL OR " +
+            "LOWER(CONCAT(d.firstName, ' ', d.lastName)) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(d.specialization) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(d.email) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+            "AND (:specialization IS NULL OR d.specialization = :specialization) " +
+            "AND (:minExperience IS NULL OR d.yoe >= :minExperience) " +
+            "AND (:maxExperience IS NULL OR d.yoe <= :maxExperience)")
+    Page<DoctorEntity> searchAdminByMultipleFilters(
+            @Param("keyword") String keyword,
+            @Param("specialization") String specialization,
+            @Param("minExperience") Integer minExperience,
+            @Param("maxExperience") Integer maxExperience,
+            Pageable pageable);
+
 
 }

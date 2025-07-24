@@ -27,6 +27,8 @@ public class DoctorEntity extends AbstractEntity {
     @Column(name = "lastName")
     private String lastName;
 
+    private String gender;
+
     private String specialization;
 
     @Column(name = "yoe")
@@ -104,6 +106,14 @@ public class DoctorEntity extends AbstractEntity {
 
     public void setYoe(Integer yoe) {
         this.yoe = yoe;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getPhoneNumber() {

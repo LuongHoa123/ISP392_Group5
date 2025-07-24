@@ -81,10 +81,10 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center">
             <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="errorModalLabel" style="font-size: 2.2rem; font-weight: bold;">Thành công</h5>
+                <h5 class="modal-title" id="successModalLabel" style="font-size: 2.2rem; font-weight: bold;">Thành công</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
-            <div class="modal-body" style="font-size: 2rem; font-weight: green;">
+            <div class="modal-body" style="font-size: 2rem;">
                 Đánh giá thành công! Cảm ơn bạn đã tin tưởng chúng tôi.
             </div>
             <div class="modal-footer">
@@ -94,12 +94,58 @@
     </div>
 </div>
 
+<!-- Modal Cập nhật thành công -->
+<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="updateModalLabel" style="font-size: 2.2rem; font-weight: bold;">Đã cập nhật</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body" style="font-size: 2rem;">
+                Cập nhật đánh giá thành công!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Xóa đánh giá -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="deleteModalLabel" style="font-size: 2.2rem; font-weight: bold;">Đã xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body" style="font-size: 2rem;">
+                Đánh giá đã được xóa thành công.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script th:if="${param.success}">
     const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-    window.addEventListener('load', () => {
-        successModal.show();
-    });
+    window.addEventListener('load', () => successModal.show());
 </script>
+
+<script th:if="${param.update}">
+    const updateModal = new bootstrap.Modal(document.getElementById('updateModal'));
+    window.addEventListener('load', () => updateModal.show());
+</script>
+
+<script th:if="${param.delete}">
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    window.addEventListener('load', () => deleteModal.show());
+</script>
+
 
 <!-- Modal Thông báo Lỗi -->
 <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
@@ -191,14 +237,38 @@
                 <div class="container mt-5">
                     <h2 class="text-center mb-4">Bạn đã đánh giá lịch hẹn này</h2>
                     <div class="card p-4">
-                        <p><strong>Số sao:</strong> <span th:text="${review.star}">5</span> ★</p>
-                        <p><strong>Nội dung:</strong></p>
-                        <blockquote class="blockquote">
-                            <p class="mb-0" th:text="${review.content}">Nội dung đánh giá...</p>
-                        </blockquote>
-                        <a th:href="@{/}" class="btn btn-primary mt-3">Quay lại trang chủ</a>
+
+                        <form th:action="@{/patient/review/update}" method="post">
+                            <input type="hidden" name="reviewId" th:value="${review.id}"/>
+
+                            <div class="mb-3">
+                                <label for="rating" class="form-label"><strong>Số sao:</strong></label>
+                                <select name="rating" class="form-control" id="rating" required>
+                                    <option th:each="i : ${#numbers.sequence(1, 5)}"
+                                            th:value="${i}"
+                                            th:selected="${i == review.star}"
+                                            th:text="${i + ' ★'}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="content"><strong>Nội dung:</strong></label>
+                                <textarea class="form-control" name="content" id="content" rows="4" required
+                                          th:text="${review.content}">Nội dung đánh giá...</textarea>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-3">
+                                <button type="submit" class="btn btn-success">Cập nhật đánh giá</button>
+                            </div>
+                        </form>
+
+                        <div class="mt-4 text-center">
+                            <a th:href="@{/}" class="btn btn-primary">Quay lại trang chủ</a>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </section>
 

@@ -44,12 +44,17 @@ public class DoctorController {
     public String searchDoctors(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String specialization,
+            @RequestParam(required = false) String gender,
             @RequestParam(required = false) String experienceRange,
+            @RequestParam(required = false, defaultValue = "name_asc") String sort,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             Model model
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("firstName").ascending());
+        if (keyword != null && keyword.trim().isEmpty()) keyword = null;
+        if (specialization != null && specialization.trim().isEmpty()) specialization = null;
+        if (gender != null && gender.trim().isEmpty()) gender = null;
+        if (experienceRange != null && experienceRange.trim().isEmpty()) experienceRange = null;
 
         Integer minExperience = null;
         Integer maxExperience = null;
@@ -64,22 +69,41 @@ public class DoctorController {
             minExperience = 10;
         }
 
-        if (keyword != null && !keyword.isBlank()) {
-            keyword = keyword.trim().replaceAll("\\s+", " ");
+        Sort sortObj;
+        switch (sort) {
+            case "name_desc":
+                sortObj = Sort.by("firstName").descending();
+                break;
+            case "exp_asc":
+                sortObj = Sort.by("yoe").ascending();
+                break;
+            case "exp_desc":
+                sortObj = Sort.by("yoe").descending();
+                break;
+            default:
+                sortObj = Sort.by("firstName").ascending();
         }
 
+        Pageable pageable = PageRequest.of(page, size, sortObj);
+
         Page<DoctorEntity> doctorPage = doctorRepository.searchByMultipleFilters(
-                keyword, specialization, minExperience, maxExperience, pageable);
+                keyword, specialization, gender, minExperience, maxExperience, pageable
+        );
 
         model.addAttribute("doctors", doctorPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", doctorPage.getTotalPages());
         model.addAttribute("keyword", keyword);
         model.addAttribute("specialization", specialization);
+        model.addAttribute("gender", gender);
         model.addAttribute("experienceRange", experienceRange);
+        model.addAttribute("sort", sort);
+
         String queryParams = "?keyword=" + (keyword != null ? keyword : "") +
                 "&specialization=" + (specialization != null ? specialization : "") +
-                "&experienceRange=" + (experienceRange != null ? experienceRange : "");
+                "&experienceRange=" + (experienceRange != null ? experienceRange : "") +
+                "&gender=" + (gender != null ? gender : "") +
+                "&sort=" + sort;
 
         model.addAttribute("baseUrl", "/doctors/search" + queryParams);
 
@@ -94,28 +118,24 @@ public class DoctorController {
             model.addAttribute("error", "Không tìm thấy bác sĩ");
             return "redirect:/doctors";
         }
-        
-        // Tính toán thống kê đánh giá từ bảng review
+
         List<ReviewEntity> reviews = reviewRepository.findByDoctor(doctor);
         Double averageRating = reviewRepository.getAverageRatingByDoctor(doctor);
         Long totalReviews = reviewRepository.getTotalReviewsByDoctor(doctor);
-        
-        // Tính phân bố đánh giá thực tế
+
         long excellentCount = reviews.stream().filter(r -> r.getStar() != null && r.getStar() >= 4).count();
         long goodCount = reviews.stream().filter(r -> r.getStar() != null && r.getStar() == 3).count();
         long poorCount = reviews.stream().filter(r -> r.getStar() != null && r.getStar() <= 2).count();
-        
-        // Tính phần trăm (mặc định 0 nếu không có đánh giá)
+
         int excellentPercent = totalReviews > 0 ? (int) Math.round((excellentCount * 100.0) / totalReviews) : 0;
         int goodPercent = totalReviews > 0 ? (int) Math.round((goodCount * 100.0) / totalReviews) : 0;
         int poorPercent = totalReviews > 0 ? (int) Math.round((poorCount * 100.0) / totalReviews) : 0;
-        
-        // Lấy một số đánh giá gần đây để hiển thị
+
         List<ReviewEntity> recentReviews = reviews.stream()
                 .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
                 .limit(3)
                 .collect(java.util.stream.Collectors.toList());
-        
+
         model.addAttribute("doctor", doctor);
         model.addAttribute("reviews", reviews);
         model.addAttribute("recentReviews", recentReviews);
@@ -124,7 +144,7 @@ public class DoctorController {
         model.addAttribute("excellentPercent", excellentPercent);
         model.addAttribute("goodPercent", goodPercent);
         model.addAttribute("poorPercent", poorPercent);
-        
+
         return "doctor-details";
     }
 }

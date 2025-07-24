@@ -168,21 +168,26 @@
 
             <!-- Search form: Allows users to filter doctors by keyword, specialization, or experience range -->
             <div class="container my-4">
-                <form class="form-inline row justify-content-center" th:action="@{/doctors/search}" method="get"
-                      style="gap: 10px">
+                <form class="form-inline row justify-content-center" th:action="@{/doctors/search}" method="get" style="gap: 10px">
                     <div class="col-auto">
-                        <input style="font-size: 16px;" class="form-control input-large"
-                               type="text" name="keyword" placeholder="Tên, chuyên môn, email..." th:value="${keyword}">
+                        <input class="form-control input-large" type="text" name="keyword"
+                               placeholder="Tên, chuyên môn, email..." th:value="${keyword}" style="font-size: 16px;">
                     </div>
 
                     <div class="col-auto">
                         <select class="form-control" name="specialization" style="font-size: 16px;">
-                            <option value="" th:selected="${specialization == null or specialization == ''}">Tất cả
-                                chuyên khoa
-                            </option>
+                            <option value="" th:selected="${specialization == null or specialization == ''}">Tất cả chuyên khoa</option>
                             <option value="Tai" th:selected="${specialization == 'Tai'}">Chuyên khoa Tai</option>
                             <option value="Mũi" th:selected="${specialization == 'Mũi'}">Chuyên khoa Mũi</option>
                             <option value="Họng" th:selected="${specialization == 'Họng'}">Chuyên khoa Họng</option>
+                        </select>
+                    </div>
+
+                    <div class="col-auto">
+                        <select class="form-control" name="gender" style="font-size: 16px;">
+                            <option value="" th:selected="${gender == null or gender == ''}">Tất cả giới tính</option>
+                            <option value="MALE" th:selected="${gender == 'MALE'}">Nam</option>
+                            <option value="FEMALE" th:selected="${gender == 'FEMALE'}">Nữ</option>
                         </select>
                     </div>
 
@@ -195,6 +200,14 @@
                         </select>
                     </div>
 
+                    <div class="col-auto">
+                        <select class="form-control" name="sort" style="font-size: 16px;">
+                            <option value="name_asc" th:selected="${sort == 'name_asc'}">Tên A → Z</option>
+                            <option value="name_desc" th:selected="${sort == 'name_desc'}">Tên Z → A</option>
+                            <option value="exp_asc" th:selected="${sort == 'exp_asc'}">Kinh nghiệm ít → nhiều</option>
+                            <option value="exp_desc" th:selected="${sort == 'exp_desc'}">Kinh nghiệm nhiều → ít</option>
+                        </select>
+                    </div>
 
                     <div class="col-auto">
                         <button class="btn btn-primary" type="submit">Tìm kiếm</button>
@@ -202,7 +215,6 @@
                 </form>
             </div>
 
-            <!-- Doctor list: Displays a grid of doctor profiles with details like name, specialization, email, phone, and experience -->
             <div class="box-container">
                 <div class="box" th:each="doctor : ${doctors}">
                     <a th:href="@{/doctors/{id}(id=${doctor.id})}" class="text-decoration-none">
@@ -211,6 +223,7 @@
                         <span class="specialization" th:text="${doctor.specialization}">Chuyên khoa</span>
                         <p th:text="'Email: ' + ${doctor.email}"></p>
                         <p th:text="'SĐT: ' + ${doctor.phoneNumber}"></p>
+                        <p th:text="'Giới tính: ' + (${doctor.gender} == 'MALE' ? 'Nam' : (${doctor.gender} == 'FEMALE' ? 'Nữ' : 'Khác'))"></p>
                         <p th:text="${doctor.yoe != null ? doctor.yoe + ' năm kinh nghiệm' : 'Chưa cập nhật'}"></p>
                     </a>
                     <div class="share">
