@@ -16,6 +16,7 @@ import java.util.List;
 @SpringBootApplication
 public interface ShiftRepository extends JpaRepository<ShiftEntity, Long> {
     Page<ShiftEntity> findByDoctorId(Long id, Pageable pageable);
+    List<ShiftEntity> findByDoctorId(Long id);
     Page<ShiftEntity> findByNurseId(Long id, Pageable pageable);
     Page<ShiftEntity> findByRoomId(Long id, Pageable pageable);
     Page<ShiftEntity> findByStartTimeBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);

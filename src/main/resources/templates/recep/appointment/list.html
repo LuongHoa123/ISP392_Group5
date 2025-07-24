@@ -243,31 +243,35 @@
                                         <input type="hidden" name="appointmentId" th:value="${appt.id}"/>
 
                                         <div class="form-group">
+                                            <label>Thời gian khám</label>
+                                            <input type="datetime-local" class="form-control"
+                                                   th:id="'appointmentDate_' + ${appt.id}"
+                                                   name="appointmentDateTime"
+                                                   th:value="${#temporals.format(appt.appointmentDateTime, 'yyyy-MM-dd''T''HH:mm')}"
+                                                   th:attr="onchange=|fetchDoctorsAndRoom(${appt.id})|" />
+
+                                        </div>
+
+                                        <div class="form-group">
                                             <label>Bác sĩ</label>
-                                            <select class="form-control" name="doctorId" required>
-                                                <option th:each="doc : ${doctors}" th:value="${doc.id}"
-                                                        th:text="${doc.firstName + ' ' + doc.lastName + ' - Chuyên khoa: ' + doc.specialization}"></option>
+                                            <select class="form-control"
+                                                    name="doctorId"
+                                                    th:id="'doctorSelect_' + ${appt.id}"
+                                                    th:attr="onchange=|fetchRoom(${appt.id})|">
                                             </select>
                                         </div>
 
                                         <div class="form-group">
                                             <label>Phòng</label>
-                                            <select class="form-control" name="roomId" required>
-                                                <option th:each="room : ${rooms}" th:value="${room.id}"
-                                                        th:text="${room.roomName}"></option>
-                                            </select>
+                                            <input type="text" class="form-control"
+                                                   name="roomNameDisplay"
+                                                   readonly
+                                                   th:id="'roomDisplay_' + ${appt.id}" />
+                                            <input type="hidden"
+                                                   name="roomId"
+                                                   th:id="'roomId_' + ${appt.id}" />
                                         </div>
 
-                                        <div class="form-group">
-                                            <label>Thời gian khám</label>
-                                            <input type="datetime-local" class="form-control"
-                                                   name="appointmentDateTime" id="appointmentDate"
-                                                   th:value="${(assignErrorId != null && assignErrorId == appt.id and assignTimeError != null)
-                               ? #temporals.format(assignTimeError, 'yyyy-MM-dd''T''HH:mm')
-                               : #temporals.format(appt.appointmentDateTime, 'yyyy-MM-dd''T''HH:mm')}"
-                                                   th:attr="min=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
-                                                   required>
-                                        </div>
                                     </div>
 
                                     <div class="modal-footer">
@@ -276,6 +280,57 @@
                                         </button>
                                     </div>
                                 </form>
+
+                                <script>
+                                    async function fetchDoctorsAndRoom(apptId) {
+                                        const time = document.getElementById('appointmentDate_' + apptId)?.value;
+                                        if (!time) return;
+
+                                        console.log("Fetch doctors & room | TIME:", time, "| APPT ID:", apptId);
+
+                                        try {
+                                            const docRes = await fetch(`/recep/appointment/available-doctors?time=${encodeURIComponent(time)}`);
+                                            const doctors = await docRes.json();
+
+                                            const doctorSelect = document.getElementById('doctorSelect_' + apptId);
+                                            doctorSelect.innerHTML = doctors.map(doc =>
+                                                `<option value="${doc.id}">${doc.firstName} ${doc.lastName} - Chuyên khoa: ${doc.specialization}</option>`
+                                            ).join('');
+
+                                            document.getElementById('roomDisplay_' + apptId).value = '';
+                                            document.getElementById('roomId_' + apptId).value = '';
+
+                                            if (doctors.length > 0) {
+                                                doctorSelect.value = doctors[0].id;
+                                                fetchRoom(apptId);
+                                            }
+
+                                        } catch (err) {
+                                            console.error("Lỗi khi fetch bác sĩ:", err);
+                                        }
+                                    }
+
+
+                                    async function fetchRoom(apptId) {
+                                        const time = document.getElementById('appointmentDate_' + apptId)?.value;
+                                        const doctorId = document.getElementById('doctorSelect_' + apptId)?.value;
+
+                                        if (!time || !doctorId) return;
+
+                                        try {
+                                            const roomRes = await fetch(`/recep/appointment/room-by-shift?time=${encodeURIComponent(time)}&doctorId=${doctorId}`);
+                                            const room = await roomRes.json();
+
+                                            document.getElementById('roomDisplay_' + apptId).value = room.roomName;
+                                            document.getElementById('roomId_' + apptId).value = room.id;
+
+                                        } catch (err) {
+                                            console.error("Error: ", err);
+                                        }
+                                    }
+                                </script>
+
+
                             </div>
                         </div>
                     </div>

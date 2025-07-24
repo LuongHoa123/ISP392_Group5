@@ -277,4 +277,31 @@ public class RecepAppointmentController {
         return "recep/appointment/conclusion";
     }
 
+    @GetMapping("/available-doctors")
+    @ResponseBody
+    public List<DoctorEntity> getAvailableDoctors(@RequestParam("time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime time) {
+        return doctorRepository.findAll().stream()
+                .filter(doc -> !appointmentRepository.existsByDoctorIdAndAppointmentDateTime(doc.getId(), time))
+                .filter(doc -> shiftRepository.findByDoctorId(doc.getId()).stream()
+                        .anyMatch(shift -> !shift.getStartTime().isAfter(time) && !shift.getEndTime().isBefore(time)))
+                .collect(Collectors.toList());
+    }
+
+
+    @GetMapping("/room-by-shift")
+    @ResponseBody
+    public RoomEntity getRoomByShift(@RequestParam("time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime time,
+                                     @RequestParam("doctorId") Long doctorId) {
+        List<ShiftEntity> shifts = shiftRepository.findByDoctorId(doctorId);
+        return shifts.stream()
+                .filter(shift -> !shift.getStartTime().isAfter(time) && !shift.getEndTime().isBefore(time))
+                .findFirst()
+                .map(ShiftEntity::getRoom)
+                .orElse(null);
+    }
+
+
+    @Autowired
+    private ShiftRepository shiftRepository;
+
 }
