@@ -184,7 +184,7 @@
 
                                     <button class="btn btn-sm btn-warning" data-toggle="modal"
                                             th:data-target="${'#cancelModal-' + appt.id}"
-                                            th:if="${appt.status == -1}">
+                                            th:if="${appt.status == -1 || appt.status == 2}">
                                         🛑 Huỷ lịch
                                     </button>
 

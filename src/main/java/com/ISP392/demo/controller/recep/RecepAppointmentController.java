@@ -105,8 +105,12 @@ public class RecepAppointmentController {
             return "redirect:/recep/appointment";
         }
 
-        boolean doctorBusy = appointmentRepository.existsByDoctorIdAndAppointmentDateTime(doctorId, appointmentDateTime);
-        boolean roomBusy = appointmentRepository.existsByRoomIdAndAppointmentDateTime(roomId, appointmentDateTime);
+        boolean doctorBusy = appointmentRepository
+                .existsByDoctorIdAndAppointmentDateTimeAndIdNot(doctorId, appointmentDateTime, appointmentId);
+
+        boolean roomBusy = appointmentRepository
+                .existsByRoomIdAndAppointmentDateTimeAndIdNot(roomId, appointmentDateTime, appointmentId);
+
 
         if (doctorBusy || roomBusy) {
             redirectAttributes.addFlashAttribute("assignErrorId", appointmentId);

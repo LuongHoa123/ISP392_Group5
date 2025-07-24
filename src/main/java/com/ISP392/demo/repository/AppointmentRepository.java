@@ -22,6 +22,8 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
     List<AppointmentEntity> findByPatient(PatientEntity patientEntity);
     boolean existsByDoctorIdAndAppointmentDateTime(Long doctorId, LocalDateTime dateTime);
     boolean existsByRoomIdAndAppointmentDateTime(Long roomId, LocalDateTime dateTime);
+    boolean existsByDoctorIdAndAppointmentDateTimeAndIdNot(Long doctorId, LocalDateTime dateTime, Long excludeId);
+    boolean existsByRoomIdAndAppointmentDateTimeAndIdNot(Long roomId, LocalDateTime dateTime, Long excludeId);
 
     List<AppointmentEntity> findTop5ByStatusOrderByAppointmentDateTimeDesc(Integer status);
 
