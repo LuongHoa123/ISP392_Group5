@@ -46,6 +46,12 @@
     </style>
 </head>
 <body>
+
+<div class="alert alert-danger"
+     th:if="${assignErrorMsg != null}"
+     th:text="${assignErrorMsg}">
+</div>
+
 <div th:if="${successMessage}" class="alert alert-success text-center mt-3" role="alert" th:text="${successMessage}">
 </div>
 
@@ -235,11 +241,6 @@
 
                                     <div class="modal-body">
                                         <input type="hidden" name="appointmentId" th:value="${appt.id}"/>
-
-                                        <div class="alert alert-danger"
-                                             th:if="${assignErrorId != null and assignErrorId == appt.id}"
-                                             th:text="${assignErrorMsg}">
-                                        </div>
 
                                         <div class="form-group">
                                             <label>Bác sĩ</label>

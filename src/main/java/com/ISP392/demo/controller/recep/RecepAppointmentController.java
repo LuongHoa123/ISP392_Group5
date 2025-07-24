@@ -100,6 +100,17 @@ public class RecepAppointmentController {
                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime appointmentDateTime,
                                RedirectAttributes redirectAttributes) {
 
+        int hour = appointmentDateTime.getHour();
+        boolean inMorning = hour >= 7 && hour < 11;
+        boolean inAfternoon = hour >= 13 && hour < 17;
+
+        if (!(inMorning || inAfternoon)) {
+            redirectAttributes.addFlashAttribute("assignErrorId", appointmentId);
+            redirectAttributes.addFlashAttribute("assignErrorMsg", "Lịch hẹn nằm ngoài giờ hành chính (7-11h và 13-17h). Vui lòng chọn thời gian khác.");
+            redirectAttributes.addFlashAttribute("assignTimeError", appointmentDateTime);
+            return "redirect:/recep/appointment";
+        }
+
         AppointmentEntity appointment = appointmentRepository.findById(appointmentId).orElse(null);
         if (appointment == null || appointment.getStatus() == 1 || appointment.getStatus() == 0) {
             return "redirect:/recep/appointment";
