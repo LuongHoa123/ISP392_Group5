@@ -125,8 +125,7 @@
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title">Chi tiết người dùng</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Đóng"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                                     </div>
                                     <div class="modal-body">
                                         <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
@@ -135,15 +134,43 @@
                                             <span th:text="${user.status == 1 ? 'Hoạt động' : 'Bị khóa'}"
                                                   th:classappend="${user.status == 1} ? 'text-success' : 'text-danger'"></span>
                                         </p>
+
+                                        <div th:if="${user.nurses != null and !user.nurses.isEmpty()}">
+                                            <p><strong>Họ tên:</strong> <span th:text="${user.nurses[0].firstName + ' ' + user.nurses[0].lastName}"></span></p>
+                                            <p><strong>SĐT:</strong> <span th:text="${user.nurses[0].phoneNumber}"></span></p>
+                                            <p><strong>Địa chỉ:</strong> <span th:text="${user.nurses[0].address}"></span></p>
+                                            <p><strong>Năm tốt nghiệp:</strong> <span th:text="${user.nurses[0].yearOfGraduate}"></span></p>
+                                            <p><strong>Trường đại học:</strong> <span th:text="${user.nurses[0].university}"></span></p>
+                                        </div>
+
+                                        <div th:if="${user.doctors != null and !user.doctors.isEmpty()}">
+                                            <p><strong>Họ tên:</strong> <span th:text="${user.doctors[0].firstName + ' ' + user.doctors[0].lastName}"></span></p>
+                                            <p><strong>Chuyên khoa:</strong> <span th:text="${user.doctors[0].specialization}"></span></p>
+                                            <p><strong>SĐT:</strong> <span th:text="${user.doctors[0].phoneNumber}"></span></p>
+                                            <p><strong>Số năm kinh nghiệm:</strong> <span th:text="${user.doctors[0].yoe}"></span></p>
+                                        </div>
+
+                                        <div th:if="${user.patients != null and !user.patients.isEmpty()}">
+                                            <p><strong>Họ tên:</strong> <span th:text="${user.patients[0].firstName + ' ' + user.patients[0].lastName}"></span></p>
+                                            <p><strong>SĐT:</strong> <span th:text="${user.patients[0].phone}"></span></p>
+                                            <p><strong>Địa chỉ:</strong> <span th:text="${user.patients[0].address}"></span></p>
+                                            <p><strong>Quốc tịch:</strong> <span th:text="${user.patients[0].nation}"></span></p>
+                                        </div>
+
+                                        <div th:if="${user.receps != null and !user.receps.isEmpty()}">
+                                            <p><strong>Họ tên:</strong> <span th:text="${user.receps[0].firstName + ' ' + user.receps[0].lastName}"></span></p>
+                                            <p><strong>SĐT:</strong> <span th:text="${user.receps[0].phoneNumber}"></span></p>
+                                        </div>
+
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng
-                                        </button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
 
                     <nav th:if="${totalPages > 1}">
                         <ul class="pagination justify-content-center mt-3">
