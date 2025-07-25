@@ -2,6 +2,7 @@ package com.ISP392.demo.controller.recep;
 
 import com.ISP392.demo.dto.AppointmentDto;
 import com.ISP392.demo.entity.*;
+import com.ISP392.demo.repository.AppointmentRepository;
 import com.ISP392.demo.repository.PatientRepository;
 import com.ISP392.demo.repository.UserRepository;
 import com.ISP392.demo.repository.RoleRepository;
@@ -9,6 +10,10 @@ import com.ISP392.demo.enums.GenderEnum;
 import com.ISP392.demo.enums.RoleEnum;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -183,43 +188,54 @@ public class RecepPatientController {
         return "recep/patient/list";
     }
 
+    @Autowired
+    private AppointmentRepository appointmentRepository;
+
     @GetMapping("/detail")
     public String patientDetailPage(Model model,
-                                    @RequestParam("id") Long patientId) {
+                                    @RequestParam("id") Long patientId,
+                                    @RequestParam(value = "page", defaultValue = "0") int page,
+                                    @RequestParam(value = "size", defaultValue = "5") int size) {
         PatientEntity patient = patientRepository.findById(patientId).orElse(null);
         if (patient == null) {
             return "redirect:/recep/patient";
         }
-        List<AppointmentDto> history = patient.getAppointments().stream()
-                .sorted((a1, a2) -> a2.getAppointmentDateTime().compareTo(a1.getAppointmentDateTime()))
-                .map(a -> {
-                    AppointmentDto dto = new AppointmentDto();
-                    dto.setId(a.getId());
-                    dto.setAppointmentDateTime(a.getAppointmentDateTime());
-                    dto.setReason(a.getReason());
-                    dto.setName(a.getName());
-                    dto.setPhoneNumber(a.getPhoneNumber());
-                    dto.setAge(a.getAge());
-                    dto.setEmail(a.getEmail());
-                    dto.setStatus(a.getStatus());
-                    dto.setRoomName(a.getRoom() != null ? a.getRoom().getRoomName() : null);
-                    ConclusionEntity ce = a.getConclusionEntity();
-                    if (ce != null) {
-                        dto.setPrescription(ce.getPrescription());
-                        dto.setConclusionContent(ce.getContent());
-                    } else {
-                        dto.setPrescription(a.getPrescription());
-                        dto.setConclusionContent(a.getConclusion());
-                    }
-                    return dto;
-                })
-                .collect(Collectors.toList());
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("appointmentDateTime").descending());
+        Page<AppointmentEntity> appointmentPage = appointmentRepository.findByPatientId(patientId, pageable);
+
+        Page<AppointmentDto> appointmentDtoPage = appointmentPage.map(a -> {
+            AppointmentDto dto = new AppointmentDto();
+            dto.setId(a.getId());
+            dto.setAppointmentDateTime(a.getAppointmentDateTime());
+            dto.setReason(a.getReason());
+            dto.setName(a.getName());
+            dto.setPhoneNumber(a.getPhoneNumber());
+            dto.setAge(a.getAge());
+            dto.setEmail(a.getEmail());
+            dto.setStatus(a.getStatus());
+            dto.setRoomName(a.getRoom() != null ? a.getRoom().getRoomName() : null);
+
+            ConclusionEntity ce = a.getConclusionEntity();
+            if (ce != null) {
+                dto.setPrescription(ce.getPrescription());
+                dto.setConclusionContent(ce.getContent());
+            } else {
+                dto.setPrescription(a.getPrescription());
+                dto.setConclusionContent(a.getConclusion());
+            }
+            return dto;
+        });
 
         model.addAttribute("patient", patient);
-        model.addAttribute("appointments", history);
+        model.addAttribute("appointments", appointmentDtoPage.getContent());
+        model.addAttribute("currentPage", appointmentDtoPage.getNumber());
+        model.addAttribute("totalPages", appointmentDtoPage.getTotalPages());
+        model.addAttribute("pageSize", appointmentDtoPage.getSize());
 
         return "recep/patient/detail";
     }
+
 
     @GetMapping("/add")
     public String addPatientForm(Model model) {

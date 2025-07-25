@@ -14,6 +14,31 @@
         <div class="container mx-auto mt-8 px-4 sm:px-6 lg:px-8 max-w-4xl">
             <h3 class="mb-4 text-2xl font-bold text-gray-800">Chuẩn đoán sơ qua: <span th:text="${appointment.diagnosis.content}" class="text-gray-600"></span></h3>
 
+            <a th:href="@{'/recep/appointment/generatePdf/' + ${appointment.id}}"
+               class="btn btn-sm btn-primary" target="_blank">
+                In Phiếu
+            </a>
+
+            <h3>Chi tiết bệnh nhân</h3>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <p><strong>Họ:</strong> <span th:text="${appointment.patient.firstName}"></span></p>
+                    <p><strong>Tên:</strong> <span th:text="${appointment.patient.lastName}"></span></p>
+                    <p><strong>Ngày sinh:</strong> <span th:text="${#temporals.format(appointment.patient.dateOfBirth, 'dd/MM/yyyy')}"></span></p>
+                    <p>
+                        <strong>Giới tính:</strong>
+                        <th:block th:switch="${appointment.patient.gender?.name()}">
+                            <span th:case="'MALE'">Nam</span>
+                            <span th:case="'FEMALE'">Nữ</span>
+                            <span th:case="*">Không xác định</span>
+                        </th:block>
+                    </p>
+                    <p><strong>Địa chỉ:</strong> <span th:text="${appointment.patient.address} ?: '---'"></span></p>
+                    <p><strong>Số điện thoại:</strong> <span th:text="${appointment.patient.phone}"></span></p>
+                </div>
+            </div>
+
             <h3 class="mb-6 text-2xl font-bold text-gray-800">Kết luận cho lịch khám</h3>
 
             <div th:if="${appointmentServices.size() > 0}" class="bg-white shadow-md rounded-lg p-6 mb-6">
