@@ -33,8 +33,6 @@ public class RecepInvoiceController {
         return "recep/appointment/invoice";
     }
 
-
-
     @GetMapping("/detail/{id}")
     public String invoiceDetailPage(@PathVariable("id") Long id, Model model) {
         InvoiceEntity invoice = invoiceRepository.findById(id).orElse(null);

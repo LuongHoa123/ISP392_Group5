@@ -194,13 +194,6 @@
                                         Huỷ lịch
                                     </button>
 
-                                    <div th:if="${appt.status == 1}">
-                                        <a th:href="@{'/recep/appointment/generatePdf/' + ${appt.id}}"
-                                           class="btn btn-sm btn-primary" target="_blank">
-                                            In Phiếu
-                                        </a>
-                                    </div>
-
                                     <span th:if="${appt.status == 1}">
     <a th:href="@{'/recep/invoice/' + ${appt.id}}"
        class="btn btn-sm btn-primary">

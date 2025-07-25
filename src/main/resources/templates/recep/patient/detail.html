@@ -143,7 +143,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="appt, iterStat : ${appointmqents}">
+                    <tr th:each="appt, iterStat : ${appointments}">
                         <td th:text="${iterStat.index + 1}"></td>
                         <td th:text="${#temporals.format(appt.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></td>
                         <td th:text="${appt.reason}"></td>
@@ -169,6 +169,32 @@
                     </tr>
                     </tbody>
                 </table>
+                <nav th:if="${totalPages > 1}">
+                    <ul class="pagination justify-content-center">
+                        <li th:classappend="${currentPage == 0} ? 'disabled'" class="page-item">
+                            <a class="page-link"
+                               th:href="@{/recep/patient/detail(id=${patient.id}, page=${currentPage - 1}, size=${pageSize})}">
+                                Trước
+                            </a>
+                        </li>
+
+                        <li class="page-item"
+                            th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                            th:classappend="${i == currentPage} ? 'active'">
+                            <a class="page-link"
+                               th:href="@{/recep/patient/detail(id=${patient.id}, page=${i}, size=${pageSize})}"
+                               th:text="${i + 1}">1</a>
+                        </li>
+
+                        <li th:classappend="${currentPage + 1 == totalPages} ? 'disabled'" class="page-item">
+                            <a class="page-link"
+                               th:href="@{/recep/patient/detail(id=${patient.id}, page=${currentPage + 1}, size=${pageSize})}">
+                                Sau
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
             </div>
 
             <a th:href="@{/recep/patient}" class="btn btn-danger mt-3">Quay lại</a>

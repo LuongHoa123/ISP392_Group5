@@ -84,6 +84,7 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
 """, nativeQuery = true)
     List<Object[]> countAppointmentsByWeekday(@Param("year") int year);
 
+    Page<AppointmentEntity> findByPatientId(Long patientId, Pageable pageable);
 
     Page<AppointmentEntity> findByAppointmentDateTimeBetween(
             LocalDateTime start,
