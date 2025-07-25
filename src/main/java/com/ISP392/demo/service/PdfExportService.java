@@ -14,6 +14,7 @@ import com.ISP392.demo.entity.AppointmentEntity;
 import com.ISP392.demo.entity.AppointmentServiceEntity;
 import com.ISP392.demo.entity.ConclusionEntity;
 import com.ISP392.demo.entity.PatientEntity;
+import com.ISP392.demo.dto.AppointmentDto;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
@@ -524,6 +525,63 @@ public class PdfExportService {
         document.add(table);
         document.close();
 
+        return new ByteArrayInputStream(out.toByteArray());
+    }
+
+    public ByteArrayInputStream exportPatientDetailToPdf(PatientEntity patient, List<AppointmentDto> appointments) throws IOException {
+        PdfFont customFont = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(out);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
+
+        // Thông tin bệnh nhân
+        document.add(new Paragraph("THÔNG TIN BỆNH NHÂN")
+                .setFont(customFont)
+                .setFontSize(16)
+                .setBold()
+                .setTextAlignment(TextAlignment.CENTER)
+                .setMarginBottom(15));
+        document.add(new Paragraph("Họ: " + (patient.getFirstName() != null ? patient.getFirstName() : ""))
+                .setFont(customFont).setFontSize(12));
+        document.add(new Paragraph("Tên: " + (patient.getLastName() != null ? patient.getLastName() : ""))
+                .setFont(customFont).setFontSize(12));
+        document.add(new Paragraph("Ngày sinh: " + (patient.getDateOfBirth() != null ? patient.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : ""))
+                .setFont(customFont).setFontSize(12));
+        document.add(new Paragraph("Giới tính: " + (patient.getGender() != null ? (patient.getGender().toString().equals("MALE") ? "Nam" : "Nữ") : ""))
+                .setFont(customFont).setFontSize(12));
+        document.add(new Paragraph("Địa chỉ: " + (patient.getAddress() != null ? patient.getAddress() : ""))
+                .setFont(customFont).setFontSize(12));
+        document.add(new Paragraph("Số điện thoại: " + (patient.getPhone() != null ? patient.getPhone() : ""))
+                .setFont(customFont).setFontSize(12));
+
+        document.add(new Paragraph("LỊCH SỬ KHÁM BỆNH")
+                .setFont(customFont)
+                .setFontSize(15)
+                .setBold()
+                .setTextAlignment(TextAlignment.CENTER)
+                .setMarginTop(20)
+                .setMarginBottom(10));
+
+        String[] columns = {"#", "Thời gian hẹn", "Lý do khám", "Phòng", "Trạng thái", "Đơn thuốc", "Kết luận"};
+        float[] columnWidths = {3F, 15F, 20F, 10F, 10F, 25F, 25F};
+        Table table = new Table(UnitValue.createPercentArray(columnWidths)).useAllAvailableWidth();
+        for (String col : columns) {
+            table.addHeaderCell(new Cell().add(new Paragraph(col).setFont(customFont).setFontSize(10).setBold().setTextAlignment(TextAlignment.CENTER))
+                    .setBackgroundColor(ColorConstants.LIGHT_GRAY).setBorder(new SolidBorder(ColorConstants.BLACK, 0.5f)).setPadding(6));
+        }
+        int idx = 1;
+        for (AppointmentDto appt : appointments) {
+            table.addCell(new Cell().add(new Paragraph(String.valueOf(idx++)).setFont(customFont).setFontSize(9).setTextAlignment(TextAlignment.CENTER)).setPadding(5));
+            table.addCell(new Cell().add(new Paragraph(appt.getAppointmentDateTime() != null ? appt.getAppointmentDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) : "").setFont(customFont).setFontSize(9)).setPadding(5));
+            table.addCell(new Cell().add(new Paragraph(appt.getReason() != null ? appt.getReason() : "").setFont(customFont).setFontSize(9)).setPadding(5));
+            table.addCell(new Cell().add(new Paragraph(appt.getRoomName() != null ? appt.getRoomName() : "---").setFont(customFont).setFontSize(9)).setPadding(5));
+            table.addCell(new Cell().add(new Paragraph(getStatusText(appt.getStatus())).setFont(customFont).setFontSize(9).setTextAlignment(TextAlignment.CENTER)).setPadding(5));
+            table.addCell(new Cell().add(new Paragraph(appt.getPrescription() != null ? appt.getPrescription() : "Không có").setFont(customFont).setFontSize(9)).setPadding(5));
+            table.addCell(new Cell().add(new Paragraph(appt.getConclusionContent() != null ? appt.getConclusionContent() : "Không có").setFont(customFont).setFontSize(9)).setPadding(5));
+        }
+        document.add(table);
+        document.close();
         return new ByteArrayInputStream(out.toByteArray());
     }
 }

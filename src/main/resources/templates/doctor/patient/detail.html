@@ -97,6 +97,7 @@
 
             <a th:href="@{/doctor/patient}" class="btn btn-danger mt-3 mr-2">Quay lại</a>
             <a th:href="@{/doctor/patient/detail(id=${patient.id}, page=0)}" class="btn btn-primary mt-3">Reset</a>
+            <a th:href="@{/doctor/patient/export-pdf-detail(id=${patient.id})}" class="btn btn-success mt-3 ml-2">Xuất PDF</a>
         </div>
     </th:block>
 </th:block>

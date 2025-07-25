@@ -13,6 +13,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 import com.ISP392.demo.dto.AppointmentDto;
 import com.ISP392.demo.entity.AppointmentEntity;
@@ -24,6 +31,7 @@ import com.ISP392.demo.repository.AppointmentRepository;
 import com.ISP392.demo.repository.DoctorRepository;
 import com.ISP392.demo.repository.PatientRepository;
 import com.ISP392.demo.repository.UserRepository;
+import com.ISP392.demo.service.PdfExportService;
 
 @Controller
 @RequestMapping("/doctor/patient")
@@ -40,6 +48,9 @@ public class DoctorPatientController {
 
     @Autowired
     private AppointmentRepository appointmentRepository;
+
+    @Autowired
+    private PdfExportService pdfExportService;
 
     @GetMapping("")
     public String patientListPage(Model model,
@@ -105,8 +116,7 @@ public class DoctorPatientController {
 
     @GetMapping("/detail")
     public String patientDetailPage(Model model,
-                                    @RequestParam("id") Long patientId,
-                                    @RequestParam(value = "page", defaultValue = "0") int page) {
+                                    @RequestParam("id") Long patientId) {
         PatientEntity patient = patientRepository.findById(patientId).orElse(null);
         if (patient == null) {
             return "redirect:/doctor/patient";
@@ -143,19 +153,58 @@ public class DoctorPatientController {
                 })
                 .collect(Collectors.toList());
 
-        int size = 5;
-        int totalItems = history.size();
-        int totalPages = (int) Math.ceil((double) totalItems / size);
-        int start = Math.min(page * size, totalItems);
-        int end = Math.min(start + size, totalItems);
-        List<AppointmentDto> appointmentsPage = history.subList(start, end);
-
         model.addAttribute("patient", patient);
-        model.addAttribute("appointments", appointmentsPage);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("appointments", history);
 
         return "doctor/patient/detail";
+    }
+
+    @GetMapping("/export-pdf-detail")
+    public ResponseEntity<Resource> exportPatientDetailPdf(@RequestParam("id") Long patientId) {
+        PatientEntity patient = patientRepository.findById(patientId).orElse(null);
+        if (patient == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByEmail(username).orElse(null);
+        DoctorEntity doctor = doctorRepository.findByUser(user);
+        List<AppointmentDto> history = patient.getAppointments().stream()
+                .filter(a -> a.getDoctor() != null && a.getDoctor().getId().equals(doctor.getId()))
+                .sorted((a1, a2) -> a2.getAppointmentDateTime().compareTo(a1.getAppointmentDateTime()))
+                .map(a -> {
+                    AppointmentDto dto = new AppointmentDto();
+                    dto.setId(a.getId());
+                    dto.setAppointmentDateTime(a.getAppointmentDateTime());
+                    dto.setReason(a.getReason());
+                    dto.setName(a.getName());
+                    dto.setPhoneNumber(a.getPhoneNumber());
+                    dto.setAge(a.getAge());
+                    dto.setEmail(a.getEmail());
+                    dto.setStatus(a.getStatus());
+                    dto.setRoomName(a.getRoom() != null ? a.getRoom().getRoomName() : null);
+                    ConclusionEntity ce = a.getConclusionEntity();
+                    if (ce != null) {
+                        dto.setPrescription(ce.getPrescription());
+                        dto.setConclusionContent(ce.getContent());
+                    } else {
+                        dto.setPrescription(a.getPrescription());
+                        dto.setConclusionContent(a.getConclusion());
+                    }
+                    return dto;
+                })
+                .collect(java.util.stream.Collectors.toList());
+        try {
+            ByteArrayInputStream pdfFile = pdfExportService.exportPatientDetailToPdf(patient, history);
+            String filename = "benh_nhan_" + patient.getFirstName() + "_" + patient.getLastName() + ".pdf";
+            InputStreamResource file = new InputStreamResource(pdfFile);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PostMapping("/delete/{id}")
@@ -170,18 +219,5 @@ public class DoctorPatientController {
         // Xóa tất cả các lịch hẹn giữa bác sĩ này và bệnh nhân này
         appointmentRepository.deleteByDoctorAndPatient(doctor, patient);
         return "redirect:/doctor/patient?deleted=true";
-    }
-
-    @PostMapping("/delete-appointment/{appointmentId}")
-    @Transactional
-    public String deleteAppointmentFromPatient(@PathVariable Long appointmentId, @RequestParam("id") Long patientId) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserEntity user = userRepository.findByEmail(username).orElse(null);
-        DoctorEntity doctor = doctorRepository.findByUser(user);
-        AppointmentEntity appointment = appointmentRepository.findById(appointmentId).orElse(null);
-        if (appointment != null && appointment.getDoctor() != null && doctor != null && appointment.getDoctor().getId().equals(doctor.getId())) {
-            appointmentRepository.delete(appointment);
-        }
-        return "redirect:/doctor/patient/detail?id=" + patientId;
     }
 }
