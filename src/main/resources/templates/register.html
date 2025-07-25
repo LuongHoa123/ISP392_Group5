@@ -511,6 +511,21 @@
     
 
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dobInput = document.getElementById('dob');
+        const today = new Date();
+
+        // Tính ngày lớn nhất cho người 150 tuổi
+        const maxDate = new Date(today.getFullYear() - 0, today.getMonth(), today.getDate());
+        const minDate = new Date(today.getFullYear() - 150, today.getMonth(), today.getDate());
+
+        dobInput.setAttribute('max', maxDate.toISOString().split('T')[0]);
+        dobInput.setAttribute('min', minDate.toISOString().split('T')[0]);
+    });
+</script>
+
 
 </body>
 </html>
+
