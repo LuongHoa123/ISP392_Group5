@@ -302,13 +302,7 @@
 </script>
 <script>
     function exportFile(type) {
-        var patient = document.getElementById('exportPatient').value;
-        var date = document.getElementById('exportDate').value;
         var url = '/doctor/appointment/export-' + type;
-        var params = [];
-        if (patient) params.push('patientName=' + encodeURIComponent(patient));
-        if (date) params.push('date=' + encodeURIComponent(date));
-        if (params.length > 0) url += '?' + params.join('&');
         window.location.href = url;
     }
 </script>

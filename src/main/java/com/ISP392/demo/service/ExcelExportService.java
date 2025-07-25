@@ -1,15 +1,23 @@
 package com.ISP392.demo.service;
 
-import com.ISP392.demo.entity.AppointmentEntity;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.stereotype.Service;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Service;
+
+import com.ISP392.demo.entity.AppointmentEntity;
 
 @Service
 public class ExcelExportService {
@@ -29,8 +37,8 @@ public class ExcelExportService {
             // Create header row
             Row headerRow = sheet.createRow(0);
             String[] columns = {
-                    "STT", "Họ tên bệnh nhân", "Số điện thoại", "Email",
-                    "Thời gian hẹn", "Lý do khám", "Phòng khám", "Trạng thái"
+                    "STT", "Họ tên", "SĐT", "Email",
+                    "Thời gian hẹn", "Phòng", "Chi tiết", "Trạng thái"
             };
 
             for (int i = 0; i < columns.length; i++) {
@@ -53,10 +61,10 @@ public class ExcelExportService {
                     appointment.getAppointmentDateTime() != null ? 
                     appointment.getAppointmentDateTime().format(formatter) : ""
                 );
-                row.createCell(5).setCellValue(appointment.getReason());
-                row.createCell(6).setCellValue(
+                row.createCell(5).setCellValue(
                     appointment.getRoom() != null ? appointment.getRoom().getRoomName() : ""
                 );
+                row.createCell(6).setCellValue(String.valueOf(appointment.getId())); // Chi tiết là ID
                 row.createCell(7).setCellValue(getStatusText(appointment.getStatus()));
             }
 

@@ -1,21 +1,5 @@
 package com.ISP392.demo.service;
 
-import com.ISP392.demo.entity.*;
-import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.properties.TextAlignment;
-import com.itextpdf.layout.properties.UnitValue;
-import com.itextpdf.layout.borders.SolidBorder;
-import org.springframework.stereotype.Service;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,12 +8,32 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.stereotype.Service;
+
+import com.ISP392.demo.entity.AppointmentEntity;
+import com.ISP392.demo.entity.AppointmentServiceEntity;
+import com.ISP392.demo.entity.ConclusionEntity;
+import com.ISP392.demo.entity.PatientEntity;
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
+
 @Service
 public class PdfExportService {
     private static final String FONT_PATH = "src/main/resources/static/fonts/NotoSans-Regular.ttf";
 
     public ByteArrayInputStream exportAppointmentsToPdf(List<AppointmentEntity> appointments) throws IOException {
-        PdfFont customFont = PdfFontFactory.createFont(FONT_PATH, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+        PdfFont customFont = PdfFontFactory.createFont(StandardFonts.HELVETICA);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(out);
@@ -45,10 +49,10 @@ public class PdfExportService {
                 .setMarginBottom(20));
 
         String[] columns = {
-                "STT", "Họ tên bệnh nhân", "Số điện thoại", "Email",
-                "Thời gian hẹn", "Lý do khám", "Phòng khám", "Trạng thái"
+                "STT", "Họ tên", "SĐT", "Email",
+                "Thời gian hẹn", "Phòng", "Chi tiết", "Trạng thái"
         };
-        float[] columnWidths = {5F, 20F, 15F, 25F, 15F, 20F, 15F, 15F};
+        float[] columnWidths = {5F, 20F, 15F, 25F, 15F, 15F, 15F, 15F};
         Table table = new Table(UnitValue.createPercentArray(columnWidths))
                 .useAllAvailableWidth()
                 .setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 1));
@@ -103,13 +107,13 @@ public class PdfExportService {
                     .setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 0.5f))
                     .setPadding(6));
             table.addCell(new Cell()
-                    .add(new Paragraph(appointment.getReason() != null ? appointment.getReason() : "")
+                    .add(new Paragraph(appointment.getRoom() != null ? appointment.getRoom().getRoomName() : "")
                             .setFont(customFont)
                             .setFontSize(9))
                     .setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 0.5f))
                     .setPadding(6));
             table.addCell(new Cell()
-                    .add(new Paragraph(appointment.getRoom() != null ? appointment.getRoom().getRoomName() : "")
+                    .add(new Paragraph(String.valueOf(appointment.getId()))
                             .setFont(customFont)
                             .setFontSize(9))
                     .setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 0.5f))

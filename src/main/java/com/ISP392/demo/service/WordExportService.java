@@ -28,8 +28,8 @@ public class WordExportService {
             XWPFTable table = document.createTable(appointments.size() + 1, 8);
             
             // Thiết lập header
-            String[] headers = {"STT", "Họ tên bệnh nhân", "Số điện thoại", "Email", 
-                               "Thời gian hẹn", "Lý do khám", "Phòng khám", "Trạng thái"};
+            String[] headers = {"STT", "Họ tên", "SĐT", "Email", 
+                               "Thời gian hẹn", "Phòng", "Chi tiết", "Trạng thái"};
             
             XWPFTableRow headerRow = table.getRow(0);
             for (int i = 0; i < headers.length; i++) {
@@ -50,8 +50,8 @@ public class WordExportService {
                 row.getCell(3).setText(appointment.getEmail() != null ? appointment.getEmail() : "");
                 row.getCell(4).setText(appointment.getAppointmentDateTime() != null ? 
                     appointment.getAppointmentDateTime().format(formatter) : "");
-                row.getCell(5).setText(appointment.getReason() != null ? appointment.getReason() : "");
-                row.getCell(6).setText(appointment.getRoom() != null ? appointment.getRoom().getRoomName() : "");
+                row.getCell(5).setText(appointment.getRoom() != null ? appointment.getRoom().getRoomName() : "");
+                row.getCell(6).setText(String.valueOf(appointment.getId())); // Chi tiết là ID
                 row.getCell(7).setText(getStatusText(appointment.getStatus()));
             }
             
