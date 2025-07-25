@@ -21,20 +21,18 @@
                             <h4 class="mb-0">Thêm bệnh nhân mới</h4>
                         </div>
                         <div class="card-body">
-                            <!-- Hiển thị thông báo lỗi -->
                             <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
                                 <span th:text="${errorMessage}"></span>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
 
                             <form th:action="@{/recep/patient/save}" method="post">
-                                <!-- Thông tin tài khoản -->
                                 <div class="row">
                                     <div class="col-12">
                                         <h5 class="text-primary mb-3">Thông tin tài khoản</h5>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -53,7 +51,6 @@
 
                                 <hr>
 
-                                <!-- Thông tin cá nhân -->
                                 <div class="row">
                                     <div class="col-12">
                                         <h5 class="text-primary mb-3">Thông tin cá nhân</h5>
@@ -79,13 +76,17 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="phone">Số điện thoại <span class="text-danger">*</span></label>
-                                            <input type="tel" class="form-control" id="phone" name="phone" required>
+                                            <input type="tel" class="form-control" id="phone" name="phone" required
+                                                   maxlength="10"
+                                                   pattern="0[0-9]{9}"
+                                                   title="Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số.">
+                                            <small id="phone-error" class="form-text text-danger" style="display: none;"></small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="dateOfBirth">Ngày sinh <span class="text-danger">*</span></label>
-                                            <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" required>
+                                            <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" required max="">
                                         </div>
                                     </div>
                                 </div>
@@ -129,5 +130,42 @@
 <script th:src="@{/assets_admin/vendors/js/vendor.bundle.base.js}"></script>
 <script th:src="@{/assets_admin/js/off-canvas.js}"></script>
 <script th:src="@{/assets_admin/js/misc.js}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const phoneInput = document.getElementById('phone');
+        const phoneError = document.getElementById('phone-error');
+
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function() {
+                // Bắt đầu bằng 0, theo sau là 9 chữ số
+                const phoneRegex = /^0\d{9}$/;
+
+                if (phoneInput.value && !phoneRegex.test(phoneInput.value)) {
+                    phoneError.textContent = 'Số điện thoại không hợp lệ. Phải có 10 chữ số và bắt đầu bằng 0.';
+                    phoneError.style.display = 'block';
+                } else {
+                    phoneError.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateOfBirthInput = document.getElementById('dateOfBirth');
+        const today = new Date();
+        today.setDate(today.getDate() - 1); // hôm qua
+
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+
+        const maxDate = `${yyyy}-${mm}-${dd}`;
+        dateOfBirthInput.max = maxDate;
+    });
+</script>
+
 </body>
-</html> 
+</html>
