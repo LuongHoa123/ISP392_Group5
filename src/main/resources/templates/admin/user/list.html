@@ -154,7 +154,9 @@
                                             <p><strong>Họ tên:</strong> <span th:text="${user.patients[0].firstName + ' ' + user.patients[0].lastName}"></span></p>
                                             <p><strong>SĐT:</strong> <span th:text="${user.patients[0].phone}"></span></p>
                                             <p><strong>Địa chỉ:</strong> <span th:text="${user.patients[0].address}"></span></p>
-                                            <p><strong>Quốc tịch:</strong> <span th:text="${user.patients[0].nation}"></span></p>
+                                            <p><strong>Giới tính:</strong> <span th:text="${user.patients[0].gender}"></span></p>
+                                            <p><strong>CCCD:</strong> <span th:text="${user.patients[0].identification}"></span></p>
+                                            <p><strong>Dân tộc:</strong> <span th:text="${user.patients[0].nation}"></span></p>
                                         </div>
 
                                         <div th:if="${user.receps != null and !user.receps.isEmpty()}">

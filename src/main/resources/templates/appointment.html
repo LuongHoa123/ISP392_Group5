@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/about.css}">
     <link rel="stylesheet" th:href="@{/css/services.css}">
@@ -131,224 +132,259 @@
 </script>
 
 
-<th:block th:replace="layout/user-layout :: layout">
-    <th:block th:fragment="pageContent">
-        <section class="appointment">
-            <h1 class="heading">Đặt <span>lịch hẹn</span></h1>
-            <div class="row">
-                <div class="image">
-                    <img th:src="@{/assets/appointment.png}" alt="Hình ảnh đặt lịch hẹn">
-                </div>
+<header class="header" id="nav">
+    <a th:href="@{/}" class="logo d-flex align-items-center">
+        <img th:src="@{/assets/logo.png}" alt="Logo" style="height: 30px; margin-right: 8px;">
+        Veritas ENT
+    </a>
+    <nav class="navbar">
+        <a th:href="@{/}" class="nav-links">Trang chủ</a>
+        <a th:href="@{/doctors}" class="nav-links">Bác sĩ</a>
 
-                <style>
-                    .input-wrapper {
-                        position: relative;
-                        width: 100%;
-                    }
+        <th:block th:if="${#authorization.expression('isAnonymous()')}">
+            <a th:href="@{/login}" class="nav-links">Đăng nhập</a>
+            <a th:href="@{/register}" class="nav-links">Đăng ký</a>
+        </th:block>
 
-                    .input-wrapper .required-star {
-                        position: absolute;
-                        right: 10px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        color: red;
-                        font-size: 20px;
-                        pointer-events: none;
-                    }
+        <th:block th:unless="${#authorization.expression('isAnonymous()')}">
 
-                    .box,
-                    .box-half {
-                        width: 100%;
-                        padding-right: 25px; /* để tránh bị đè lên bởi dấu * */
-                    }
+            <a th:href="@{/patient/appointment}" class="nav-links">
+                <i class="fas fa-calendar-plus"></i> Đặt lịch
+            </a>
 
-                    .box-half-app {
-                        display: flex;
-                        justify-content: space-between;
-                        gap: 10px;
-                    }
+            <a th:href="@{/patient/appointment/calendar}" class="nav-links">
+                <i class="fas fa-calendar-check"></i> Lịch hẹn của tôi
+            </a>
 
-                    .box-half-app > div {
-                        width: 50%;
-                    }
-                </style>
+            <a th:href="@{/changePass}" class="nav-links" title="Đổi mật khẩu">
+                <i class="fas fa-key"></i>
+            </a>
 
-                <form id="appForm" th:action="@{/patient/appointment/save}" method="post">
-                    <h3>Đặt lịch khám với chúng tôi</h3>
+            <a th:href="@{/profile}" class="nav-links" title="Đổi thông tin cá nhân">
+                <i class="fas fa-user-edit"></i>
+            </a>
 
-                    <div class="input-wrapper">
-                        <input type="text" name="name" th:value="${patient.firstName + ' ' + patient.lastName}"
-                               placeholder="Họ và tên của bạn" class="box" required>
-                        <span class="required-star">*</span>
-                        <div id="nameError" class="text-danger"></div>
-                    </div>
+            <a th:href="@{/logout}" class="nav-links">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+        </th:block>
+    </nav>
+    <div id="menu-btn" class="fas fa-bars"></div>
+</header>
+<section class="appointment">
+    <h1 class="heading">Đặt <span>lịch hẹn</span></h1>
+    <div class="row">
+        <div class="image">
+            <img th:src="@{/assets/appointment.png}" alt="Hình ảnh đặt lịch hẹn">
+        </div>
 
-                    <div class="input-wrapper">
-                        <select name="doctorId" class="box" required>
-                            <option value="">--Chọn bác sĩ--</option>
-                            <option th:each="doctor : ${doctors}"
-                                    th:value="${doctor.id}"
-                                    th:text="${doctor.firstName + ' ' + doctor.lastName + ' - Chuyên khoa: ' + doctor.specialization}"></option>
-                        </select>
-                    </div>
+        <style>
+            .input-wrapper {
+                position: relative;
+                width: 100%;
+            }
 
-                    <div class="input-wrapper">
-                        <input type="tel" name="phone" th:value="${patient.phone}" placeholder="Số điện thoại"
-                               readonly
-                               class="box" maxlength="10" required>
-                        <span class="required-star">*</span>
-                        <div id="phoneError" class="text-danger"></div>
-                    </div>
+            .input-wrapper .required-star {
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: red;
+                font-size: 20px;
+                pointer-events: none;
+            }
 
-                    <div class="input-wrapper">
-                        <input type="number" name="age" placeholder="Tuổi của bạn" class="box" min="0" max="100"
-                               required>
-                        <span class="required-star">*</span>
-                        <div id="ageError" class="text-danger"></div>
-                    </div>
+            .box,
+            .box-half {
+                width: 100%;
+                padding-right: 25px; /* để tránh bị đè lên bởi dấu * */
+            }
 
-                    <div class="input-wrapper">
-                        <input type="email" name="email" th:value="${patient.user.email}"
-                               placeholder="Địa chỉ email" readonly
-                               class="box" required>
-                        <span class="required-star">*</span>
-                    </div>
+            .box-half-app {
+                display: flex;
+                justify-content: space-between;
+                gap: 10px;
+            }
 
-                    <div class="input-wrapper">
-                        <input type="date" th:attr="min=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
-                               id="appointmentDate"
-                               name="date" class="box" required>
-                        <span class="required-star">*</span>
-                    </div>
+            .box-half-app > div {
+                width: 50%;
+            }
+        </style>
 
-                    <div class="input-wrapper">
+        <form id="appForm" th:action="@{/patient/appointment/save}" method="post">
+            <h3>Đặt lịch khám với chúng tôi</h3>
+
+            <div class="input-wrapper">
+                <input type="text" name="name" th:value="${patient.firstName + ' ' + patient.lastName}"
+                       placeholder="Họ và tên của bạn" class="box" required>
+                <span class="required-star">*</span>
+                <div id="nameError" class="text-danger"></div>
+            </div>
+
+            <div class="input-wrapper">
+                <select name="doctorId" class="box" required>
+                    <option value="">--Chọn bác sĩ--</option>
+                    <option th:each="doctor : ${doctors}"
+                            th:value="${doctor.id}"
+                            th:text="${doctor.firstName + ' ' + doctor.lastName + ' - Chuyên khoa: ' + doctor.specialization}"></option>
+                </select>
+            </div>
+
+            <div class="input-wrapper">
+                <input type="tel" name="phone" th:value="${patient.phone}" placeholder="Số điện thoại"
+                       readonly
+                       class="box" maxlength="10" required>
+                <span class="required-star">*</span>
+                <div id="phoneError" class="text-danger"></div>
+            </div>
+
+            <div class="input-wrapper">
+                <input type="number" name="age" placeholder="Tuổi của bạn" class="box" min="0" max="100"
+                       required>
+                <span class="required-star">*</span>
+                <div id="ageError" class="text-danger"></div>
+            </div>
+
+            <div class="input-wrapper">
+                <input type="email" name="email" th:value="${patient.user.email}"
+                       placeholder="Địa chỉ email" readonly
+                       class="box" required>
+                <span class="required-star">*</span>
+            </div>
+
+            <div class="input-wrapper">
+                <input type="date" th:attr="min=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+                       id="appointmentDate"
+                       name="date" class="box" required>
+                <span class="required-star">*</span>
+            </div>
+
+            <div class="input-wrapper">
         <textarea name="problem" placeholder="Mô tả vấn đề sức khỏe của bạn..."
                   class="problem italic-placeholder" rows="4" required></textarea>
-                        <div id="charCount" class="text-muted" style="font-size: 0.85rem;">0 / 250 ký tự</div>
-                        <span class="required-star">*</span>
-                        <div id="problemError" class="text-danger"></div>
-                    </div>
-
-                    <input type="submit" value="Đặt lịch ngay" class="btn">
-                </form>
-
+                <div id="charCount" class="text-muted" style="font-size: 0.85rem;">0 / 250 ký tự</div>
+                <span class="required-star">*</span>
+                <div id="problemError" class="text-danger"></div>
             </div>
-        </section>
-        <a href="#" class="back-to-top" id="backToTop" title="Lên đầu trang">
-            <i class="fas fa-chevron-up"></i>
-        </a>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const form = document.querySelector("#appForm");
-                const problemCharCount = document.getElementById("charCount");
 
-                const problemInput = document.querySelector("[name='problem']");
+            <input type="submit" value="Đặt lịch ngay" class="btn">
+        </form>
 
-                problemInput.addEventListener("input", function () {
-                    problemCharCount.textContent = `${problemInput.value.length} / 250 ký tự`;
-                });
+    </div>
+</section>
+<a href="#" class="back-to-top" id="backToTop" title="Lên đầu trang">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector("#appForm");
+        const problemCharCount = document.getElementById("charCount");
 
-                form.addEventListener("submit", function (event) {
-                    let isValid = true;
+        const problemInput = document.querySelector("[name='problem']");
 
-                    const clearErrors = () => {
-                        document.getElementById('nameError').textContent = '';
-                        document.getElementById('phoneError').textContent = '';
-                        document.getElementById('ageError').textContent = '';
-                        document.getElementById('problemError').textContent = '';
-                    };
-                    clearErrors();
+        problemInput.addEventListener("input", function () {
+            problemCharCount.textContent = `${problemInput.value.length} / 250 ký tự`;
+        });
 
-                    const nameInput = document.querySelector("[name='name']");
-                    const name = nameInput.value.trim();
-                    const namePattern = /^[\p{L} .'-]+$/u;
+        form.addEventListener("submit", function (event) {
+            let isValid = true;
 
-                    if (!name) {
-                        document.getElementById('nameError').textContent = 'Họ tên không được để trống.';
-                        isValid = false;
-                    } else if (!namePattern.test(name)) {
-                        document.getElementById('nameError').textContent = 'Họ tên không hợp lệ. Chỉ cho phép chữ và dấu.';
-                        isValid = false;
-                    }
+            const clearErrors = () => {
+                document.getElementById('nameError').textContent = '';
+                document.getElementById('phoneError').textContent = '';
+                document.getElementById('ageError').textContent = '';
+                document.getElementById('problemError').textContent = '';
+            };
+            clearErrors();
 
-                    const phoneInput = document.querySelector("[name='phone']");
-                    const phone = phoneInput.value.trim();
-                    const phonePattern = /^0\d{9}$/;
+            const nameInput = document.querySelector("[name='name']");
+            const name = nameInput.value.trim();
+            const namePattern = /^[\p{L} .'-]+$/u;
 
-                    if (!phonePattern.test(phone)) {
-                        document.getElementById('phoneError').textContent =
-                            'Số điện thoại phải có 10 chữ số, bắt đầu bằng 0 và không chứa ký tự đặc biệt.';
-                        isValid = false;
-                    }
+            if (!name) {
+                document.getElementById('nameError').textContent = 'Họ tên không được để trống.';
+                isValid = false;
+            } else if (!namePattern.test(name)) {
+                document.getElementById('nameError').textContent = 'Họ tên không hợp lệ. Chỉ cho phép chữ và dấu.';
+                isValid = false;
+            }
 
-                    const ageInput = document.querySelector("[name='age']");
-                    const age = parseInt(ageInput.value);
+            const phoneInput = document.querySelector("[name='phone']");
+            const phone = phoneInput.value.trim();
+            const phonePattern = /^0\d{9}$/;
 
-                    if (isNaN(age) || age < 0 || age > 100) {
-                        document.getElementById('ageError').textContent = 'Tuổi phải từ 0 đến 100.';
-                        isValid = false;
-                    }
+            if (!phonePattern.test(phone)) {
+                document.getElementById('phoneError').textContent =
+                    'Số điện thoại phải có 10 chữ số, bắt đầu bằng 0 và không chứa ký tự đặc biệt.';
+                isValid = false;
+            }
 
-                    // Mô tả sức khỏe
-                    const problemInput = document.querySelector("[name='problem']");
-                    const problem = problemInput.value.trim();
-                    const problemPattern = /^[\p{L}0-9\s.,!?-]+$/u;
+            const ageInput = document.querySelector("[name='age']");
+            const age = parseInt(ageInput.value);
 
-                    if (!problem) {
-                        document.getElementById('problemError').textContent = 'Vui lòng mô tả vấn đề sức khỏe.';
-                        isValid = false;
-                    } else if (!problemPattern.test(problem)) {
-                        document.getElementById('problemError').textContent =
-                            'Mô tả không hợp lệ. Không dùng ký tự đặc biệt lạ.';
-                        isValid = false;
-                    } else if (problem.length > 250) {
-                        document.getElementById('problemError').textContent =
-                            'Mô tả quá dài. Tối đa 250 ký tự.';
-                        isValid = false;
-                    }
+            if (isNaN(age) || age < 0 || age > 100) {
+                document.getElementById('ageError').textContent = 'Tuổi phải từ 0 đến 100.';
+                isValid = false;
+            }
 
+            // Mô tả sức khỏe
+            const problemInput = document.querySelector("[name='problem']");
+            const problem = problemInput.value.trim();
+            const problemPattern = /^[\p{L}0-9\s.,!?-]+$/u;
 
-                    if (!isValid) {
-                        event.preventDefault();
-                    }
-                });
-
-                const dateInput = document.getElementById('appointmentDate');
-                const today = new Date();
-                const tomorrow = new Date(today);
-                tomorrow.setDate(tomorrow.getDate() + 1);
-
-                const yyyy = tomorrow.getFullYear();
-                const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
-                const dd = String(tomorrow.getDate()).padStart(2, '0');
-                const minDateStr = `${yyyy}-${mm}-${dd}`;
-                dateInput.min = minDateStr;
-            });
-        </script>
+            if (!problem) {
+                document.getElementById('problemError').textContent = 'Vui lòng mô tả vấn đề sức khỏe.';
+                isValid = false;
+            } else if (!problemPattern.test(problem)) {
+                document.getElementById('problemError').textContent =
+                    'Mô tả không hợp lệ. Không dùng ký tự đặc biệt lạ.';
+                isValid = false;
+            } else if (problem.length > 250) {
+                document.getElementById('problemError').textContent =
+                    'Mô tả quá dài. Tối đa 250 ký tự.';
+                isValid = false;
+            }
 
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+
+        const dateInput = document.getElementById('appointmentDate');
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        const yyyy = tomorrow.getFullYear();
+        const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+        const dd = String(tomorrow.getDate()).padStart(2, '0');
+        const minDateStr = `${yyyy}-${mm}-${dd}`;
+        dateInput.min = minDateStr;
+    });
+</script>
 
 
-                const backToTopBtn = document.getElementById("backToTop");
-                c
-                window.addEventListener("scroll", function () {
-                    if (window.scrollY > 300) {
-                        backToTopBtn.style.display = "block";
-                    } else {
-                        backToTopBtn.style.display = "none";
-                    }
-                });
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
 
-                backToTopBtn.addEventListener("click", function (e) {
-                    e.preventDefault();
-                    window.scrollTo({top: 0, behavior: "smooth"});
-                });
-            });
-        </script>
-    </th:block>
-</th:block>
+
+        const backToTopBtn = document.getElementById("backToTop");
+        c
+        window.addEventListener("scroll", function () {
+            if (window.scrollY > 300) {
+                backToTopBtn.style.display = "block";
+            } else {
+                backToTopBtn.style.display = "none";
+            }
+        });
+
+        backToTopBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            window.scrollTo({top: 0, behavior: "smooth"});
+        });
+    });
+</script>
 
 
 <style>

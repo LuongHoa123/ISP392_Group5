@@ -1,5 +1,6 @@
 package com.ISP392.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,16 +24,19 @@ public class ShiftEntity extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     @EqualsAndHashCode.Exclude
+    @JsonBackReference
     private DoctorEntity doctor;
 
     @ManyToOne
     @JoinColumn(name = "nurse_id")
     @EqualsAndHashCode.Exclude
+    @JsonBackReference
     private NurseEntity nurse;
 
     @ManyToOne
     @JoinColumn(name = "room_id")
     @EqualsAndHashCode.Exclude
+    @JsonBackReference
     private RoomEntity room;
 
     public LocalDateTime getStartTime() {
