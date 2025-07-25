@@ -25,6 +25,41 @@
             border-radius: 3px;
             margin-right: 6px;
         }
+        .search-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .sortable-header {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: color 0.2s ease;
+        }
+        .sortable-header:hover {
+            color: #007bff;
+        }
+        .sortable-header i {
+            margin-left: 5px;
+            color: #ddd;
+        }
+        .sortable-header.asc i {
+            color: #007bff;
+        }
+        .sortable-header.desc i {
+            color: #007bff;
+        }
+        .filter-section {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .filter-section h6 {
+            color: #495057;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
@@ -47,71 +82,207 @@
                     <div class="card-body">
                         <h4 class="card-title">Danh sách bệnh nhân</h4>
                         
-                        <!-- Search Form -->
-                        <form th:action="@{/admin/patient}" method="get" class="form-inline mb-3">
-                            <div class="form-group mr-2">
-                                <input type="text" name="search" th:value="${search}" class="form-control" placeholder="Tìm kiếm theo tên...">
-                            </div>
-                            <button type="submit" class="btn btn-primary mr-2">
-                                <i class="mdi mdi-magnify"></i> Tìm kiếm
-                            </button>
-                        </form>
+                        <!-- Enhanced Search & Filter Form -->
+                        <div class="search-form">
+                            <form th:action="@{/admin/patient}" method="get">
+                                <!-- Tìm kiếm -->
+                                <div class="filter-section">
+                                    <h6><i class="mdi mdi-magnify"></i> Tìm kiếm</h6>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <input type="text" id="searchInput" name="search" th:value="${search}" 
+                                                       class="form-control" 
+                                                       placeholder="Nhập tên, họ, email hoặc số điện thoại...">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button type="submit" class="btn btn-primary btn-block">
+                                                <i class="mdi mdi-magnify"></i> Tìm kiếm
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Lọc -->
+                                <div class="filter-section">
+                                    <h6><i class="mdi mdi-filter"></i> Lọc dữ liệu</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="genderFilter">Giới tính</label>
+                                                <select id="genderFilter" class="form-control">
+                                                    <option value="">-- Tất cả giới tính --</option>
+                                                    <option value="MALE">Nam</option>
+                                                    <option value="FEMALE">Nữ</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>&nbsp;</label>
+                                                <div class="text-muted small">
+                                                    <i class="mdi mdi-information"></i> 
+                                                    Nhấp vào tiêu đề cột "Họ" hoặc "Tên" để sắp xếp
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Buttons -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="mdi mdi-magnify"></i> Tìm kiếm
+                                        </button>
+                                        <button type="button" id="resetBtn" class="btn btn-secondary ml-2">
+                                            <i class="mdi mdi-refresh"></i> Đặt lại
+                                        </button>
+                                        <button type="button" id="filterBtn" class="btn btn-info ml-2">
+                                            <i class="mdi mdi-filter"></i> Lọc giới tính
+                                        </button>
+                                    </div>
+                                    <div class="col-md-6 text-right">
+                                        <span class="text-muted">
+                                            Tổng số: <strong id="totalCount" th:text="${#lists.size(patients)}">0</strong> bệnh nhân
+                                            <span id="filteredInfo" style="display: none;">(đã lọc)</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Hidden inputs to preserve pagination -->
+                                <input type="hidden" name="page" th:value="${currentPage}">
+                                <input type="hidden" name="size" th:value="${pageSize}">
+                            </form>
+                        </div>
 
                         <!-- Table -->
                         <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
+                            <table class="table table-striped table-hover" id="patientTable">
+                                <thead class="thead-light">
                                     <tr>
                                         <th>#</th>
-                                        <th>Họ</th>
-                                        <th>Tên</th>
+                                        <th class="sortable-header" data-sort="firstName">
+                                            Họ <i class="mdi mdi-sort" id="firstNameSort"></i>
+                                        </th>
+                                        <th class="sortable-header" data-sort="lastName">
+                                            Tên <i class="mdi mdi-sort" id="lastNameSort"></i>
+                                        </th>
                                         <th>Email</th>
                                         <th>Số điện thoại</th>
                                         <th>Giới tính</th>
-                                        <th>Ngày sinh</th>
+                                        <th class="sortable-header" data-sort="dateOfBirth">
+                                            Ngày sinh <i class="mdi mdi-sort" id="dobSort"></i>
+                                        </th>
                                         <th>Địa chỉ</th>
-                                        <th>Thao tác</th>
+                                        <th style="width: 150px;">Thao tác</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr th:each="patient, iterStat : ${patients}">
-                                        <td th:text="${iterStat.count}"></td>
-                                        <td th:text="${patient.firstName}"></td>
+                                <tbody id="patientTableBody">
+                                    <tr th:each="patient, iterStat : ${patients}" th:if="${not #lists.isEmpty(patients)}" class="patient-row"
+                                        th:data-gender="${patient.gender?.name()}"
+                                        th:data-firstname="${patient.firstName}"
+                                        th:data-lastname="${patient.lastName}"
+                                        th:data-email="${patient.user?.email}"
+                                        th:data-phone="${patient.phone}"
+                                        th:data-dob="${patient.dateOfBirth}">
+                                        <td th:text="${(currentPage * pageSize) + iterStat.count}"></td>
+                                        <td>
+                                            <strong th:text="${patient.firstName}"></strong>
+                                        </td>
                                         <td th:text="${patient.lastName}"></td>
-                                        <td th:text="${patient.user != null ? patient.user.email : ''}"></td>
-                                        <td th:text="${patient.phone}"></td>
-                                        <td th:text="${patient.gender != null ? (patient.gender.name() == 'MALE' ? 'Nam' : 'Nữ') : '---'}"></td>
-                                        <td th:text="${patient.dateOfBirth != null ? #temporals.format(patient.dateOfBirth, 'dd/MM/yyyy') : '---'}"></td>
-                                        <td th:text="${patient.address}"></td>
+                                        <td th:text="${patient.user != null ? patient.user.email : '---'}"></td>
+                                        <td>
+                                            <span th:if="${patient.phone}" th:text="${patient.phone}"></span>
+                                            <span th:unless="${patient.phone}" class="text-muted">---</span>
+                                        </td>
+                                        <td>
+                                            <span th:if="${patient.gender != null}" 
+                                                  th:text="${patient.gender.name() == 'MALE' ? 'Nam' : 'Nữ'}"
+                                                  th:classappend="${patient.gender.name() == 'MALE'} ? 'badge badge-primary' : 'badge badge-info'"></span>
+                                            <span th:unless="${patient.gender != null}" class="text-muted">---</span>
+                                        </td>
+                                        <td>
+                                            <span th:if="${patient.dateOfBirth}" 
+                                                  th:text="${#temporals.format(patient.dateOfBirth, 'dd/MM/yyyy')}"></span>
+                                            <span th:unless="${patient.dateOfBirth}" class="text-muted">---</span>
+                                        </td>
+                                        <td>
+                                            <span th:if="${patient.address}" th:text="${patient.address}"></span>
+                                            <span th:unless="${patient.address}" class="text-muted">---</span>
+                                        </td>
                                         <td>
                                             <button class="btn btn-info btn-sm patient-calendar-btn" 
                                                     th:data-patient-id="${patient.id}"
-                                                    th:data-patient-name="${patient.firstName + ' ' + patient.lastName}">
+                                                    th:data-patient-name="${patient.firstName + ' ' + patient.lastName}"
+                                                    title="Xem lịch khám của bệnh nhân">
                                                 <i class="mdi mdi-calendar"></i> Lịch khám
                                             </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="noResults" style="display: none;">
+                                        <td colspan="9" class="text-center py-4">
+                                            <div class="text-muted">
+                                                <i class="mdi mdi-account-search" style="font-size: 48px;"></i>
+                                                <p class="mt-2">Không tìm thấy bệnh nhân nào</p>
+                                                <button type="button" id="clearFilter" class="btn btn-outline-primary btn-sm">
+                                                    <i class="mdi mdi-refresh"></i> Xóa bộ lọc
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
 
-                            <!-- Pagination -->
+                            <!-- Enhanced Pagination -->
                             <nav th:if="${totalPages > 1}" aria-label="Page navigation" class="mt-4">
-                                <ul class="pagination justify-content-center">
-                                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                                        <a class="page-link" th:href="@{/admin/patient(page=${currentPage - 1}, search=${search})}">
-                                            Trước
-                                        </a>
-                                    </li>
-                                    <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-                                        th:classappend="${i == currentPage} ? 'active'">
-                                        <a class="page-link" th:href="@{/admin/patient(page=${i}, search=${search})}" th:text="${i + 1}"></a>
-                                    </li>
-                                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                                        <a class="page-link" th:href="@{/admin/patient(page=${currentPage + 1}, search=${search})}">
-                                            Sau
-                                        </a>
-                                    </li>
-                                </ul>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="text-muted">
+                                            Hiển thị <strong th:text="${(currentPage * pageSize) + 1}">1</strong> 
+                                            đến <strong th:text="${(currentPage * pageSize) + #lists.size(patients)}">10</strong> 
+                                            trong tổng số <strong th:text="${totalElements}">0</strong> bệnh nhân
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <ul class="pagination justify-content-end">
+                                            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                                <a class="page-link" th:href="@{/admin/patient(page=${currentPage - 1}, search=${search}, gender=${gender}, sortField=${sortField}, sortDirection=${sortDirection})}">
+                                                    <i class="mdi mdi-chevron-left"></i> Trước
+                                                </a>
+                                            </li>
+                                            
+                                            <!-- First page -->
+                                            <li class="page-item" th:if="${currentPage > 2}">
+                                                <a class="page-link" th:href="@{/admin/patient(page=0, search=${search}, gender=${gender}, sortField=${sortField}, sortDirection=${sortDirection})}">1</a>
+                                            </li>
+                                            <li class="page-item disabled" th:if="${currentPage > 3}">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                            
+                                            <!-- Current page range -->
+                                            <li class="page-item" th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, currentPage - 2), T(java.lang.Math).min(totalPages - 1, currentPage + 2))}"
+                                                th:classappend="${i == currentPage} ? 'active'">
+                                                <a class="page-link" th:href="@{/admin/patient(page=${i}, search=${search}, gender=${gender}, sortField=${sortField}, sortDirection=${sortDirection})}" th:text="${i + 1}"></a>
+                                            </li>
+                                            
+                                            <!-- Last page -->
+                                            <li class="page-item disabled" th:if="${currentPage < totalPages - 4}">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                            <li class="page-item" th:if="${currentPage < totalPages - 3}">
+                                                <a class="page-link" th:href="@{/admin/patient(page=${totalPages - 1}, search=${search}, gender=${gender}, sortField=${sortField}, sortDirection=${sortDirection})}" th:text="${totalPages}"></a>
+                                            </li>
+                                            
+                                            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                                <a class="page-link" th:href="@{/admin/patient(page=${currentPage + 1}, search=${search}, gender=${gender}, sortField=${sortField}, sortDirection=${sortDirection})}">
+                                                    Sau <i class="mdi mdi-chevron-right"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </nav>
                         </div>
                     </div>
@@ -179,8 +350,24 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 <script>
     let patientCalendar;
+    let allPatients = [];
+    let currentSort = { field: null, direction: 'asc' };
 
     document.addEventListener('DOMContentLoaded', function() {
+        // Store all patient data
+        const rows = document.querySelectorAll('.patient-row');
+        rows.forEach(row => {
+            allPatients.push({
+                element: row,
+                gender: row.getAttribute('data-gender'),
+                firstName: row.getAttribute('data-firstname') || '',
+                lastName: row.getAttribute('data-lastname') || '',
+                email: row.getAttribute('data-email') || '',
+                phone: row.getAttribute('data-phone') || '',
+                dateOfBirth: row.getAttribute('data-dob')
+            });
+        });
+
         // Initialize calendar but don't render yet
         var calendarEl = document.getElementById('calendar');
         patientCalendar = new FullCalendar.Calendar(calendarEl, {
@@ -197,7 +384,12 @@
             }
         });
 
-        // Add event delegation for patient calendar buttons
+        // Add event listeners
+        setupEventListeners();
+    });
+
+    function setupEventListeners() {
+        // Patient calendar buttons
         document.addEventListener('click', function(e) {
             if (e.target.closest('.patient-calendar-btn')) {
                 const button = e.target.closest('.patient-calendar-btn');
@@ -206,7 +398,170 @@
                 openPatientCalendar(patientId, patientName);
             }
         });
-    });
+
+        // Filter by gender
+        document.getElementById('filterBtn').addEventListener('click', function() {
+            filterByGender();
+        });
+
+        // Reset filters
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            resetFilters();
+        });
+
+        document.getElementById('clearFilter').addEventListener('click', function() {
+            resetFilters();
+        });
+
+        // Sort functionality
+        document.querySelectorAll('.sortable-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const sortField = this.getAttribute('data-sort');
+                sortTable(sortField);
+            });
+        });
+    }
+
+    function filterByGender() {
+        const selectedGender = document.getElementById('genderFilter').value;
+        const tableBody = document.getElementById('patientTableBody');
+        let visibleCount = 0;
+
+        allPatients.forEach(patient => {
+            const shouldShow = !selectedGender || patient.gender === selectedGender;
+            
+            if (shouldShow) {
+                patient.element.style.display = '';
+                visibleCount++;
+            } else {
+                patient.element.style.display = 'none';
+            }
+        });
+
+        // Update counter and show/hide no results message
+        document.getElementById('totalCount').textContent = visibleCount;
+        const filteredInfo = document.getElementById('filteredInfo');
+        const noResults = document.getElementById('noResults');
+
+        if (selectedGender) {
+            filteredInfo.style.display = 'inline';
+        } else {
+            filteredInfo.style.display = 'none';
+        }
+
+        if (visibleCount === 0) {
+            noResults.style.display = '';
+        } else {
+            noResults.style.display = 'none';
+        }
+
+        // Re-number visible rows
+        reNumberRows();
+    }
+
+    function resetFilters() {
+        // Reset gender filter
+        document.getElementById('genderFilter').value = '';
+        
+        // Show all rows
+        allPatients.forEach(patient => {
+            patient.element.style.display = '';
+        });
+
+        // Reset counter
+        document.getElementById('totalCount').textContent = allPatients.length;
+        document.getElementById('filteredInfo').style.display = 'none';
+        document.getElementById('noResults').style.display = 'none';
+
+        // Reset sort
+        currentSort = { field: null, direction: 'asc' };
+        document.querySelectorAll('.sortable-header').forEach(header => {
+            header.classList.remove('asc', 'desc');
+        });
+
+        // Re-number rows
+        reNumberRows();
+    }
+
+    function sortTable(field) {
+        // Determine sort direction
+        if (currentSort.field === field) {
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSort.field = field;
+            currentSort.direction = 'asc';
+        }
+
+        // Update header icons
+        document.querySelectorAll('.sortable-header').forEach(header => {
+            header.classList.remove('asc', 'desc');
+            const icon = header.querySelector('i');
+            icon.className = 'mdi mdi-sort';
+        });
+
+        const currentHeader = document.querySelector(`[data-sort="${field}"]`);
+        currentHeader.classList.add(currentSort.direction);
+        const currentIcon = currentHeader.querySelector('i');
+        currentIcon.className = currentSort.direction === 'asc' ? 'mdi mdi-sort-ascending' : 'mdi mdi-sort-descending';
+
+        // Sort visible patients only
+        const visiblePatients = allPatients.filter(patient => 
+            patient.element.style.display !== 'none'
+        );
+
+        visiblePatients.sort((a, b) => {
+            let valueA, valueB;
+
+            switch (field) {
+                case 'firstName':
+                    valueA = a.firstName.toLowerCase();
+                    valueB = b.firstName.toLowerCase();
+                    break;
+                case 'lastName':
+                    valueA = a.lastName.toLowerCase();
+                    valueB = b.lastName.toLowerCase();
+                    break;
+                case 'dateOfBirth':
+                    valueA = a.dateOfBirth ? new Date(a.dateOfBirth) : new Date('1900-01-01');
+                    valueB = b.dateOfBirth ? new Date(b.dateOfBirth) : new Date('1900-01-01');
+                    break;
+                default:
+                    return 0;
+            }
+
+            if (valueA < valueB) return currentSort.direction === 'asc' ? -1 : 1;
+            if (valueA > valueB) return currentSort.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        // Reorder DOM elements
+        const tableBody = document.getElementById('patientTableBody');
+        const noResultsRow = document.getElementById('noResults');
+        
+        // Remove no results row temporarily
+        if (noResultsRow.parentNode) {
+            noResultsRow.remove();
+        }
+
+        // Append sorted elements
+        visiblePatients.forEach(patient => {
+            tableBody.appendChild(patient.element);
+        });
+
+        // Add back no results row
+        tableBody.appendChild(noResultsRow);
+
+        // Re-number rows
+        reNumberRows();
+    }
+
+    function reNumberRows() {
+        const visibleRows = document.querySelectorAll('.patient-row:not([style*="display: none"])');
+        visibleRows.forEach((row, index) => {
+            const firstCell = row.querySelector('td:first-child');
+            firstCell.textContent = index + 1;
+        });
+    }
 
     function openPatientCalendar(patientId, patientName) {
         // Set patient name in modal title
