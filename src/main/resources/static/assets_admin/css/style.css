@@ -1861,8 +1861,6 @@ p {
 
 abbr[title],
 abbr[data-bs-original-title] {
-  -webkit-text-decoration: underline dotted;
-  text-decoration: underline dotted;
   cursor: help;
   -webkit-text-decoration-skip-ink: none;
   text-decoration-skip-ink: none; }
@@ -1924,7 +1922,7 @@ sup {
 
 a {
   color: #0d6efd;
-  text-decoration: underline; }
+   }
   a:hover {
     color: #0a58ca; }
 
@@ -4671,7 +4669,7 @@ textarea.form-control-lg {
 .btn-link {
   font-weight: 400;
   color: #0d6efd;
-  text-decoration: underline; }
+  }
   .btn-link:hover {
     color: #0a58ca; }
   .btn-link:disabled, .btn-link.disabled {
@@ -8468,8 +8466,7 @@ textarea.form-control-lg {
 .text-decoration-none {
   text-decoration: none !important; }
 
-.text-decoration-underline {
-  text-decoration: underline !important; }
+
 
 .text-decoration-line-through {
   text-decoration: line-through !important; }

@@ -71,9 +71,7 @@ table{
     text-align: center;
 }
 
-.timings .row p u{
-    text-decoration: underline;
-}
+
 /* making tables responsive for mobile devicies */
 @media(max-width: 500px){
     .timings .row .table table thead{
