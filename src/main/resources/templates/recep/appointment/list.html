@@ -328,7 +328,7 @@
                         </div>
                     </div>
 
-                    <div th:each="appt : ${appointments}" th:if="${appt.status == -1}">
+                    <div th:each="appt : ${appointments}" th:if="${appt.status == -1 || appt.status == 2}">
                         <div class="modal fade" th:id="${'cancelModal-' + appt.id}" tabindex="-1" role="dialog">
                             <div class="modal-dialog" role="document">
                                 <form th:action="@{/recep/appointment/send-cancel-email}" method="post"
