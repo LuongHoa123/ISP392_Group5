@@ -238,7 +238,7 @@
 
                                         <div class="form-group">
                                             <label>Thời gian khám</label>
-                                            <input type="datetime-local" class="form-control"
+                                            <input type="datetime-local" class="form-control" required
                                                    th:id="'appointmentDate_' + ${appt.id}"
                                                    name="appointmentDateTime"
                                                    th:value="${#temporals.format(appt.appointmentDateTime, 'yyyy-MM-dd''T''HH:mm')}"
@@ -249,7 +249,7 @@
                                         <div class="form-group">
                                             <label>Bác sĩ</label>
                                             <select class="form-control"
-                                                    name="doctorId"
+                                                    name="doctorId" required
                                                     th:id="'doctorSelect_' + ${appt.id}"
                                                     th:attr="onchange=|fetchRoom(${appt.id})|">
                                             </select>
@@ -257,7 +257,7 @@
 
                                         <div class="form-group">
                                             <label>Phòng</label>
-                                            <input type="text" class="form-control"
+                                            <input type="text" class="form-control" required
                                                    name="roomNameDisplay"
                                                    readonly
                                                    th:id="'roomDisplay_' + ${appt.id}"/>
