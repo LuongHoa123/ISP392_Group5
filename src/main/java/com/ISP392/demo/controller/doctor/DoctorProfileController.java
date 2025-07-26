@@ -77,6 +77,7 @@ public class DoctorProfileController {
 
         doctor.setFirstName(formDoctor.getFirstName());
         doctor.setLastName(formDoctor.getLastName());
+        doctor.setSpecialization(formDoctor.getSpecialization());
 
         Optional<DoctorEntity> existingDoctor = doctorRepository.findByPhoneNumber(formDoctor.getPhoneNumber());
         if (existingDoctor.isPresent() && existingDoctor.get().getId() != doctor.getId()) {

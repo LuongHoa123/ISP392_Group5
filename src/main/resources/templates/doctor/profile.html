@@ -96,6 +96,12 @@
                                     </div>
 
                                     <div class="form-group">
+                                        <label for="specialization">Chuyên khoa <span class="text-danger">*</span></label>
+                                        <input type="text" id="specialization" class="form-control" th:field="*{specialization}" name="specialization"
+                                               placeholder="Chuyên khoa" required>
+                                    </div>
+
+                                    <div class="form-group">
                                         <label>Email (không thể sửa)</label>
                                         <input type="email" class="form-control" th:value="*{email}" name="email" readonly>
                                     </div>

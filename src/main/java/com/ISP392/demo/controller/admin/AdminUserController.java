@@ -5,9 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.ISP392.demo.entity.LogsEntity;
-import com.ISP392.demo.repository.DoctorRepository;
-import com.ISP392.demo.repository.LogsRepository;
+import com.ISP392.demo.entity.*;
+import com.ISP392.demo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,11 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ISP392.demo.dto.UserDto;
-import com.ISP392.demo.entity.RoleEntity;
-import com.ISP392.demo.entity.UserEntity;
 import com.ISP392.demo.enums.RoleEnum;
-import com.ISP392.demo.repository.RoleRepository;
-import com.ISP392.demo.repository.UserRepository;
 
 import jakarta.validation.Valid;
 
@@ -48,6 +43,12 @@ public class AdminUserController {
 
     @Autowired
     private LogsRepository logsRepository;
+
+    @Autowired
+    private PatientRepository patientRepository;
+
+    @Autowired
+    private RecepRepository recepRepository;
 
 
     private void saveLog(String content) {
@@ -118,6 +119,7 @@ public class AdminUserController {
     public String saveUser(@ModelAttribute("userDto") @Valid UserDto userDto,
                            BindingResult result,
                            Model model) {
+
         if (result.hasErrors()) {
             model.addAttribute("roles", roleRepository.findAll());
             return "admin/user/add";
@@ -125,17 +127,45 @@ public class AdminUserController {
 
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             model.addAttribute("roles", roleRepository.findAll());
-            model.addAttribute("emailError");
+            model.addAttribute("emailError", "Email đã tồn tại rồi");
             return "admin/user/add";
         }
 
         RoleEntity selectedRole = roleRepository.findByName(RoleEnum.valueOf(userDto.getRoleName()));
+
         UserEntity user = new UserEntity();
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setRole(selectedRole);
         user.setStatus(userDto.getStatus());
-        userRepository.save(user);
+
+        UserEntity save = userRepository.save(user);
+
+        switch (userDto.getRoleName()) {
+            case "DOCTOR":
+                DoctorEntity doctor = new DoctorEntity();
+                doctor.setEmail(user.getEmail());
+                doctor.setUser(save);
+                doctorRepository.save(doctor);
+                break;
+
+            case "RECEPTIONIST":
+                RecepEntity recep = new RecepEntity();
+                recep.setEmail(user.getEmail());
+                recep.setUser(save);
+                recepRepository.save(recep);
+                break;
+
+            case "PATIENT":
+                PatientEntity patient = new PatientEntity();
+                patient.setUser(save);
+                patientRepository.save(patient);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Không rõ: " + userDto.getRoleName());
+        }
+
         saveLog("Thêm người dùng " + user.getEmail() + ", quyền " + user.getRole().getName());
 
         return "redirect:/admin/user?add=true";
@@ -197,7 +227,6 @@ public class AdminUserController {
 
         return "redirect:/admin/user?edit=true";
     }
-
 
 
     @PostMapping("/update-status/{id}")

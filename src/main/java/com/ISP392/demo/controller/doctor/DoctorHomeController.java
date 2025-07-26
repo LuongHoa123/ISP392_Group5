@@ -46,14 +46,10 @@ public class DoctorHomeController {
         }
 
         DoctorEntity doctor = doctorRepository.findByUser(userEntity);
-        if (doctor == null) {
-            return "redirect:/doctor/dashboard";
-        }
         session.setAttribute("fullName", doctor.getFirstName() + " " + doctor.getLastName());
         session.setAttribute("avatar", doctor.getAvatar());
         session.setAttribute("specialization", "Chuyên khoa: " + doctor.getSpecialization());
 
-        // Thống kê số bệnh nhân đã khám và chưa khám trong tháng hiện tại
         int month = LocalDate.now().getMonthValue();
         int year = LocalDate.now().getYear();
         Map<Integer, Long> statusCount = new HashMap<>();
