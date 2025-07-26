@@ -178,6 +178,7 @@
         <span th:case="2" class="badge badge-info">Đang chờ khám</span>
         <span th:case="*">Không xác định</span>
     </span>
+                            </td>
                             <td>
                                 <div class="d-flex flex-wrap gap-1">
                                     <div th:if="${appt.status == -1}">
@@ -241,7 +242,7 @@
                                                    th:id="'appointmentDate_' + ${appt.id}"
                                                    name="appointmentDateTime"
                                                    th:value="${#temporals.format(appt.appointmentDateTime, 'yyyy-MM-dd''T''HH:mm')}"
-                                                   th:attr="onchange=|fetchDoctorsAndRoom(${appt.id})|" />
+                                                   th:attr="onchange=|fetchDoctorsAndRoom(${appt.id})|"/>
 
                                         </div>
 
@@ -259,10 +260,10 @@
                                             <input type="text" class="form-control"
                                                    name="roomNameDisplay"
                                                    readonly
-                                                   th:id="'roomDisplay_' + ${appt.id}" />
+                                                   th:id="'roomDisplay_' + ${appt.id}"/>
                                             <input type="hidden"
                                                    name="roomId"
-                                                   th:id="'roomId_' + ${appt.id}" />
+                                                   th:id="'roomId_' + ${appt.id}"/>
                                         </div>
 
                                     </div>

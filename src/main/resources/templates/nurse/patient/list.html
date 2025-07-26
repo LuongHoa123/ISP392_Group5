@@ -19,7 +19,8 @@
             <!-- Form tìm kiếm -->
             <form class="form-inline mb-3" method="get" th:action="@{/nurse/patient}">
                 <input type="date" name="date" class="form-control mr-2" th:value="${selectedDate}">
-                <input type="text" name="searchKeyword" class="form-control mr-2" placeholder="Tìm họ, tên hoặc số điện thoại"
+                <input type="text" name="searchKeyword" class="form-control mr-2"
+                       placeholder="Tìm họ, tên hoặc số điện thoại"
                        th:value="${searchKeyword}">
                 <button type="submit" class="btn btn-primary mr-2">Tìm kiếm</button>
                 <a class="btn btn-success" th:href="@{/nurse/patient/export/pdf(date=${selectedDate})}">Xuất PDF</a>
@@ -42,9 +43,10 @@
                 </div>
             </div>
 
-            <p><strong>Tổng số bệnh nhân khám ngày <span th:text="${#temporals.format(selectedDate, 'dd/MM/yyyy')}"></span>: </strong><span th:text="${totalPatients}"></span></p>
+            <p><strong>Tổng số bệnh nhân khám ngày <span
+                    th:text="${#temporals.format(selectedDate, 'dd/MM/yyyy')}"></span>: </strong><span
+                    th:text="${totalPatients}"></span></p>
 
-            <!-- Bảng danh sách bệnh nhân -->
             <div class="card">
                 <div class="card-body">
                     <table class="table table-bordered">
@@ -56,19 +58,27 @@
                             <th>Ngày sinh</th>
                             <th>Giới tính</th>
                             <th>Số điện thoại</th>
+                            <th>Trạng thái</th>
                             <th></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="appt, iterStat : ${appointments}"
-                            data-bs-toggle="modal"
-                            th:attr="data-bs-target='#apptModal__' + ${appt.id}">
+                        <tr th:each="appt, iterStat : ${appointments}">
                             <td th:text="${iterStat.index + 1}"></td>
                             <td th:text="${appt.patient.firstName}"></td>
                             <td th:text="${appt.patient.lastName}"></td>
                             <td th:text="${#temporals.format(appt.patient.dateOfBirth, 'dd/MM/yyyy')}"></td>
                             <td th:text="${appt.patient.gender.name() == 'MALE' ? 'Nam' : 'Nữ'}"></td>
                             <td th:text="${appt.patient.phone}"></td>
+                            <td>
+                            <span th:switch="${appt.status}">
+        <span th:case="-1" class="badge badge-warning">Đang chờ xác nhận</span>
+        <span th:case="0" class="badge badge-secondary">Đã huỷ</span>
+        <span th:case="1" class="badge badge-success">Đã khám</span>
+        <span th:case="2" class="badge badge-info">Đang chờ khám</span>
+        <span th:case="*">Không xác định</span>
+    </span>
+                            </td>
                             <td>
                                 <a th:href="@{/nurse/service/{id}(id=${appt.id})}"
                                    class="btn btn-primary btn-sm">
@@ -84,19 +94,31 @@
                         </tr>
                         </tbody>
                     </table>
+
                     <nav class="d-flex justify-content-end">
                         <ul class="pagination">
                             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                                <a class="page-link" th:href="@{/nurse/patient(date=${selectedDate}, page=${currentPage - 1}, searchKeyword=${searchKeyword})}">« Trước</a>
+                                <a class="page-link"
+                                   th:href="@{/nurse/patient(date=${selectedDate}, page=${currentPage - 1}, searchKeyword=${searchKeyword})}">«
+                                    Trước</a>
                             </li>
-                            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${i == currentPage} ? 'active'">
-                                <a class="page-link" th:href="@{/nurse/patient(date=${selectedDate}, page=${i}, searchKeyword=${searchKeyword})}" th:text="${i + 1}">1</a>
+
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                th:classappend="${i == currentPage} ? 'active'">
+                                <a class="page-link"
+                                   th:href="@{/nurse/patient(date=${selectedDate}, page=${i}, searchKeyword=${searchKeyword})}"
+                                   th:text="${i + 1}">1</a>
                             </li>
+
                             <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                                <a class="page-link" th:href="@{/nurse/patient(date=${selectedDate}, page=${currentPage + 1}, searchKeyword=${searchKeyword})}">Sau »</a>
+                                <a class="page-link"
+                                   th:href="@{/nurse/patient(date=${selectedDate}, page=${currentPage + 1}, searchKeyword=${searchKeyword})}">Sau
+                                    »</a>
                             </li>
+
                         </ul>
                     </nav>
+
                     <div th:each="appt : ${appointments}">
                         <div class="modal fade" th:id="'apptModal__' + ${appt.id}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -106,13 +128,22 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <p><strong>Họ tên bệnh nhân:</strong> <span th:text="${appt.patient.firstName + ' ' + appt.patient.lastName}"></span></p>
-                                        <p><strong>Ngày sinh:</strong> <span th:text="${#temporals.format(appt.patient.dateOfBirth, 'dd/MM/yyyy')}"></span></p>
-                                        <p><strong>Giới tính:</strong> <span th:text="${appt.patient.gender.name() == 'MALE' ? 'Nam' : 'Nữ'}"></span></p>
-                                        <p><strong>Thời gian hẹn:</strong> <span th:text="${#temporals.format(appt.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></span></p>
+                                        <p><strong>Họ tên bệnh nhân:</strong> <span
+                                                th:text="${appt.patient.firstName + ' ' + appt.patient.lastName}"></span>
+                                        </p>
+                                        <p><strong>Ngày sinh:</strong> <span
+                                                th:text="${#temporals.format(appt.patient.dateOfBirth, 'dd/MM/yyyy')}"></span>
+                                        </p>
+                                        <p><strong>Giới tính:</strong> <span
+                                                th:text="${appt.patient.gender.name() == 'MALE' ? 'Nam' : 'Nữ'}"></span>
+                                        </p>
+                                        <p><strong>Thời gian hẹn:</strong> <span
+                                                th:text="${#temporals.format(appt.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></span>
+                                        </p>
                                         <p><strong>Lý do:</strong> <span th:text="${appt.reason}"></span></p>
                                         <p><strong>Email:</strong> <span th:text="${appt.email}"></span></p>
-                                        <p><strong>Ghi chú huỷ (nếu có):</strong> <span th:text="${appt.noteCancel ?: 'Không'}"></span></p>
+                                        <p><strong>Ghi chú huỷ (nếu có):</strong> <span
+                                                th:text="${appt.noteCancel ?: 'Không'}"></span></p>
                                         <p><strong>Phòng:</strong>
                                             <span th:text="${appt.room != null ? appt.room.roomName : ''}"></span>
                                         </p>
