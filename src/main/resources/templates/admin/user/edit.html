@@ -48,12 +48,8 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="role">Phân quyền</label>
-                                <select class="form-control" th:field="*{roleName}" required>
-                                    <option th:each="role : ${roles}" th:value="${role.name}"
-                                            th:text="${role.name}" th:selected="${role.name == roleName}"></option>
-                                </select>
-                                <div class="text-danger" th:if="${#fields.hasErrors('roleName')}" th:errors="*{roleName}"></div>
+                                <label for="role">Quyền</label>
+                                <input type="text" class="form-control" th:field="*{roleName}" placeholder="Email" readonly>
                             </div>
 
                             <div class="form-group">

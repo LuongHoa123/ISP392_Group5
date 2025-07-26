@@ -50,6 +50,8 @@ public class AdminUserController {
     @Autowired
     private RecepRepository recepRepository;
 
+    @Autowired
+    private NurseRepository nurseRepository;
 
     private void saveLog(String content) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -156,14 +158,18 @@ public class AdminUserController {
                 recepRepository.save(recep);
                 break;
 
+            case "NURSE":
+                NurseEntity nurse = new NurseEntity();
+                nurse.setUser(save);
+                nurseRepository.save(nurse);
+                break;
+
             case "PATIENT":
                 PatientEntity patient = new PatientEntity();
                 patient.setUser(save);
                 patientRepository.save(patient);
                 break;
-
             default:
-                throw new IllegalArgumentException("Không rõ: " + userDto.getRoleName());
         }
 
         saveLog("Thêm người dùng " + user.getEmail() + ", quyền " + user.getRole().getName());
@@ -202,7 +208,6 @@ public class AdminUserController {
 
         Optional<UserEntity> emailUser = userRepository.findByEmail(userDto.getEmail());
         if (emailUser.isPresent() && !emailUser.get().getId().equals(id)) {
-            model.addAttribute("roles", roleRepository.findAll());
             model.addAttribute("emailError", "Email is already registered.");
             return "admin/user/edit";
         }
@@ -216,9 +221,6 @@ public class AdminUserController {
             if (userDto.getPassword() != null && !userDto.getPassword().isBlank()) {
                 user.setPassword(passwordEncoder.encode(userDto.getPassword()));
             }
-
-            RoleEntity selectedRole = roleRepository.findByName(RoleEnum.valueOf(userDto.getRoleName()));
-            user.setRole(selectedRole);
 
             userRepository.save(user);
             saveLog("Cập nhật người dùng " + user.getEmail());

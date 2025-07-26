@@ -47,6 +47,8 @@ public class NursePatientController {
                                @RequestParam(defaultValue = "0") int page,
                                @RequestParam(required = false) String searchKeyword) {
 
+        page = Math.max(page, 0);
+
         LocalDate currentDate = (date != null && !date.isEmpty()) ?
                 LocalDate.parse(date) : LocalDate.now();
 
@@ -75,6 +77,7 @@ public class NursePatientController {
 
         return "nurse/patient/list";
     }
+
 
     @GetMapping("/export/pdf")
     public ResponseEntity<byte[]> exportPdf(@RequestParam(required = false) String date) throws IOException {
