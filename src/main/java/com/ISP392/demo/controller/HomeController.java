@@ -73,10 +73,6 @@ public class HomeController {
     @GetMapping("/appointment/cancel")
     public String cancelByPatient(@RequestParam Long id, RedirectAttributes redirectAttributes) {
         AppointmentEntity appointment = appointmentRepository.findById(id).orElse(null);
-        if (appointment == null || appointment.getStatus() != -1) {
-            return "redirect:/";
-        }
-
         appointment.setStatus(0);
         appointment.setNoteCancel("Huỷ bởi bệnh nhân qua email");
         appointmentRepository.save(appointment);
