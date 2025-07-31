@@ -223,7 +223,7 @@
 
             <div class="input-wrapper">
                 <select name="doctorId" class="box" required>
-                    <option value="">--Chọn bác sĩ--</option>
+                    <option value="">--Bác sĩ mà bạn mong muốn khám--</option>
                     <option th:each="doctor : ${doctors}"
                             th:value="${doctor.id}"
                             th:text="${doctor.firstName + ' ' + doctor.lastName + ' - Chuyên khoa: ' + doctor.specialization}"></option>
