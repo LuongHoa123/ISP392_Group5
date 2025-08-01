@@ -1,8 +1,7 @@
 package com.ISP392.demo.controller.auth;
 
-import com.ISP392.demo.entity.UserEntity;
-import com.ISP392.demo.repository.UserRepository;
-import com.ISP392.demo.service.EmailSenderService;
+import java.util.Random;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -13,8 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.ISP392.demo.entity.UserEntity;
+import com.ISP392.demo.repository.UserRepository;
+import com.ISP392.demo.service.EmailSenderService;
+
 import jakarta.servlet.http.HttpSession;
-import java.util.Random;
 
 @Controller
 @RequestMapping("/auth")

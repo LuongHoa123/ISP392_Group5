@@ -1,29 +1,31 @@
 package com.ISP392.demo.controller.admin;
 
-import com.ISP392.demo.entity.DoctorEntity;
-import com.ISP392.demo.entity.NurseEntity;
-import com.ISP392.demo.entity.ShiftEntity;
-import com.ISP392.demo.repository.DoctorRepository;
-import com.ISP392.demo.repository.NurseRepository;
-import com.ISP392.demo.repository.ShiftRepository;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAdjusters;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.ISP392.demo.entity.DoctorEntity;
+import com.ISP392.demo.entity.NurseEntity;
+import com.ISP392.demo.entity.ShiftEntity;
+import com.ISP392.demo.repository.DoctorRepository;
+import com.ISP392.demo.repository.NurseRepository;
+import com.ISP392.demo.repository.ShiftRepository;
 
 @Controller
 @RequestMapping("/admin/shift/statistics")
@@ -125,7 +127,7 @@ public class AdminShiftStatisticsController {
         
         // Thêm dữ liệu vào model
         model.addAttribute("statistics", pagedData);
-        model.addAttribute("chartData", chartData);
+        model.addAttribute("chartData", chartData); // ← Chuẩn bị dữ liệu
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("totalItems", totalItems);
@@ -139,7 +141,7 @@ public class AdminShiftStatisticsController {
         
         return "admin/shift/statistics";
     }
-    
+    //tính toán cho từng ngày
     private Map<String, Object> createPersonStatistics(DoctorEntity doctor, NurseEntity nurse, 
                                                       List<ShiftEntity> weeklyShifts, LocalDate startOfWeek) {
         

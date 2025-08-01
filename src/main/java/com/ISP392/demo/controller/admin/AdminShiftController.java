@@ -43,15 +43,16 @@ public class AdminShiftController {
     private NurseRepository nurseRepository;
     @Autowired
     private RoomRepository roomRepository;
-    
+    //API endpoint trả về danh sách tất cả ca trực dưới dạng JSON
     @GetMapping("/api")
-    @ResponseBody
+    @ResponseBody // ← Quan trọng: Trả về JSON thay vì HTML
     public List<Map<String, Object>> getShifts() {
         return shiftRepository.findAll().stream().map(s -> {
             Map<String, Object> ev = new HashMap<>();
             ev.put("id", s.getId());
             
             // Create title with person and room info
+            
             String personInfo = "";
             if (s.getDoctor() != null) {
                 personInfo = s.getDoctor().getFirstName() + " " + s.getDoctor().getLastName() + " (BS)";
@@ -61,7 +62,7 @@ public class AdminShiftController {
             
             String roomInfo = s.getRoom() != null ? " - " + s.getRoom().getRoomName() : "";
             ev.put("title", personInfo + roomInfo);
-            
+            // Thời gian bắt đầu và kết thúc cho FullCalendar
             ev.put("start", s.getStartTime().toString());
             ev.put("end", s.getEndTime().toString());
             ev.put("fixedTime", getFixedTimeFromStartTime(s.getStartTime()));
@@ -76,20 +77,21 @@ public class AdminShiftController {
     public ResponseEntity<?> saveShift(@RequestParam Map<String, String> formData,
                             RedirectAttributes redirectAttributes) {
 
+         // Lấy ID nếu đang edit (null nếu tạo mới)                       
         Long id = formData.get("id") != null && !formData.get("id").isEmpty()
                 ? Long.valueOf(formData.get("id")) : null;
-
+        // Chuyển đổi ngày và giờ từ formData
         String rawDate = formData.get("date");
-        String onlyDate = rawDate.split("T")[0];
+        String onlyDate = rawDate.split("T")[0]; // Chỉ lấy phần ngày
         LocalDate date = LocalDate.parse(onlyDate);
-
+                                // Xác định thời gian dựa trên ca trực
         String fixedTime = formData.get("fixedTime");
         LocalTime startTime = fixedTime.equals("MORNING") ? LocalTime.of(7, 0) : LocalTime.of(13, 0);
         LocalTime endTime = fixedTime.equals("MORNING") ? LocalTime.of(11, 0) : LocalTime.of(17, 0);
 
         LocalDateTime shiftStart = LocalDateTime.of(date, startTime);
         LocalDateTime shiftEnd = LocalDateTime.of(date, endTime);
-
+                                // Parse các ID từ form (có thể null)
         Long doctorId = formData.get("doctorId") != null && !formData.get("doctorId").isEmpty()
                 ? Long.valueOf(formData.get("doctorId")) : null;
         Long nurseId = formData.get("nurseId") != null && !formData.get("nurseId").isEmpty()
@@ -110,7 +112,7 @@ public class AdminShiftController {
                 return ResponseEntity.badRequest().body("Phòng đã được sử dụng trong thời gian này.");
             }
         }
-
+        // Tạo hoặc cập nhật entity
         ShiftEntity shift = id != null ? shiftRepository.findById(id).orElse(new ShiftEntity()) : new ShiftEntity();
         shift.setStartTime(shiftStart);
         shift.setEndTime(shiftEnd);
@@ -150,7 +152,7 @@ public class AdminShiftController {
                              @RequestParam(required = false) Long doctorId,
                              @RequestParam(required = false) Long nurseId,
                              @RequestParam(required = false) String date,
-                             @RequestParam(defaultValue = "0") int page) {
+                             @RequestParam(defaultValue = "0") int page) { // Trang hiện tại (default = 0)
 
         Pageable pageable = PageRequest.of(page, 10, Sort.by("startTime").descending());
         Page<ShiftEntity> shifts;
@@ -160,6 +162,7 @@ public class AdminShiftController {
         } else if (nurseId != null) {
             shifts = shiftRepository.findByNurseId(nurseId, pageable);
         } else if (date != null && !date.isEmpty()) {
+            // Filter theo ngày: từ 00:00:00 đến 23:59:59
             LocalDate localDate = LocalDate.parse(date);
             LocalDateTime startOfDay = localDate.atStartOfDay();
             LocalDateTime endOfDay = localDate.atTime(23, 59, 59);
@@ -167,7 +170,7 @@ public class AdminShiftController {
         } else {
             shifts = shiftRepository.findAll(pageable);
         }
-
+        // Truyền dữ liệu cho view
         model.addAttribute("shifts", shifts.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", shifts.getTotalPages());

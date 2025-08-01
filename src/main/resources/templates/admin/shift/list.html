@@ -99,21 +99,21 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                const calendarEl = document.getElementById('calendar');
+                const calendarEl = document.getElementById('calendar'); // ← Lấy div#calendar
                 const modal = new bootstrap.Modal(document.getElementById('shiftModal'));
                 const deleteBtn = document.getElementById('deleteBtn');
 
-                const calendar = new FullCalendar.Calendar(calendarEl, {
+                const calendar = new FullCalendar.Calendar(calendarEl, { // ← Tạo calendar object
                     initialView: 'dayGridMonth',
                     headerToolbar: {
                         left: 'prev,next today',
                         center: 'title',
                         right: 'dayGridMonth,timeGridWeek,timeGridDay'
                     },
-                    events: '/admin/shift/api',
+                    events: '/admin/shift/api',  // ← Load data từ API // ← Gọi API và nhận JSON
                     selectable: true,
                     select: function(info) {
-                        openModal(null, info.startStr);
+                        openModal(null, info.startStr);   // ← Click ngày → Mở modal
                     },
                     eventClick: function(info) {
                         // Khi click vào event thì mở modal chỉnh sửa
@@ -121,7 +121,7 @@
                     }
                 });
 
-                calendar.render();
+                calendar.render(); // ← 🎯 RENDER CALENDAR VÀO DIV!
 
                 function openModal(event, selectedDate = null) {
                     const form = document.getElementById('shiftForm');

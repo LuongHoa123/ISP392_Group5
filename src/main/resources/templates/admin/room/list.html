@@ -325,11 +325,11 @@
                                th:href="@{'/admin/room/edit/' + ${room.id}}">
                                <i class="mdi mdi-pencil"></i> Sửa
                             </a>
-                            <a class="btn-delete"
+                            <!-- <a class="btn-delete"
                                th:href="@{'/admin/room/delete/' + ${room.id}}"
                                onclick="return confirm('Bạn có chắc chắn muốn xóa phòng này không?');">
                                <i class="mdi mdi-delete"></i> Xóa
-                            </a>
+                            </a> -->
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(rooms)}">

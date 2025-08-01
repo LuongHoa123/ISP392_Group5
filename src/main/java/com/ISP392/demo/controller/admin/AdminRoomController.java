@@ -97,7 +97,7 @@ public class AdminRoomController {
         model.addAttribute("room", new RoomEntity());
         return "admin/room/add";
     }
-
+    // api goi phong trong
     @GetMapping("/api/available-rooms")
     public String getAvailableRooms(@RequestParam Integer floor, Model model) {
         List<String> occupiedRooms = roomRepository.findAll().stream()
@@ -113,7 +113,7 @@ public class AdminRoomController {
         model.addAttribute("availableRooms", availableRooms);
         return "fragments/room-options :: roomOptions";
     }
-
+    
     @PostMapping("/save")
     public String saveRoom(@ModelAttribute("room") @Valid RoomEntity room,
                            BindingResult result,
