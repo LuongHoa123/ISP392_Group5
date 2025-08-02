@@ -3,6 +3,7 @@ package com.ISP392.demo.controller.admin;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.ISP392.demo.entity.DoctorEntity;
 import com.ISP392.demo.entity.ShiftEntity;
 import com.ISP392.demo.repository.DoctorRepository;
 import com.ISP392.demo.repository.NurseRepository;
@@ -112,6 +114,21 @@ public class AdminShiftController {
                 return ResponseEntity.badRequest().body("Phòng đã được sử dụng trong thời gian này.");
             }
         }
+
+        // Kiểm tra bác sĩ có phù hợp với phòng không
+        if (doctorId != null && roomId != null) {
+            var room = roomRepository.findById(roomId).orElse(null);
+            var doctor = doctorRepository.findById(doctorId).orElse(null);
+            
+            if (room != null && doctor != null) {
+                List<String> requiredSpecializations = getSpecializationsByRoomType(room.getRoomType());
+                if (!requiredSpecializations.isEmpty() && !requiredSpecializations.contains(doctor.getSpecialization())) {
+                    return ResponseEntity.badRequest().body("Bác sĩ " + doctor.getFirstName() + " " + doctor.getLastName() + 
+                            " (chuyên khoa " + doctor.getSpecialization() + ") không phù hợp với phòng " + room.getRoomName() + 
+                            " (yêu cầu chuyên khoa: " + String.join(", ", requiredSpecializations) + ")");
+                }
+            }
+        }
         // Tạo hoặc cập nhật entity
         ShiftEntity shift = id != null ? shiftRepository.findById(id).orElse(new ShiftEntity()) : new ShiftEntity();
         shift.setStartTime(shiftStart);
@@ -184,7 +201,49 @@ public class AdminShiftController {
         return "admin/shift/list";
     }
 
+    @GetMapping("/api/doctors-by-room/{roomId}")
+    @ResponseBody
+    public List<Map<String, Object>> getDoctorsByRoom(@PathVariable Long roomId) {
+        // Lấy thông tin phòng
+        var room = roomRepository.findById(roomId).orElse(null);
+        if (room == null) {
+            return List.of();
+        }
 
+        // Map phòng với chuyên khoa tương ứng
+        List<String> requiredSpecializations = getSpecializationsByRoomType(room.getRoomType());
+        
+        // Lấy danh sách bác sĩ theo chuyên khoa
+        List<DoctorEntity> doctors = new ArrayList<>();
+        for (String specialization : requiredSpecializations) {
+            doctors.addAll(doctorRepository.findBySpecialization(specialization));
+        }
+        
+        return doctors.stream().map(doctor -> {
+            Map<String, Object> doctorInfo = new HashMap<>();
+            doctorInfo.put("id", doctor.getId());
+            doctorInfo.put("name", doctor.getFirstName() + " " + doctor.getLastName());
+            doctorInfo.put("specialization", doctor.getSpecialization());
+            return doctorInfo;
+        }).collect(Collectors.toList());
+    }
+
+    private List<String> getSpecializationsByRoomType(String roomType) {
+        switch (roomType) {
+            case "Phòng tai":
+                return List.of("Tai");
+            case "Phòng mũi":
+                return List.of("Mũi");
+            case "Phòng họng":
+                return List.of("Họng");
+            case "Phòng nội soi (tai - mũi/ họng)":
+                return List.of("Tai", "Mũi", "Họng"); // Có thể chọn bác sĩ tai, mũi hoặc họng
+            case "Phòng thủ thuật (hút mũi, lấy dị vật)":
+                return List.of("Tai", "Mũi", "Họng"); // Có thể chọn bác sĩ tai, mũi hoặc họng
+            default:
+                return List.of(); // Không có yêu cầu chuyên khoa cụ thể
+        }
+    }
 
     private String getFixedTimeFromStartTime(LocalDateTime startTime) {
         if (startTime.toLocalTime().equals(LocalTime.of(7, 0))) {

@@ -56,5 +56,6 @@ public interface DoctorRepository extends JpaRepository<DoctorEntity, Long> {
             @Param("maxExperience") Integer maxExperience,
             Pageable pageable);
 
+    List<DoctorEntity> findBySpecialization(String specialization);
 
 }

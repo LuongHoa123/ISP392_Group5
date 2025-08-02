@@ -64,6 +64,7 @@
                                     <option th:each="r : ${rooms}" th:value="${r.id}"
                                             th:text="${r.roomName + ' - ' + r.roomType + ' (Tầng ' + r.floor + ')'}"></option>
                                 </select>
+                                <small class="text-muted" id="roomSpecializationInfo"></small>
                             </div>
 
                             <div class="mb-3">
@@ -71,8 +72,9 @@
                                 <select name="doctorId" id="doctorSelect" class="form-select">
                                     <option value="">-- Chọn bác sĩ --</option>
                                     <option th:each="d : ${doctors}" th:value="${d.id}"
-                                            th:text="${d.firstName + ' ' + d.lastName}"></option>
+                                            th:text="${d.firstName + ' ' + d.lastName + ' (' + d.specialization + ')'}"></option>
                                 </select>
+                                <small class="text-info" id="doctorSpecializationInfo"></small>
                             </div>
 
                             <div class="mb-3">
@@ -196,6 +198,92 @@
                     .catch(error => {
                         alert('Lỗi: ' + error);
                     });
+                });
+
+                // Xử lý cập nhật danh sách bác sĩ khi chọn phòng
+                document.getElementById('roomSelect').addEventListener('change', function() {
+                    const roomId = this.value;
+                    const doctorSelect = document.getElementById('doctorSelect');
+                    const roomSpecializationInfo = document.getElementById('roomSpecializationInfo');
+                    const doctorSpecializationInfo = document.getElementById('doctorSpecializationInfo');
+                    
+                    // Reset danh sách bác sĩ
+                    doctorSelect.innerHTML = '<option value="">-- Chọn bác sĩ --</option>';
+                    roomSpecializationInfo.textContent = '';
+                    doctorSpecializationInfo.textContent = '';
+                    
+                    if (roomId) {
+                        // Lấy danh sách bác sĩ phù hợp với phòng
+                        fetch(`/admin/shift/api/doctors-by-room/${roomId}`)
+                            .then(response => response.json())
+                            .then(doctors => {
+                                if (doctors.length > 0) {
+                                    doctors.forEach(doctor => {
+                                        const option = document.createElement('option');
+                                        option.value = doctor.id;
+                                        option.textContent = doctor.name + ' (' + doctor.specialization + ')';
+                                        doctorSelect.appendChild(option);
+                                    });
+                                    
+                                    // Hiển thị thông báo về chuyên khoa yêu cầu
+                                    const roomType = this.options[this.selectedIndex].text;
+                                    if (roomType.includes('Phòng tai')) {
+                                        roomSpecializationInfo.textContent = 'Yêu cầu: Bác sĩ chuyên khoa Tai';
+                                        doctorSpecializationInfo.textContent = 'Chỉ hiển thị bác sĩ chuyên khoa Tai';
+                                    } else if (roomType.includes('Phòng mũi')) {
+                                        roomSpecializationInfo.textContent = 'Yêu cầu: Bác sĩ chuyên khoa Mũi';
+                                        doctorSpecializationInfo.textContent = 'Chỉ hiển thị bác sĩ chuyên khoa Mũi';
+                                    } else if (roomType.includes('Phòng họng')) {
+                                        roomSpecializationInfo.textContent = 'Yêu cầu: Bác sĩ chuyên khoa Họng';
+                                        doctorSpecializationInfo.textContent = 'Chỉ hiển thị bác sĩ chuyên khoa Họng';
+                                    } else if (roomType.includes('nội soi') || roomType.includes('thủ thuật')) {
+                                        roomSpecializationInfo.textContent = 'Yêu cầu: Bác sĩ chuyên khoa Tai, Mũi hoặc Họng';
+                                        doctorSpecializationInfo.textContent = 'Chỉ hiển thị bác sĩ chuyên khoa Tai, Mũi, Họng';
+                                    } else {
+                                        roomSpecializationInfo.textContent = 'Không có yêu cầu chuyên khoa cụ thể';
+                                        doctorSpecializationInfo.textContent = 'Có thể chọn bất kỳ bác sĩ nào';
+                                    }
+                                } else {
+                                    roomSpecializationInfo.textContent = 'Không có bác sĩ phù hợp cho phòng này';
+                                    doctorSpecializationInfo.textContent = 'Vui lòng chọn phòng khác hoặc thêm bác sĩ chuyên khoa phù hợp';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Lỗi khi lấy danh sách bác sĩ:', error);
+                                roomSpecializationInfo.textContent = 'Lỗi khi tải danh sách bác sĩ';
+                            });
+                    }
+                });
+
+                // Validation khi submit form
+                document.getElementById('shiftForm').addEventListener('submit', function(e) {
+                    const roomSelect = document.getElementById('roomSelect');
+                    const doctorSelect = document.getElementById('doctorSelect');
+                    
+                    if (roomSelect.value && doctorSelect.value) {
+                        const roomType = roomSelect.options[roomSelect.selectedIndex].text;
+                        const doctorText = doctorSelect.options[doctorSelect.selectedIndex].text;
+                        
+                        // Kiểm tra xem bác sĩ có phù hợp với phòng không
+                        if (roomType.includes('Phòng tai') && !doctorText.includes('(Tai)')) {
+                            e.preventDefault();
+                            alert('Bác sĩ được chọn không phù hợp với phòng Tai. Vui lòng chọn bác sĩ chuyên khoa Tai.');
+                            return false;
+                        } else if (roomType.includes('Phòng mũi') && !doctorText.includes('(Mũi)')) {
+                            e.preventDefault();
+                            alert('Bác sĩ được chọn không phù hợp với phòng Mũi. Vui lòng chọn bác sĩ chuyên khoa Mũi.');
+                            return false;
+                        } else if (roomType.includes('Phòng họng') && !doctorText.includes('(Họng)')) {
+                            e.preventDefault();
+                            alert('Bác sĩ được chọn không phù hợp với phòng Họng. Vui lòng chọn bác sĩ chuyên khoa Họng.');
+                            return false;
+                        } else if ((roomType.includes('nội soi') || roomType.includes('thủ thuật')) && 
+                                   !doctorText.includes('(Tai)') && !doctorText.includes('(Mũi)') && !doctorText.includes('(Họng)')) {
+                            e.preventDefault();
+                            alert('Bác sĩ được chọn không phù hợp với phòng này. Vui lòng chọn bác sĩ chuyên khoa Tai, Mũi hoặc Họng.');
+                            return false;
+                        }
+                    }
                 });
             });
         </script>
