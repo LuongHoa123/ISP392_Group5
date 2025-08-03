@@ -2,6 +2,9 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý lịch làm việc</title>
 
     <!-- FullCalendar -->
@@ -15,6 +18,25 @@
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 
+    <style>
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+        
+        .invalid-feedback {
+            display: block;
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+        }
+        
+        .form-label.required::after {
+            content: " *";
+            color: #dc3545;
+        }
+    </style>
 </head>
 <body>
 
@@ -50,40 +72,51 @@
 
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label>Khung giờ</label>
+                                <label class="form-label required">Khung giờ</label>
                                 <select name="fixedTime" id="fixedTime" class="form-select" required>
+                                    <option value="">-- Chọn khung giờ --</option>
                                     <option value="MORNING">Sáng (07:00 - 11:00)</option>
                                     <option value="AFTERNOON">Chiều (13:00 - 17:00)</option>
                                 </select>
+                                <div class="invalid-feedback" id="fixedTimeError">
+                                    Vui lòng chọn khung giờ
+                                </div>
                             </div>
 
                             <div class="mb-3">
-                                <label>Số phòng</label>
-                                <select name="roomId" id="roomSelect" class="form-select">
+                                <label class="form-label required">Số phòng</label>
+                                <select name="roomId" id="roomSelect" class="form-select" required>
                                     <option value="">-- Chọn phòng --</option>
                                     <option th:each="r : ${rooms}" th:value="${r.id}"
                                             th:text="${r.roomName + ' - ' + r.roomType + ' (Tầng ' + r.floor + ')'}"></option>
                                 </select>
+                                <div class="invalid-feedback" id="roomError">
+                                    Vui lòng chọn phòng
+                                </div>
                                 <small class="text-muted" id="roomSpecializationInfo"></small>
                             </div>
 
                             <div class="mb-3">
-                                <label>Bác sĩ</label>
-                                <select name="doctorId" id="doctorSelect" class="form-select">
+                                <label class="form-label required">Bác sĩ</label>
+                                <select name="doctorId" id="doctorSelect" class="form-select" required>
                                     <option value="">-- Chọn bác sĩ --</option>
                                     <option th:each="d : ${doctors}" th:value="${d.id}"
                                             th:text="${d.firstName + ' ' + d.lastName + ' (' + d.specialization + ')'}"></option>
                                 </select>
+                                <div class="invalid-feedback" id="doctorError">
+                                    Vui lòng chọn bác sĩ
+                                </div>
                                 <small class="text-info" id="doctorSpecializationInfo"></small>
                             </div>
 
                             <div class="mb-3">
-                                <label>Y tá</label>
+                                <label class="form-label">Y tá</label>
                                 <select name="nurseId" id="nurseSelect" class="form-select">
                                     <option value="">-- Chọn y tá --</option>
                                     <option th:each="n : ${nurses}" th:value="${n.id}"
                                             th:text="${n.firstName + ' ' + n.lastName}"></option>
                                 </select>
+                                <small class="text-muted">Y tá là tùy chọn, có thể để trống</small>
                             </div>
                         </div>
 
@@ -101,53 +134,101 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                const calendarEl = document.getElementById('calendar'); // ← Lấy div#calendar
+                const calendarEl = document.getElementById('calendar');
                 const modal = new bootstrap.Modal(document.getElementById('shiftModal'));
                 const deleteBtn = document.getElementById('deleteBtn');
+                const form = document.getElementById('shiftForm');
 
-                const calendar = new FullCalendar.Calendar(calendarEl, { // ← Tạo calendar object
+                const calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'dayGridMonth',
                     headerToolbar: {
                         left: 'prev,next today',
                         center: 'title',
                         right: 'dayGridMonth,timeGridWeek,timeGridDay'
                     },
-                    events: '/admin/shift/api',  // ← Load data từ API // ← Gọi API và nhận JSON
+                    events: '/admin/shift/api',
                     selectable: true,
                     select: function(info) {
-                        openModal(null, info.startStr);   // ← Click ngày → Mở modal
+                        openModal(null, info.startStr);
                     },
                     eventClick: function(info) {
-                        // Khi click vào event thì mở modal chỉnh sửa
                         openModal(info.event);
                     }
                 });
 
-                calendar.render(); // ← 🎯 RENDER CALENDAR VÀO DIV!
+                calendar.render();
 
                 function openModal(event, selectedDate = null) {
-                    const form = document.getElementById('shiftForm');
                     form.reset();
+                    clearValidationErrors();
 
                     if (event) {
-                        // Edit mode - hiện nút xóa
                         document.getElementById('modalTitle').textContent = 'Chỉnh sửa ca trực';
                         document.getElementById('shiftId').value = event.id;
                         document.getElementById('shiftDate').value = event.start.toISOString();
                         document.getElementById('fixedTime').value = event.extendedProps.fixedTime;
-                        document.getElementById('doctorSelect').value = event.extendedProps.doctorId || '';
                         document.getElementById('nurseSelect').value = event.extendedProps.nurseId || '';
                         document.getElementById('roomSelect').value = event.extendedProps.roomId || '';
+                        
+                        // Đặt giá trị phòng trước, sau đó trigger change event để lọc bác sĩ
+                        const roomSelect = document.getElementById('roomSelect');
+                        const doctorSelect = document.getElementById('doctorSelect');
+                        const roomId = event.extendedProps.roomId;
+                        const doctorId = event.extendedProps.doctorId;
+                        
+                        console.log('Edit shift - Room ID:', roomId, 'Doctor ID:', doctorId);
+                        
+                        if (roomId) {
+                            // Trigger change event để lọc bác sĩ theo phòng
+                            setTimeout(() => {
+                                console.log('Triggering room change event for room:', roomId);
+                                const changeEvent = new Event('change', { bubbles: true });
+                                roomSelect.dispatchEvent(changeEvent);
+                                
+                                // Sau khi lọc xong, set giá trị bác sĩ
+                                setTimeout(() => {
+                                    if (doctorId) {
+                                        console.log('Setting doctor ID:', doctorId);
+                                        doctorSelect.value = doctorId;
+                                        
+                                        // Kiểm tra xem bác sĩ có trong danh sách không
+                                        const doctorOption = doctorSelect.querySelector(`option[value="${doctorId}"]`);
+                                        if (!doctorOption) {
+                                            console.warn('Doctor not found in filtered list, adding manually');
+                                            // Nếu bác sĩ không có trong danh sách đã lọc, thêm vào
+                                            const currentDoctor = event.extendedProps.doctorName;
+                                            if (currentDoctor) {
+                                                const option = document.createElement('option');
+                                                option.value = doctorId;
+                                                option.textContent = currentDoctor;
+                                                doctorSelect.appendChild(option);
+                                                doctorSelect.value = doctorId;
+                                            }
+                                        }
+                                        
+                                        // Không hiển thị validation error khi edit
+                                        doctorSelect.classList.remove('is-invalid');
+                                    }
+                                }, 300); // Tăng thời gian chờ để đảm bảo API call hoàn thành
+                            }, 100);
+                        } else {
+                            // Nếu không có phòng, set bác sĩ trực tiếp
+                            if (doctorId) {
+                                console.log('No room selected, setting doctor directly:', doctorId);
+                                doctorSelect.value = doctorId;
+                                // Không hiển thị validation error khi edit
+                                doctorSelect.classList.remove('is-invalid');
+                            }
+                        }
+                        
                         deleteBtn.style.display = 'inline-block';
                         
-                        // Gán sự kiện xóa cho nút delete
                         deleteBtn.onclick = function() {
                             if (confirm('Bạn có muốn xóa ca trực này không?')) {
                                 deleteShift(event.id);
                             }
                         };
                     } else {
-                        // Add mode - ẩn nút xóa
                         document.getElementById('modalTitle').textContent = 'Thêm ca trực';
                         document.getElementById('shiftId').value = '';
                         document.getElementById('shiftDate').value = selectedDate;
@@ -158,7 +239,66 @@
                     modal.show();
                 }
 
-                // Hàm xóa ca trực
+                function clearValidationErrors() {
+                    const inputs = form.querySelectorAll('.form-select, .form-control');
+                    inputs.forEach(input => {
+                        input.classList.remove('is-invalid');
+                    });
+                }
+
+                function validateForm() {
+                    let isValid = true;
+                    clearValidationErrors();
+
+                    // Validate khung giờ
+                    const fixedTime = document.getElementById('fixedTime');
+                    if (!fixedTime.value) {
+                        fixedTime.classList.add('is-invalid');
+                        isValid = false;
+                    }
+
+                    // Validate phòng
+                    const roomSelect = document.getElementById('roomSelect');
+                    if (!roomSelect.value) {
+                        roomSelect.classList.add('is-invalid');
+                        isValid = false;
+                    }
+
+                    // Validate bác sĩ
+                    const doctorSelect = document.getElementById('doctorSelect');
+                    if (!doctorSelect.value) {
+                        doctorSelect.classList.add('is-invalid');
+                        isValid = false;
+                    }
+
+                    // Kiểm tra xem bác sĩ có phù hợp với phòng không
+                    if (roomSelect.value && doctorSelect.value) {
+                        const roomType = roomSelect.options[roomSelect.selectedIndex].text;
+                        const doctorText = doctorSelect.options[doctorSelect.selectedIndex].text;
+                        
+                        if (roomType.includes('Phòng tai') && !doctorText.includes('(Tai)')) {
+                            doctorSelect.classList.add('is-invalid');
+                            document.getElementById('doctorError').textContent = 'Bác sĩ được chọn không phù hợp với phòng Tai. Vui lòng chọn bác sĩ chuyên khoa Tai.';
+                            isValid = false;
+                        } else if (roomType.includes('Phòng mũi') && !doctorText.includes('(Mũi)')) {
+                            doctorSelect.classList.add('is-invalid');
+                            document.getElementById('doctorError').textContent = 'Bác sĩ được chọn không phù hợp với phòng Mũi. Vui lòng chọn bác sĩ chuyên khoa Mũi.';
+                            isValid = false;
+                        } else if (roomType.includes('Phòng họng') && !doctorText.includes('(Họng)')) {
+                            doctorSelect.classList.add('is-invalid');
+                            document.getElementById('doctorError').textContent = 'Bác sĩ được chọn không phù hợp với phòng Họng. Vui lòng chọn bác sĩ chuyên khoa Họng.';
+                            isValid = false;
+                        } else if ((roomType.includes('nội soi') || roomType.includes('thủ thuật')) && 
+                                   !doctorText.includes('(Tai)') && !doctorText.includes('(Mũi)') && !doctorText.includes('(Họng)')) {
+                            doctorSelect.classList.add('is-invalid');
+                            document.getElementById('doctorError').textContent = 'Bác sĩ được chọn không phù hợp với phòng này. Vui lòng chọn bác sĩ chuyên khoa Tai, Mũi hoặc Họng.';
+                            isValid = false;
+                        }
+                    }
+
+                    return isValid;
+                }
+
                 function deleteShift(shiftId) {
                     fetch('/admin/shift/api/delete/' + shiftId, {
                         method: 'POST'
@@ -173,9 +313,14 @@
                     });
                 }
 
-                // Form submission
-                document.getElementById('shiftForm').addEventListener('submit', function(e) {
+                // Form submission với validation
+                form.addEventListener('submit', function(e) {
                     e.preventDefault();
+                    
+                    if (!validateForm()) {
+                        alert('Vui lòng điền đầy đủ thông tin bắt buộc và đảm bảo bác sĩ phù hợp với phòng được chọn.');
+                        return;
+                    }
                     
                     const formData = new FormData(this);
                     
@@ -207,6 +352,8 @@
                     const roomSpecializationInfo = document.getElementById('roomSpecializationInfo');
                     const doctorSpecializationInfo = document.getElementById('doctorSpecializationInfo');
                     
+                    console.log('Room changed to:', roomId);
+                    
                     // Reset danh sách bác sĩ
                     doctorSelect.innerHTML = '<option value="">-- Chọn bác sĩ --</option>';
                     roomSpecializationInfo.textContent = '';
@@ -214,9 +361,11 @@
                     
                     if (roomId) {
                         // Lấy danh sách bác sĩ phù hợp với phòng
+                        console.log('Fetching doctors for room:', roomId);
                         fetch(`/admin/shift/api/doctors-by-room/${roomId}`)
                             .then(response => response.json())
                             .then(doctors => {
+                                console.log('Received doctors:', doctors);
                                 if (doctors.length > 0) {
                                     doctors.forEach(doctor => {
                                         const option = document.createElement('option');
@@ -227,6 +376,7 @@
                                     
                                     // Hiển thị thông báo về chuyên khoa yêu cầu
                                     const roomType = this.options[this.selectedIndex].text;
+                                    console.log('Room type:', roomType);
                                     if (roomType.includes('Phòng tai')) {
                                         roomSpecializationInfo.textContent = 'Yêu cầu: Bác sĩ chuyên khoa Tai';
                                         doctorSpecializationInfo.textContent = 'Chỉ hiển thị bác sĩ chuyên khoa Tai';
@@ -243,6 +393,10 @@
                                         roomSpecializationInfo.textContent = 'Không có yêu cầu chuyên khoa cụ thể';
                                         doctorSpecializationInfo.textContent = 'Có thể chọn bất kỳ bác sĩ nào';
                                     }
+                                    
+                                    // Trigger change event cho doctorSelect để validation
+                                    const changeEvent = new Event('change', { bubbles: true });
+                                    doctorSelect.dispatchEvent(changeEvent);
                                 } else {
                                     roomSpecializationInfo.textContent = 'Không có bác sĩ phù hợp cho phòng này';
                                     doctorSpecializationInfo.textContent = 'Vui lòng chọn phòng khác hoặc thêm bác sĩ chuyên khoa phù hợp';
@@ -255,34 +409,29 @@
                     }
                 });
 
-                // Validation khi submit form
-                document.getElementById('shiftForm').addEventListener('submit', function(e) {
-                    const roomSelect = document.getElementById('roomSelect');
-                    const doctorSelect = document.getElementById('doctorSelect');
-                    
-                    if (roomSelect.value && doctorSelect.value) {
-                        const roomType = roomSelect.options[roomSelect.selectedIndex].text;
-                        const doctorText = doctorSelect.options[doctorSelect.selectedIndex].text;
-                        
-                        // Kiểm tra xem bác sĩ có phù hợp với phòng không
-                        if (roomType.includes('Phòng tai') && !doctorText.includes('(Tai)')) {
-                            e.preventDefault();
-                            alert('Bác sĩ được chọn không phù hợp với phòng Tai. Vui lòng chọn bác sĩ chuyên khoa Tai.');
-                            return false;
-                        } else if (roomType.includes('Phòng mũi') && !doctorText.includes('(Mũi)')) {
-                            e.preventDefault();
-                            alert('Bác sĩ được chọn không phù hợp với phòng Mũi. Vui lòng chọn bác sĩ chuyên khoa Mũi.');
-                            return false;
-                        } else if (roomType.includes('Phòng họng') && !doctorText.includes('(Họng)')) {
-                            e.preventDefault();
-                            alert('Bác sĩ được chọn không phù hợp với phòng Họng. Vui lòng chọn bác sĩ chuyên khoa Họng.');
-                            return false;
-                        } else if ((roomType.includes('nội soi') || roomType.includes('thủ thuật')) && 
-                                   !doctorText.includes('(Tai)') && !doctorText.includes('(Mũi)') && !doctorText.includes('(Họng)')) {
-                            e.preventDefault();
-                            alert('Bác sĩ được chọn không phù hợp với phòng này. Vui lòng chọn bác sĩ chuyên khoa Tai, Mũi hoặc Họng.');
-                            return false;
-                        }
+                // Real-time validation khi người dùng thay đổi giá trị
+                document.getElementById('fixedTime').addEventListener('change', function() {
+                    if (this.value) {
+                        this.classList.remove('is-invalid');
+                    } else {
+                        this.classList.add('is-invalid');
+                    }
+                });
+
+                document.getElementById('roomSelect').addEventListener('change', function() {
+                    if (this.value) {
+                        this.classList.remove('is-invalid');
+                    } else {
+                        this.classList.add('is-invalid');
+                    }
+                });
+
+                document.getElementById('doctorSelect').addEventListener('change', function() {
+                    if (this.value) {
+                        this.classList.remove('is-invalid');
+                        document.getElementById('doctorError').textContent = 'Vui lòng chọn bác sĩ';
+                    } else {
+                        this.classList.add('is-invalid');
                     }
                 });
             });

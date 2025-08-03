@@ -18,7 +18,7 @@ import java.util.Set;
         catalog = "")
 @Data
 public class ReviewEntity extends AbstractEntity {
-    @Column(name = "firstName")
+    @Column(name = "content")
     private String content;
 
     @Column(name = "star")

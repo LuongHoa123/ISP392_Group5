@@ -49,7 +49,16 @@ public class AdminShiftController {
     @GetMapping("/api")
     @ResponseBody // ← Quan trọng: Trả về JSON thay vì HTML
     public List<Map<String, Object>> getShifts() {
-        return shiftRepository.findAll().stream().map(s -> {
+        List<ShiftEntity> allShifts = shiftRepository.findAll();
+        System.out.println("Found " + allShifts.size() + " shifts in database");
+        
+        // Tạo dữ liệu test nếu không có dữ liệu
+        if (allShifts.isEmpty()) {
+            createTestData();
+            allShifts = shiftRepository.findAll();
+        }
+        
+        return allShifts.stream().map(s -> {
             Map<String, Object> ev = new HashMap<>();
             ev.put("id", s.getId());
             
@@ -71,8 +80,41 @@ public class AdminShiftController {
             ev.put("doctorId", s.getDoctor() != null ? s.getDoctor().getId() : null);
             ev.put("nurseId", s.getNurse() != null ? s.getNurse().getId() : null);
             ev.put("roomId", s.getRoom() != null ? s.getRoom().getId() : null);
+            
+            System.out.println("Created event: " + ev.get("title") + " at " + ev.get("start"));
             return ev;
         }).collect(Collectors.toList());
+    }
+
+    private void createTestData() {
+        try {
+            // Lấy doctor đầu tiên
+            var doctor = doctorRepository.findAll().stream().findFirst().orElse(null);
+            var nurse = nurseRepository.findAll().stream().findFirst().orElse(null);
+            var room = roomRepository.findAll().stream().findFirst().orElse(null);
+            
+            if (doctor != null && room != null) {
+                // Tạo ca trực cho ngày 3/8/2025
+                ShiftEntity shift1 = new ShiftEntity();
+                shift1.setStartTime(LocalDateTime.of(2025, 8, 3, 7, 0));
+                shift1.setEndTime(LocalDateTime.of(2025, 8, 3, 11, 0));
+                shift1.setDoctor(doctor);
+                shift1.setRoom(room);
+                shiftRepository.save(shift1);
+                
+                // Tạo ca trực cho ngày 5/8/2025
+                ShiftEntity shift2 = new ShiftEntity();
+                shift2.setStartTime(LocalDateTime.of(2025, 8, 5, 13, 0));
+                shift2.setEndTime(LocalDateTime.of(2025, 8, 5, 17, 0));
+                shift2.setDoctor(doctor);
+                shift2.setRoom(room);
+                shiftRepository.save(shift2);
+                
+                System.out.println("Created test data for August 2025");
+            }
+        } catch (Exception e) {
+            System.err.println("Error creating test data: " + e.getMessage());
+        }
     }
 
     @PostMapping("/api/save")
