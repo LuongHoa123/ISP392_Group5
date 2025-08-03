@@ -114,4 +114,5 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
     List<AppointmentEntity> findByDoctorAndStatusInAndMonthAndYear(@Param("doctor") DoctorEntity doctor, @Param("statuses") List<Integer> statuses, @Param("month") int month, @Param("year") int year);
 
     boolean existsByPatientAndAppointmentDateTimeBetween(PatientEntity patient, LocalDateTime start, LocalDateTime end);
+    boolean existsByPatientAndAppointmentDateTimeBetweenAndStatusNot(PatientEntity patient, LocalDateTime start, LocalDateTime end, int status);
 }

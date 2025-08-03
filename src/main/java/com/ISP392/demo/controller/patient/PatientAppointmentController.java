@@ -94,10 +94,11 @@ public class PatientAppointmentController {
 
         LocalDate appointmentDate = LocalDate.parse(date);
 
-        boolean alreadyHasAppointment = appointmentRepository.existsByPatientAndAppointmentDateTimeBetween(
+        boolean alreadyHasAppointment = appointmentRepository.existsByPatientAndAppointmentDateTimeBetweenAndStatusNot(
                 patient,
                 appointmentDate.atStartOfDay(),
-                appointmentDate.plusDays(1).atStartOfDay()
+                appointmentDate.plusDays(1).atStartOfDay(),
+                0
         );
 
         if (alreadyHasAppointment) {
